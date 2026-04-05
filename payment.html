@@ -317,6 +317,7 @@ input:focus{border-color:var(--brand);}
 <script>
 let selectedMethod = null;
 let screenshotBase64 = null;
+let screenshotFile = null;
 
 function selectMethod(method){
   selectedMethod = method;
@@ -339,6 +340,7 @@ function selectMethod(method){
 function handleScreenshot(input){
   const file = input.files[0];
   if(!file) return;
+  screenshotFile = file;
 
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -381,11 +383,8 @@ async function submitPayment(){
     const uid   = user ? user.uid : null;
     const email = user ? user.email : (phone + '@unknown.com');
 
-    // Truncate screenshot to stay under Firestore's 1 MB document limit
-    const maxLen = 700000;
-    const screenshotData = screenshotBase64.length > maxLen
-      ? screenshotBase64.substring(0, maxLen)
-      : screenshotBase64;
+    // Compress screenshot to ~50-80KB so it fits in Firestore without truncation
+    const screenshotData = await compressToBase64(screenshotFile, 600, 0.65);
 
     await window.db.collection('payment_requests').add({
       name,
@@ -412,6 +411,25 @@ async function submitPayment(){
     btn.innerHTML = '📨 Payment Submit गर्नुहोस्';
     alert('Error: ' + e.message + '\n\nPlease contact us on WhatsApp: 9841189356');
   }
+}
+
+// Compress image to base64 at reduced resolution (fallback if Storage unavailable)
+function compressToBase64(file, maxWidth, quality){
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale  = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width  = img.width  * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(screenshotBase64); };
+    img.src = url;
+  });
 }
 
 // Redirect to login if not authenticated
