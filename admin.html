@@ -183,9 +183,10 @@ tbody td .meta{font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;}
   <div class="auth-card">
     <h2>🛡 Admin Panel</h2>
     <p>AI Saathi — Authorized Access Only</p>
-    <input type="password" id="adminPin" class="auth-input" placeholder="Admin PIN हाल्नुहोस्" onkeydown="if(event.key==='Enter')checkPin()">
-    <button class="auth-btn" onclick="checkPin()">Enter</button>
-    <div class="auth-err" id="pinErr">❌ Incorrect PIN</div>
+    <input type="email" id="adminEmail" class="auth-input" placeholder="Email" autocomplete="email" onkeydown="if(event.key==='Enter')adminLogin()">
+    <input type="password" id="adminPassword" class="auth-input" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button class="auth-btn" id="loginBtn" onclick="adminLogin()">Login</button>
+    <div class="auth-err" id="pinErr"></div>
   </div>
 </div>
 
@@ -267,26 +268,66 @@ tbody td .meta{font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;}
 
 <script>
 // ─────────────────────────────────────────────
-// ADMIN PIN — change this to something strong!
+// ADMIN EMAILS — only these can access the panel
 // ─────────────────────────────────────────────
-const ADMIN_PIN = '2025'; // ← Change this to a strong PIN
+const ADMIN_EMAILS = ['anurat069@gmail.com']; // ← Replace with your actual email
 
-function checkPin(){
-  const pin = document.getElementById('adminPin').value;
-  if(pin === ADMIN_PIN){
-    document.getElementById('authWall').style.display = 'none';
-    document.getElementById('adminWrap').style.display = 'flex';
-    loadData();
-  } else {
-    document.getElementById('pinErr').style.display = 'block';
-    document.getElementById('adminPin').value = '';
-  }
+function adminLogin(){
+  const email    = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  const errEl    = document.getElementById('pinErr');
+  const btn      = document.getElementById('loginBtn');
+
+  if(!email || !password){ showErr('Email र password हाल्नुहोस्।'); return; }
+
+  btn.textContent = 'Logging in...';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  window.auth.signInWithEmailAndPassword(email, password)
+    .then(cred => {
+      if(!ADMIN_EMAILS.includes(cred.user.email)){
+        // Signed in but not an admin — kick them out
+        window.auth.signOut();
+        showErr('❌ तपाईंलाई admin access छैन।');
+        btn.textContent = 'Login';
+        btn.disabled = false;
+        return;
+      }
+      document.getElementById('authWall').style.display = 'none';
+      document.getElementById('adminWrap').style.display = 'flex';
+      loadData();
+    })
+    .catch(err => {
+      showErr('❌ ' + (err.code === 'auth/invalid-credential' ? 'Wrong email or password.' : err.message));
+      btn.textContent = 'Login';
+      btn.disabled = false;
+    });
+}
+
+function showErr(msg){
+  const el = document.getElementById('pinErr');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
 function adminLogout(){
-  document.getElementById('authWall').style.display = 'flex';
-  document.getElementById('adminWrap').style.display = 'none';
+  window.auth.signOut().then(() => {
+    document.getElementById('authWall').style.display = 'flex';
+    document.getElementById('adminWrap').style.display = 'none';
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminPassword').value = '';
+  });
 }
+
+// Auto-restore session if already logged in as admin
+window.auth.onAuthStateChanged(user => {
+  if(user && ADMIN_EMAILS.includes(user.email)){
+    document.getElementById('authWall').style.display = 'none';
+    document.getElementById('adminWrap').style.display = 'flex';
+    loadData();
+  }
+});
 
 let allRequests = [];
 let currentTab = 'pending';
@@ -311,7 +352,8 @@ function loadData(){
           txnId: data.txnId || '',
           date: data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleDateString('ne-NP') : '—',
           status: data.status || 'pending',
-          screenshotData: data.screenshotData || data.screenshotUrl || null,
+          screenshotUrl:  data.screenshotUrl  || null,
+          screenshotData: data.screenshotData || null,
         };
       });
       renderAll();
@@ -362,7 +404,7 @@ function buildRows(data){
       <td><span class="badge ${r.status}">${r.status==='pending'?'⏳ Pending':r.status==='approved'?'✅ Approved':'❌ Rejected'}</span></td>
       <td>
         <div class="action-btns">
-          ${r.screenshotData ? `<button class="btn-view-ss" onclick="viewScreenshot('${r.id}')">📸 Screenshot</button>` : ''}
+          ${(r.screenshotUrl || r.screenshotData) ? `<button class="btn-view-ss" onclick="viewScreenshot('${r.id}')">📸 Screenshot</button>` : ''}
           ${r.status==='pending' ? `
             <button class="btn-approve" onclick="approvePayment('${r.id}')">✅ Approve</button>
             <button class="btn-reject" onclick="rejectPayment('${r.id}')">❌ Reject</button>
@@ -450,7 +492,7 @@ function copyWhatsApp(id){
 // ── VIEW SCREENSHOT ──
 function viewScreenshot(id){
   const r = allRequests.find(x=>x.id===id);
-  document.getElementById('ssModalImg').src = r.screenshotData || '';
+  document.getElementById('ssModalImg').src = r.screenshotUrl || r.screenshotData || '';
   document.getElementById('ssModalInfo').innerHTML = `<strong>${r.name}</strong> · ${r.method} · ${r.date} · TXN: ${r.txnId}`;
   document.getElementById('ssModal').classList.add('show');
 }
