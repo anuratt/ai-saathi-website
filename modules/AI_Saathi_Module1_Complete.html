@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 1: What Is AI, Really?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700;900&family=Dancing+Script:wght@600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9973A;
+  --gold-light: #F0C96C;
+  --gold-pale: #FDF4E3;
+  --gold-pale2: #FBF0D8;
+  --deep: #1A1207;
+  --ink: #2D2110;
+  --muted: #7A6144;
+  --warm-white: #FEFCF7;
+  --green: #2D6A4F;
+  --green-light: #E8F5EE;
+  --red-soft: #C0392B;
+  --sky: #1A6B9A;
+  --sky-light: #E8F4FB;
+  --border: #E8D9B8;
+  --shadow: 0 4px 24px rgba(26,18,7,0.08);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--warm-white);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(201,151,58,0.2);
+  z-index: 9999;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ===== NAV ===== */
+.course-nav {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(26,18,7,0.06);
+}
+.course-nav-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  font-size: 14px;
+}
+.nav-brand {
+  font-family: 'Dancing Script', cursive;
+  font-size: 24px;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  background: var(--gold);
+  color: var(--deep) !important;
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-weight: 700 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--gold-light) !important; color: var(--deep) !important; }
+
+/* ===== HERO ===== */
+.hero {
+  background: var(--deep);
+  color: white;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.hero-orb1 {
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,151,58,0.18) 0%, transparent 70%);
+  top: -150px; right: -100px;
+  pointer-events: none;
+}
+.hero-orb2 {
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,151,58,0.1) 0%, transparent 70%);
+  bottom: -80px; left: -60px;
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 40px 70px;
+  position: relative;
+  z-index: 2;
+}
+.hero-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--deep);
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 6px 20px;
+  border-radius: 20px;
+  margin-bottom: 26px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 6vw, 66px);
+  font-weight: 900;
+  line-height: 1.12;
+  color: var(--gold-light);
+  margin-bottom: 14px;
+}
+.hero-subtitle {
+  font-size: 20px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.82);
+  margin-bottom: 10px;
+  max-width: 660px;
+  line-height: 1.65;
+}
+.hero-tagline {
+  font-family: 'Dancing Script', cursive;
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 36px;
+  font-style: italic;
+}
+.hero-promises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 44px;
+}
+.promise-pill {
+  background: rgba(201,151,58,0.14);
+  border: 1px solid rgba(201,151,58,0.35);
+  color: var(--gold-light);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+/* Video embed section */
+.hero-video-section {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,151,58,0.25);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-top: 10px;
+}
+.hero-video-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.hero-video-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: white;
+  margin-bottom: 16px;
+}
+.video-embed-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+.video-embed-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+.video-caption {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* ===== SALES STRIP ===== */
+.sales-strip {
+  background: var(--gold);
+  color: var(--deep);
+  text-align: center;
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== EMOTIONAL HOOK ===== */
+.hook-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 70px 40px 50px;
+}
+.hook-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.hook-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  color: var(--deep);
+  margin-bottom: 28px;
+  line-height: 1.25;
+}
+.hook-story {
+  background: white;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  font-size: 17.5px;
+  line-height: 1.9;
+  color: var(--ink);
+}
+.hook-story em {
+  font-family: 'Crimson Text', serif;
+  font-size: 20px;
+  color: var(--deep);
+}
+.fear-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.fear-card {
+  background: #FFF8F5;
+  border: 1px solid #F0D8CC;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.fear-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.fear-text {
+  font-size: 15.5px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.fear-text strong {
+  display: block;
+  color: var(--red-soft);
+  font-size: 14px;
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+.relief-box {
+  background: linear-gradient(135deg, var(--green) 0%, #1e5c3e 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 32px 36px;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+.relief-box::after {
+  content: '✓';
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 120px;
+  color: rgba(255,255,255,0.05);
+  font-weight: 900;
+  pointer-events: none;
+}
+.relief-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #A8E6C8;
+}
+.relief-box p {
+  font-size: 16.5px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.8;
+}
+.relief-box p strong { color: white; }
+
+/* ===== SALES SECTION ===== */
+.sales-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 40px 60px;
+}
+.sales-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--deep);
+  margin-bottom: 18px;
+}
+.big-promise {
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.selling-points {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.selling-points li {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-size: 15px;
+  color: var(--ink);
+  transition: box-shadow 0.2s;
+}
+.selling-points li:hover { box-shadow: var(--shadow); }
+.sp-check {
+  width: 24px; height: 24px;
+  background: var(--green);
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.emotional-banner {
+  background: var(--deep);
+  color: white;
+  border-radius: 16px;
+  padding: 36px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.emotional-banner::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(201,151,58,0.12);
+}
+.emotional-banner h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--gold-light);
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.emotional-banner p { color: rgba(255,255,255,0.8); font-size: 16.5px; line-height: 1.8; }
+
+/* ===== MODULE OVERVIEW ===== */
+.module-header-wrap {
+  background: var(--gold-pale);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-top: 60px;
+}
+.module-header {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 40px;
+}
+.module-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.module-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 4vw, 40px);
+  color: var(--deep);
+  margin-bottom: 14px;
+  line-height: 1.25;
+}
+.module-desc {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 700px;
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+.module-meta {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+.meta-item {
+  flex: 1;
+  min-width: 130px;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.meta-item:last-child { border-right: none; }
+.meta-item strong {
+  display: block;
+  font-size: 20px;
+  color: var(--deep);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 3px;
+}
+.meta-item span {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ===== INTRO CARDS ===== */
+.course-intro {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 40px 0;
+}
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+.intro-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 26px;
+  box-shadow: var(--shadow);
+}
+.intro-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  color: var(--deep);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.icon-circle {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--gold-pale);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.intro-card ul { list-style: none; }
+.intro-card ul li {
+  padding: 6px 0;
+  font-size: 15px;
+  color: var(--muted);
+  padding-left: 20px;
+  position: relative;
+  border-bottom: 1px solid var(--gold-pale);
+}
+.intro-card ul li:last-child { border-bottom: none; }
+.intro-card ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ===== LESSONS ===== */
+.lessons-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 40px 60px;
+}
+.lessons-wrap h2.section-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--deep);
+  margin-bottom: 8px;
+}
+.section-sub { color: var(--muted); margin-bottom: 36px; font-size: 16px; }
+
+.lesson-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 36px;
+  transition: box-shadow 0.2s;
+}
+.lesson-card:hover { box-shadow: 0 8px 40px rgba(26,18,7,0.12); }
+.lesson-header {
+  background: var(--deep);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.lesson-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 900;
+  color: rgba(201,151,58,0.3);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 56px;
+}
+.lesson-header-text h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+.lesson-header-text p {
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.3px;
+}
+.lesson-body { padding: 32px; }
+.section-block { margin-bottom: 32px; }
+.section-block:last-child { margin-bottom: 0; }
+.section-label {
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.objective-box {
+  background: var(--sky-light);
+  border: 1px solid #C5DFEF;
+  border-left: 4px solid var(--sky);
+  border-radius: 0 10px 10px 0;
+  padding: 18px 22px;
+  font-size: 16.5px;
+  color: var(--sky);
+  font-weight: 600;
+  line-height: 1.7;
+}
+.script-box {
+  background: var(--gold-pale);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 30px;
+  line-height: 1.95;
+}
+.script-box p {
+  margin-bottom: 18px;
+  font-size: 16.5px;
+  color: var(--ink);
+}
+.script-box p:last-child { margin-bottom: 0; }
+.emphasis {
+  background: rgba(201,151,58,0.15);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: var(--deep);
+}
+.analogy-block {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 18px 0;
+  display: flex;
+  gap: 14px;
+}
+.analogy-icon { font-size: 28px; flex-shrink: 0; }
+.analogy-text { font-size: 16px; color: var(--ink); line-height: 1.75; }
+.analogy-text strong { color: var(--deep); }
+
+/* Steps */
+.steps-list { list-style: none; }
+.steps-list li {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.steps-list li:last-child { border-bottom: none; }
+.step-num {
+  width: 36px; height: 36px;
+  background: var(--gold);
+  color: var(--deep);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-content { flex: 1; }
+.step-content strong {
+  display: block;
+  font-size: 15.5px;
+  color: var(--deep);
+  margin-bottom: 4px;
+}
+.step-content span { font-size: 15px; color: var(--muted); line-height: 1.7; }
+
+/* Example box */
+.example-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.example-box::before {
+  content: 'नेपाल';
+  position: absolute;
+  right: 20px;
+  top: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--border);
+  letter-spacing: 2px;
+}
+.ex-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  color: var(--deep);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+.ex-icon {
+  width: 30px; height: 30px;
+  background: var(--deep);
+  color: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.example-box p {
+  font-size: 15.5px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.example-box p:last-child { margin-bottom: 0; }
+.dialogue {
+  background: var(--gold-pale);
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-family: 'Crimson Text', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--deep);
+  border-radius: 0 8px 8px 0;
+  line-height: 1.7;
+}
+
+/* Task box */
+.task-box {
+  background: var(--green-light);
+  border: 1px solid #B8DFC9;
+  border-left: 4px solid var(--green);
+  border-radius: 0 12px 12px 0;
+  padding: 24px 26px;
+}
+.task-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--green);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.task-box p { font-size: 15.5px; color: var(--ink); margin-bottom: 12px; line-height: 1.8; }
+.task-box ol {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+.task-box ol li {
+  font-size: 15.5px;
+  color: var(--ink);
+  margin-bottom: 10px;
+  line-height: 1.75;
+  padding-left: 4px;
+}
+.task-box ol li strong { color: var(--green); }
+.task-share {
+  margin-top: 16px;
+  font-size: 14.5px;
+  color: var(--green);
+  font-weight: 700;
+  background: rgba(45,106,79,0.1);
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* Mistakes box */
+.mistakes-box {
+  background: #FFF8F5;
+  border: 1px solid #F0D8CC;
+  border-radius: 12px;
+  padding: 24px 26px;
+}
+.m-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  color: var(--red-soft);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.mistake-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid #F0D8CC;
+}
+.mistake-item:last-child { border-bottom: none; padding-bottom: 0; }
+.mistake-x {
+  width: 28px; height: 28px;
+  background: var(--red-soft);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mistake-text { font-size: 15px; color: var(--ink); line-height: 1.75; }
+.mistake-text strong { display: block; color: var(--red-soft); margin-bottom: 4px; font-size: 15.5px; }
+
+/* Lesson divider */
+.lesson-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 0 36px;
+  color: var(--gold);
+  font-size: 20px;
+  letter-spacing: 6px;
+  justify-content: center;
+}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-section {
+  background: var(--deep);
+  padding: 70px 40px;
+  margin: 20px 0;
+}
+.testimonials-inner { max-width: 900px; margin: 0 auto; }
+.section-eyebrow-white {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.testimonials-inner h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--gold-light);
+  margin-bottom: 36px;
+  line-height: 1.3;
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.testi-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,151,58,0.22);
+  border-radius: 14px;
+  padding: 24px 22px;
+  transition: background 0.2s;
+}
+.testi-card:hover { background: rgba(255,255,255,0.08); }
+.testi-stars { color: var(--gold); font-size: 14px; margin-bottom: 14px; letter-spacing: 3px; }
+.testi-quote {
+  font-size: 15px;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.75;
+  margin-bottom: 18px;
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 16.5px;
+}
+.testi-person { font-size: 14px; color: var(--gold); font-weight: 700; }
+.testi-role { font-size: 13px; color: rgba(255,255,255,0.42); }
+
+/* ===== FAQ ===== */
+.faq-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+.faq-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--deep);
+  margin-bottom: 8px;
+}
+.faq-sub { color: var(--muted); margin-bottom: 32px; font-size: 16px; }
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.faq-q {
+  padding: 20px 24px;
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--deep);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  user-select: none;
+  transition: background 0.2s;
+  gap: 16px;
+}
+.faq-q:hover { background: var(--gold-pale); }
+.faq-q .faq-arrow { color: var(--gold); font-size: 20px; transition: transform 0.25s; flex-shrink: 0; }
+.faq-a {
+  padding: 0 24px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s;
+  font-size: 15.5px;
+  color: var(--muted);
+  line-height: 1.85;
+  background: var(--gold-pale);
+}
+.faq-a.open { max-height: 400px; padding: 18px 24px 22px; }
+.faq-q.open .faq-arrow { transform: rotate(45deg); }
+
+/* ===== MODULE CLOSING ===== */
+.closing-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+.closing-box {
+  background: linear-gradient(135deg, var(--deep) 0%, #2D1E08 100%);
+  border-radius: 20px;
+  padding: 52px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.closing-box::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,151,58,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.closing-box::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,151,58,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.closing-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--deep);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 6px 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.closing-box h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 4vw, 38px);
+  color: var(--gold-light);
+  margin-bottom: 18px;
+  line-height: 1.25;
+}
+.closing-box p {
+  font-size: 17px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.85;
+  max-width: 620px;
+  margin: 0 auto 24px;
+}
+.closing-achievements {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 28px 0;
+  flex-wrap: wrap;
+}
+.ach-item {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(201,151,58,0.25);
+  border-radius: 12px;
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 130px;
+}
+.ach-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+.ach-label { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.4; }
+.curiosity-box {
+  background: rgba(201,151,58,0.12);
+  border: 1px solid rgba(201,151,58,0.3);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin: 28px 0 0;
+}
+.curiosity-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+}
+.curiosity-box p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.75;
+  margin-bottom: 0;
+}
+.cta-button {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--deep);
+  font-weight: 900;
+  font-size: 16px;
+  padding: 16px 40px;
+  border-radius: 50px;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  margin-top: 28px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.cta-button:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201,151,58,0.4);
+}
+.cta-sub {
+  display: block;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 12px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--deep);
+  padding: 40px;
+  text-align: center;
+  color: rgba(255,255,255,0.38);
+  font-size: 14px;
+  border-top: 1px solid rgba(201,151,58,0.15);
+}
+.footer strong { color: var(--gold); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 720px) {
+  .hero-inner, .hook-section, .sales-section, .module-header, .course-intro, .lessons-wrap, .faq-section, .closing-section { padding-left: 20px; padding-right: 20px; }
+  .hero h1 { font-size: 34px; }
+  .testimonials-section { padding: 40px 20px; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .fear-grid, .intro-grid, .selling-points { grid-template-columns: 1fr; }
+  .module-meta { flex-direction: column; }
+  .meta-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .meta-item:last-child { border-bottom: none; }
+  .lesson-header { flex-direction: column; gap: 12px; padding: 24px 20px; }
+  .lesson-body { padding: 22px; }
+  .script-box { padding: 22px 20px; }
+  .closing-box { padding: 36px 24px; }
+  .nav-links { display: none; }
+  .closing-achievements { gap: 12px; }
+  .hero-video-section { padding: 20px 18px; }
+  .course-nav { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="pgBar"></div></div>
+
+<!-- NAV -->
+<nav class="course-nav">
+  <div class="course-nav-inner">
+    <div class="nav-brand">AI Saathi ✦</div>
+    <div class="nav-links">
+      <a href="#hook">Start Here</a>
+      <a href="#module1">Module 1</a>
+      <a href="#lessons">Lessons</a>
+      <a href="#testimonials">Stories</a>
+      <a href="#faq">FAQ</a>
+      <a href="#enroll" class="nav-cta">Enroll Now →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Complete Beginner's Course · Nepali &amp; Hindi Friendly · No Tech Needed</div>
+    <h1>AI Saathi:<br>Your Smart Life,<br>Simplified.</h1>
+    <p class="hero-subtitle">The only AI course designed for everyday people in Nepal and South Asia — no tech background, no jargon, just real results that change your life.</p>
+    <p class="hero-tagline">"Pahile daro thyo. Ab mero samay bacchha, paise bhi." 🇳🇵</p>
+    <div class="hero-promises">
+      <span class="promise-pill">✦ Save 3+ Hours Every Day</span>
+      <span class="promise-pill">✦ Earn Extra Income</span>
+      <span class="promise-pill">✦ Grow Your Business</span>
+      <span class="promise-pill">✦ No Tech Skills Needed</span>
+      <span class="promise-pill">✦ Nepali Real Examples</span>
+      <span class="promise-pill">✦ Learn in 90 Minutes</span>
+    </div>
+
+    <!-- VIDEO SECTION -->
+    <div class="hero-video-section">
+      <p class="hero-video-label">🎬 From the Course Creator</p>
+      <h3 class="hero-video-title">Watch this first — I recorded this especially for you.</h3>
+      <div class="video-embed-wrap">
+        <!-- Google Drive video embed — replace FILE_ID with your actual file ID -->
+        <iframe
+          src="https://drive.google.com/file/d/1-hEBX3rB1G2UvdTx0ivjqUrpwovrC6-Q/preview"
+          allow="autoplay"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+      <p class="video-caption">A personal message about why I created this course — and what it will do for your life. (5 minutes)</p>
+    </div>
+
+  </div>
+</header>
+
+<!-- SALES STRIP -->
+<div class="sales-strip">
+  ✦ &nbsp; You are about to learn something that will make your children proud — and your competitors nervous. &nbsp; ✦
+</div>
+
+<!-- ===================== EMOTIONAL HOOK SECTION ===================== -->
+<section class="hook-section" id="hook">
+  <p class="hook-eyebrow">✦ Before We Begin</p>
+  <h2>Let me guess — this is how you are feeling right now.</h2>
+
+  <div class="hook-story">
+    <p>You have heard the word "AI" at least a hundred times this year. On the news. From your children. In WhatsApp groups. Everyone seems to be talking about it — and it sounds important. Really important.</p>
+    <p>But every time you try to learn more, you end up more confused than before. Too many technical words. Too many English articles. Too many YouTube videos that assume you already know everything.</p>
+    <p style="margin-bottom:0;"><em>And quietly, somewhere inside, a small voice says: "Maybe this is not for me. Maybe I am too old. Maybe I am not smart enough for this technology stuff."</em></p>
+  </div>
+
+  <div class="fear-grid">
+    <div class="fear-card">
+      <div class="fear-icon">😰</div>
+      <div class="fear-text">
+        <strong>SOUND FAMILIAR?</strong>
+        "I tried watching AI videos but they lost me in 2 minutes. I felt stupid."
+      </div>
+    </div>
+    <div class="fear-card">
+      <div class="fear-icon">😔</div>
+      <div class="fear-text">
+        <strong>OR MAYBE THIS?</strong>
+        "My 22-year-old nephew uses AI for everything. I feel like I am already left behind."
+      </div>
+    </div>
+    <div class="fear-card">
+      <div class="fear-icon">😟</div>
+      <div class="fear-text">
+        <strong>OR PERHAPS?</strong>
+        "I am a business owner. I see my competition growing. I know I need to change but I do not know where to start."
+      </div>
+    </div>
+    <div class="fear-card">
+      <div class="fear-icon">🤔</div>
+      <div class="fear-text">
+        <strong>OR EVEN THIS?</strong>
+        "I am a teacher / professional. I know AI could save me hours of work — but it feels too complicated to learn."
+      </div>
+    </div>
+  </div>
+
+  <div class="relief-box">
+    <h3>✓ &nbsp; I want you to take a deep breath. Because everything you just felt — is completely normal. And it ends today.</h3>
+    <p>You are not too old. You are not too slow. You are not behind. You are just <strong>missing one simple thing: a patient teacher who explains AI in plain, human language.</strong> Not for engineers. Not for young tech people. For <em>you</em> — a real person with a real life who deserves to benefit from this incredible tool. That is exactly what this course is.</p>
+  </div>
+</section>
+
+<!-- ===================== SALES SECTION ===================== -->
+<section class="sales-section" id="about">
+  <h2>Is this course really for you?</h2>
+  <p class="big-promise">
+    Imagine this: It is Monday morning. You open your phone, type a few simple sentences, and in 60 seconds — your shop's Facebook post is written beautifully, your reply to a difficult customer is ready, and you have fresh ideas for three new products. <strong>That is not magic. That is AI — and you can start doing it this week.</strong>
+  </p>
+
+  <ul class="selling-points">
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">No computer degree needed — ever</strong>If you can use WhatsApp, you already have the skills to use AI. We start from zero and go step by step.</div></li>
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">Real stories from Nepal &amp; South Asia</strong>Bhansaghar owners, teachers, tailors, farmers — people just like you who are now saving time and making more money.</div></li>
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">Start seeing results within 7 days</strong>This is not theory. By the end of Module 1, you will have done your first real AI task. You will feel the change immediately.</div></li>
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">Like a patient friend teaching you</strong>Simple, warm, kind language — never lecture-style. We explain everything with daily-life examples like shops, family, and phones.</div></li>
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">Watch at your own pace, on your phone</strong>Short lessons designed for busy adults. Watch while having tea, in the evening, anywhere. No rush, no pressure.</div></li>
+    <li><span class="sp-check">✓</span><div><strong style="display:block;margin-bottom:5px;color:var(--deep)">Lifetime access + free updates forever</strong>AI is changing fast. Your course grows with it — at no extra cost. Learn once, benefit for life.</div></li>
+  </ul>
+
+  <div class="emotional-banner">
+    <h3>Your children are not smarter than you.<br>They just started earlier.</h3>
+    <p>Every day without this knowledge, someone younger is using AI to get the job you want, sell more than your shop, and write better than you. But here is the good news: <strong style="color:var(--gold-light)">AI does not care about your age or education. It only cares that you ask it the right questions.</strong> And we will teach you exactly that — starting right now.</p>
+  </div>
+</section>
+
+<!-- ===================== MODULE HEADER ===================== -->
+<div class="module-header-wrap">
+  <section class="module-header" id="module1">
+    <p class="module-eyebrow">✦ Module 1 of 8 — Start Here</p>
+    <h2>What Is AI — And Why Should <em>You</em> Care?</h2>
+    <p class="module-desc">Before we use AI to change your life, we need to understand it. In this module, you will go from "AI sounds scary and confusing" to "AI is my new helpful friend." By the end of this single module, you will have had your very first AI conversation — and I promise, you will be smiling.</p>
+    <div class="module-meta">
+      <div class="meta-item"><strong>5</strong><span>Lessons</span></div>
+      <div class="meta-item"><strong>~90 min</strong><span>Total Time</span></div>
+      <div class="meta-item"><strong>Zero</strong><span>Tech Skills Needed</span></div>
+      <div class="meta-item"><strong>5 Tasks</strong><span>Hands-On Practice</span></div>
+      <div class="meta-item"><strong>PDF + Video</strong><span>Formats</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- INTRO CARDS -->
+<section class="course-intro">
+  <div class="intro-grid">
+    <div class="intro-card">
+      <h4><span class="icon-circle">🎯</span> What you will be able to do</h4>
+      <ul>
+        <li>Explain what AI is to your family in simple, clear words</li>
+        <li>Open and use ChatGPT for the very first time</li>
+        <li>Have a real, useful conversation with AI</li>
+        <li>Write your first prompt and get a helpful answer</li>
+        <li>Save 30 minutes on a real task from your life</li>
+      </ul>
+    </div>
+    <div class="intro-card">
+      <h4><span class="icon-circle">💡</span> What makes this module special</h4>
+      <ul>
+        <li>Stories from real people in Nepal and South Asia</li>
+        <li>Zero scary technical words — ever</li>
+        <li>Daily-life analogies: shops, family, chai, phones</li>
+        <li>Step-by-step instructions even a first-timer can follow</li>
+        <li>Builds your confidence, not just your knowledge</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LESSONS ===================== -->
+<section class="lessons-wrap" id="lessons">
+  <h2 class="section-heading">Your 5 Lessons Inside Module 1</h2>
+  <p class="section-sub">Take them in order. Each lesson builds on the last. Each one makes you stronger. 💪</p>
+
+  <!-- ===== LESSON 1 ===== -->
+  <div class="lesson-card">
+    <div class="lesson-header">
+      <div class="lesson-num">01</div>
+      <div class="lesson-header-text">
+        <h3>What Is AI, Really? (The Simple Truth No One Told You)</h3>
+        <p>Estimated time: 18 minutes &nbsp;·&nbsp; PDF + Video lesson</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will understand what Artificial Intelligence truly is — in plain, simple, human language. You will feel calm, curious, and maybe even a little excited. The fear will be gone.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content</p>
+        <div class="script-box">
+          <p>Let us start with the honest truth: <span class="emphasis">AI is not a robot. It is not dangerous. It is not magic.</span> And it is definitely not only for engineers and young people who studied computers.</p>
+          <p>AI — short for Artificial Intelligence — is simply a <span class="emphasis">very clever computer program that has read millions of books, articles, and conversations</span>, and learned from all of them. When you ask it a question, it uses everything it has learned to give you a helpful answer.</p>
+
+          <div class="analogy-block">
+            <div class="analogy-icon">🧑‍💼</div>
+            <div class="analogy-text"><strong>Think of it like this:</strong> Imagine you hired a brilliant new assistant for your shop or office. This assistant has read every book ever written, studied thousands of businesses, and learned from millions of conversations. Now, whenever you have a question or a task — you simply tell them. They respond immediately, politely, and helpfully. That assistant? That is AI. And the best part: <strong>you do not have to teach it anything. It already knows.</strong></div>
+          </div>
+
+          <p>You already use AI every single day — and you probably did not even know it. When Google Maps tells you the fastest route to avoid traffic — that is AI. When YouTube suggests the next video you will probably enjoy — that is AI. When your phone keyboard predicts the next word you want to type — that is AI. When Daraz shows you products you might want to buy — that is AI.</p>
+          <p>So you see — AI is not something from the future. <span class="emphasis">It is already deeply part of your daily life.</span> We are just going to learn how to use a more powerful version of it — one that can write, think, plan, and create for you — on purpose.</p>
+          <p>The tool we will use most in this course is called <span class="emphasis">ChatGPT</span>. You type something to it — like a WhatsApp message to a smart friend — and it writes back with a helpful, detailed response. In your language. In seconds. For free.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">S</span> Sunita's Saree Shop, Bhaktapur</div>
+          <p>Sunita Maharjan, 47 years old, runs a small saree and clothing business in Bhaktapur. She sells through Facebook and WhatsApp. But writing beautiful product posts used to take her 45 minutes — her English was not strong, and she always felt her posts did not look professional.</p>
+          <p>Her daughter showed her ChatGPT one evening. Sunita typed: <em>"Write a beautiful Facebook post for a red wedding saree, traditional Nepali design, price Rs 4,500."</em></p>
+          <div class="dialogue">"In 10 seconds — 10 seconds! — I had a post more beautiful than anything I had ever written. That night I stopped being afraid of AI and started using it every single day." — Sunita Maharjan, Bhaktapur</div>
+          <p>Today, Sunita uses AI to write all her posts, reply to customer messages, plan new collection names, and even translate her posts into English. <strong style="color:var(--green)">Her sales increased 30% in two months. She never took a computer class. She never learned to code. She just learned to talk to AI.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise — Lesson 1</p>
+        <div class="task-box">
+          <div class="task-title">Task 1: AI Is Already Around You</div>
+          <p>This is a very simple but important task. It only takes 5–10 minutes. Please do all three parts:</p>
+          <ol>
+            <li><strong>Find 5 examples of AI you already use.</strong> Look at your phone right now. Maps? Auto-correct? Social media feed? Voice assistant? Shopping suggestions? Write them down on paper or in your phone notes.</li>
+            <li><strong>Explain AI to one family member</strong> using the "brilliant assistant" idea from today's lesson. Use your own words. If they understand — you have truly learned it.</li>
+            <li><strong>Write your biggest fear about AI on paper.</strong> Just one sentence. Then write next to it: <em>"This fear will go away by the end of this course."</em> — because it will.</li>
+          </ol>
+          <div class="task-share">📸 Take a photo of your paper and share it in our WhatsApp learning group! Your classmates are waiting to cheer you on.</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These — Very Common Traps</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Thinking you need to understand how AI was built</strong>You do not. You do not need to understand how your car engine works to drive a car. You do not need to understand how AI was programmed to use it. Leave "machine learning" and "neural networks" for the engineers. You just need to know how to talk to it.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Believing "I am too old" or "I am not technical enough"</strong>Age has zero to do with learning AI tools. In fact, experienced adults — business owners, teachers, parents — often get MORE value from AI because they know exactly what problems they need to solve. Youth is not an advantage here. Wisdom is.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Giving up after the first confusing moment</strong>AI sometimes gives imperfect answers. That is completely normal — even for experts who use it every day. Think of it like a new shop employee who needs a little guidance at first. Keep talking to it, keep adjusting. Patience is the only skill you truly need.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ===== LESSON 2 ===== -->
+  <div class="lesson-card">
+    <div class="lesson-header">
+      <div class="lesson-num">02</div>
+      <div class="lesson-header-text">
+        <h3>Your First Conversation with AI — Step by Step</h3>
+        <p>Estimated time: 25 minutes &nbsp;·&nbsp; Hands-on practice lesson</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will have opened ChatGPT, created your free account, and had your very first real AI conversation — even if you have never done anything like this on a computer or phone before.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content</p>
+        <div class="script-box">
+          <p>Today is a big day. <span class="emphasis">You are going to talk to AI for the very first time.</span> I know that might feel a little strange — even a little silly — like talking to a machine. But I promise: within five minutes, you will forget you were ever nervous.</p>
+          <p>The tool we will use is called <span class="emphasis">ChatGPT</span>. It is made by a company called OpenAI. It is free. It works on your phone, your tablet, and your computer. You do not need to download anything complicated.</p>
+
+          <div class="analogy-block">
+            <div class="analogy-icon">📱</div>
+            <div class="analogy-text"><strong>Here is how simple it is:</strong> Opening ChatGPT is exactly like opening WhatsApp for the first time. You download the app, you create an account with your email, and then you see a chat screen. <strong>Instead of messaging your friend — you message the AI.</strong> That is the only difference.</div>
+          </div>
+
+          <p>The most important rule of talking to AI: <span class="emphasis">There are no special commands. No coding. No technical words.</span> You simply write in normal, everyday language — exactly how you would type a WhatsApp message to a smart friend. Write in Nepali, Hindi, English, or a mix — ChatGPT understands all of it.</p>
+          <p>Your very first message can be as simple as: <span class="emphasis">"Namaste! I am new to AI. Can you tell me 3 simple ways you can help a business owner in Nepal?"</span> Press send. Watch what happens. ChatGPT will reply immediately, in detail, in a friendly way. That is your first AI conversation. And it only gets better from here.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step Instructions: Your First ChatGPT Conversation</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Open your app store</strong>
+              <span>On iPhone: go to App Store. On Android: go to Google Play. Search "ChatGPT." You will see the black and white logo. It is free. Tap Install or Get.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Create your free account</strong>
+              <span>Tap "Sign Up." Enter your email address. Create a password (write it down somewhere safe!). Check your email for a confirmation link and click it. Total time: about 3–4 minutes.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Find the message box</strong>
+              <span>Once you are inside ChatGPT, look for the text box at the bottom of the screen. It says "Message ChatGPT." Tap it. Your keyboard will appear — just like when you type a WhatsApp message.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Send your very first message</strong>
+              <span>Type this exactly: "Namaste! I am new to AI. What are 3 simple ways you can help me in my daily life?" Then press the send button (the little arrow). Wait 3 seconds.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Read and write back</strong>
+              <span>ChatGPT will reply immediately with a warm, detailed, helpful response. Read it. Then ask one follow-up question — anything that came to mind. You have now had your first AI conversation. Congratulations! 🎉</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">R</span> Ram Bahadur's First Time, Pokhara</div>
+          <p>Ram Bahadur Gurung, 52, owns a small hotel near Phewa Lake in Pokhara. His English was basic, and he always hired someone to write his tourist brochures and TripAdvisor replies — costing him thousands of rupees each time.</p>
+          <p>His first ChatGPT message was simple. He typed in broken English: <em>"I have small hotel in Pokhara near lake. Help me write reply for tourist who gave 3 star review and said breakfast was good but room was small."</em></p>
+          <div class="dialogue">"It gave me a perfect, professional reply — polite, friendly, honest. My English was basic but the AI made it sound excellent. I could not believe it was free." — Ram Bahadur, Hotel Owner, Pokhara</div>
+          <p>Ram now uses ChatGPT every morning. He writes guest replies, creates promotional messages, and even drafts emails to travel agencies — all in under 10 minutes. <strong style="color:var(--green)">He saved Rs 15,000 a month that he used to pay for writing help.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise — Lesson 2</p>
+        <div class="task-box">
+          <div class="task-title">Task 2: Have Your First Real AI Conversation</div>
+          <p>Do not just read this lesson. Go do it — right now, while everything is fresh. It takes less than 10 minutes.</p>
+          <ol>
+            <li><strong>Download ChatGPT and create your free account</strong> using the steps above. If you have any trouble, ask your children or a friend — it is very simple.</li>
+            <li><strong>Send this exact message:</strong> "Namaste! I am a complete beginner. I am from Nepal. What are 3 ways AI can help someone like me in daily life?" Read the reply carefully.</li>
+            <li><strong>Ask one follow-up question</strong> about anything in the reply that interested you. This is your real, original conversation with AI. It belongs to you.</li>
+          </ol>
+          <div class="task-share">📸 Take a screenshot of your first conversation and share it in the group. You will be amazed how many others are doing this for the first time too!</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Things that confuse beginners — but should not confuse you</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using search words instead of natural sentences</strong>Many people type short keywords like "Nepal business AI help" — like they are Googling. Instead, write in full sentences like you are messaging a person: "Can you give me 3 ideas to help my clothing shop get more customers?" Full sentences get much better answers.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Thinking the AI can see your shop or know your situation</strong>AI does not know who you are or what your business is — until you tell it. Always give context: "I am a 45-year-old woman who sells vegetables in Kathmandu market. I want to..." The more detail you give, the better the answer.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Accepting the first answer without asking for more</strong>If the first answer is not exactly what you wanted, just say so: "Can you make this simpler?" or "Can you give me a Nepali example?" AI is not offended by follow-up questions — it actually gives better answers when you ask for clarification.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ===== LESSON 3 ===== -->
+  <div class="lesson-card">
+    <div class="lesson-header">
+      <div class="lesson-num">03</div>
+      <div class="lesson-header-text">
+        <h3>How to Ask AI the Right Way (The Secret of Good Prompts)</h3>
+        <p>Estimated time: 20 minutes &nbsp;·&nbsp; The most important lesson in the course</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will know exactly how to ask AI questions in a way that gets you excellent, useful, specific answers — every single time. This one skill alone will save you hours of frustration.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content</p>
+        <div class="script-box">
+          <p>Here is the most important truth about AI that almost no one teaches beginners: <span class="emphasis">The quality of your answer depends completely on the quality of your question.</span> This is the single biggest secret to using AI well.</p>
+          <p>In AI language, your question or instruction is called a <span class="emphasis">"prompt."</span> A good prompt is like giving clear instructions to a skilled worker. A bad prompt is like telling that same worker "do something" — and then being surprised when the result is not what you wanted.</p>
+
+          <div class="analogy-block">
+            <div class="analogy-icon">👨‍🍳</div>
+            <div class="analogy-text"><strong>The Bhansaghar Analogy:</strong> Imagine you go to a restaurant and say to the cook: <em>"Make me something good."</em> They might bring you anything — maybe something you do not like. But if you say: <em>"I want a spicy chicken curry with extra gravy, not too oily, served with rice — like my mother used to make in Kathmandu"</em> — now the cook can make exactly what you want. <strong>AI is the cook. Your prompt is the order. Be specific, be clear, be complete.</strong></div>
+          </div>
+
+          <p>A great prompt has three things: <span class="emphasis">Who you are + What you want + How you want it.</span></p>
+          <p><strong>Weak prompt:</strong> "Write a post for my shop."</p>
+          <p><strong>Strong prompt:</strong> "I am a 40-year-old woman who sells handmade jewellery in Patan, Kathmandu. Write a friendly Facebook post for my new silver necklace collection. Keep it short — 3 sentences — and make it feel warm and personal, not too formal."</p>
+          <p><span class="emphasis">See the difference?</span> The second prompt tells AI exactly who you are, exactly what you want, and exactly how you want it. The result will be dramatically better. And with practice, writing strong prompts becomes as natural as sending a WhatsApp message.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: The 3-Part Prompt Formula</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Part 1: Who You Are (Context)</strong>
+              <span>Tell AI who you are and what your situation is. Example: "I am a school teacher in Pokhara" or "I am a small clothing shop owner in Butwal" or "I am a 35-year-old mother looking for..."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Part 2: What You Want (Task)</strong>
+              <span>Be very specific about the task. Not "write something" — but "write a 3-sentence Facebook post" or "give me 5 ideas for" or "explain to me in simple words why..."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Part 3: How You Want It (Format/Style)</strong>
+              <span>Describe the style, length, tone, or language you want. "Keep it simple." "Use Nepali examples." "Make it friendly, not formal." "Write it in Nepali." "Keep it under 100 words."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Bonus: Ask for Changes</strong>
+              <span>If the first answer is not perfect, tell AI: "Make it shorter" or "Can you make it sound warmer?" or "Can you give me a version in Nepali?" AI loves feedback and gets better with every instruction.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">M</span> Maya's Craft Business, Patan</div>
+          <p>Maya Shrestha, 38, sells traditional Newari handicrafts — dhaka fabric, pashmina, and copper statues — through a small shop and Instagram. She wanted to write better product descriptions but always felt her writing was too plain and simple.</p>
+          <p>Her first AI prompt (weak): <em>"Write about my pashmina."</em> The result was too generic — nothing special.</p>
+          <p>Her second prompt (strong): <em>"I am a Nepali craftswoman selling handmade pashmina shawls from Patan. Write a warm, elegant product description of 4 sentences for a light grey pashmina — suitable for international buyers. Mention it is handmade, traditional, and perfect as a gift."</em></p>
+          <div class="dialogue">"The second description was so beautiful, I cried a little. I felt proud of my work for the first time in years. Now I use this formula for every single product." — Maya Shrestha, Patan</div>
+          <p><strong style="color:var(--green)">Maya's Instagram engagement tripled in one month — not because she changed her products, but because she learned to describe them powerfully using AI.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise — Lesson 3</p>
+        <div class="task-box">
+          <div class="task-title">Task 3: Write Your First Strong Prompt</div>
+          <p>Now it is your turn. Use the 3-part formula to write one strong prompt about your own life, work, or business.</p>
+          <ol>
+            <li><strong>Choose one thing you need help with</strong> — a Facebook post, a reply to a customer, a letter, a plan for something, an explanation of something. Pick anything real from your life.</li>
+            <li><strong>Write your prompt using all 3 parts:</strong> Who you are + What you want + How you want it. Write it on paper first before typing it into ChatGPT.</li>
+            <li><strong>Send it to ChatGPT and read the answer.</strong> If it is not perfect, send a follow-up instruction to improve it. Notice how the second answer is better than the first.</li>
+          </ol>
+          <div class="task-share">✍️ Share your prompt AND the AI's answer in the group. Let others see what is possible — and inspire them too!</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Prompt mistakes that waste your time</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Writing one-word or two-word prompts</strong>"Help me" or "business ideas" or "write post" — these are too vague. AI will give a generic answer that is not useful for your specific situation. Always add context and specifics.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Accepting a bad answer and thinking AI is useless</strong>If AI gives a bad answer, it does not mean AI is bad — it means the prompt needed more detail. Always try again with a better, more specific prompt before giving up. This is a skill that improves with practice.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Forgetting to tell AI the language you want</strong>By default, ChatGPT often replies in English. If you want Nepali or Hindi — just say so at the end of your prompt: "Please reply in Nepali." It will switch immediately. You are always in control.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ===== LESSON 4 ===== -->
+  <div class="lesson-card">
+    <div class="lesson-header">
+      <div class="lesson-num">04</div>
+      <div class="lesson-header-text">
+        <h3>3 Ways AI Can Save You Time and Money — This Week</h3>
+        <p>Estimated time: 22 minutes &nbsp;·&nbsp; Practical results lesson</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will have used AI to complete at least one real, useful task from your own life — and you will feel the time and energy it saved you, for yourself.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content</p>
+        <div class="script-box">
+          <p>Knowledge without action is just information. So in this lesson, we are going to make AI actually useful for your real life — today, not someday. Let us look at three powerful ways AI saves you time and money right now.</p>
+
+          <p><span class="emphasis">Way #1: Writing — Posts, Messages, Letters, Replies</span></p>
+          <p>This is the single most common way beginners start using AI — and it immediately saves hours. Whether you need a Facebook post for your shop, a reply to a difficult customer, a formal letter for a school or office, or a thank-you message — AI writes it in seconds. You describe what you need, it writes it, and you copy and paste. Done. What used to take 30–45 minutes now takes 2 minutes.</p>
+
+          <div class="analogy-block">
+            <div class="analogy-icon">✍️</div>
+            <div class="analogy-text"><strong>Think of AI as a writing assistant</strong> who never sleeps, never complains, writes in any language, and is always happy to rewrite until you are satisfied. You are the boss. AI does the typing.</div>
+          </div>
+
+          <p><span class="emphasis">Way #2: Ideas and Planning</span></p>
+          <p>Stuck? Not sure what to do next? AI is the best brainstorming partner you have ever had. Ask it for business ideas, marketing plans, lesson plans, trip ideas, menu ideas — anything. It gives you 5, 10, even 20 ideas in seconds. You pick the ones you like. You do not have to use all of them. Just having options unlocks your thinking and removes the stress of feeling stuck.</p>
+
+          <p><span class="emphasis">Way #3: Learning and Understanding</span></p>
+          <p>Confused by something? A government form? A legal document? A medical term? A business concept? Ask AI to explain it in simple words — like explaining to a 10-year-old. AI will break it down patiently, clearly, and without making you feel foolish. No more googling and getting lost in complicated articles. Just ask AI directly.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">P</span> Prakash's Hardware Shop, Birgunj</div>
+          <p>Prakash Sah, 44, runs a medium-sized hardware and plumbing supplies shop in Birgunj. He had three real problems: writing vendor emails took too long, he could not think of good promotional ideas for his shop, and he struggled to understand some import tax documents from customs.</p>
+          <p>In one single morning, using what he learned in this module, Prakash used AI to write three professional vendor emails (15 minutes instead of 2 hours), generate 10 promotional ideas for a Dashain sale, and understand his import tax document in simple Nepali.</p>
+          <div class="dialogue">"That morning I saved probably 3 hours of work. And the promotional ideas — one of them I used for Dashain and my sales were the best ever. I paid nothing extra. I just used ChatGPT." — Prakash Sah, Birgunj</div>
+          <p><strong style="color:var(--green)">Prakash now saves an estimated 2–3 hours every workday using AI. He has reinvested that time into growing a second product line for his shop.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise — Lesson 4</p>
+        <div class="task-box">
+          <div class="task-title">Task 4: Save Time on a Real Task Today</div>
+          <p>Choose ONE real task from your life right now — something you actually need to do. Use AI to help you complete it. Here are some easy starting ideas:</p>
+          <ol>
+            <li><strong>If you have a shop or business:</strong> Ask AI to write one Facebook post or one customer reply message for you. Use it exactly or edit it slightly.</li>
+            <li><strong>If you are a teacher or professional:</strong> Ask AI to create a simple lesson plan outline, explain a concept to you, or help you write a letter or email you have been putting off.</li>
+            <li><strong>If you are a homemaker or parent:</strong> Ask AI to plan a week of meals with your budget, suggest activities for your children, or explain a news topic you have been confused about.</li>
+          </ol>
+          <div class="task-share">⏱️ Note the time before you start and the time when you finish. How much time did AI save you? Share your number in the group — you will surprise yourself!</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Real-world usage mistakes to watch for</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Copying AI's answer without reading it first</strong>Always read the full response before using it. AI is very good but not perfect. Sometimes it gets a specific fact wrong, or the tone is not quite right for your situation. Always review before sending or publishing.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Sharing private personal information with AI</strong>Do not type private passwords, ID numbers, bank account details, or sensitive family information into ChatGPT. Use AI for writing, ideas, and learning — but keep your private data safe. Treat it like a public tool, not a personal diary.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using AI once and then forgetting about it</strong>The biggest waste of this skill is learning it and then not using it again. The key is habit. Try using AI for one small task every single day this week. By the end of 7 days, it will feel as natural as checking WhatsApp.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ===== LESSON 5 ===== -->
+  <div class="lesson-card">
+    <div class="lesson-header">
+      <div class="lesson-num">05</div>
+      <div class="lesson-header-text">
+        <h3>Is AI Safe? The Truth About What AI Can and Cannot Do</h3>
+        <p>Estimated time: 15 minutes &nbsp;·&nbsp; Trust and clarity lesson</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will feel fully comfortable and safe using AI — knowing clearly what it can do for you, what its limits are, and how to use it wisely and responsibly.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content</p>
+        <div class="script-box">
+          <p>Before we go deeper in this course, I want to have an honest conversation with you about AI — the real truth, without exaggeration or fear. Because sometimes, people either think AI is a magical genius that can do everything perfectly, or they are afraid it will take over the world. Neither is true.</p>
+          <p><span class="emphasis">What AI is VERY GOOD at:</span> Writing, summarising, explaining, translating, brainstorming ideas, editing, answering general questions, creating plans, and producing drafts of almost any kind of text. For these tasks, AI is genuinely extraordinary — faster and often better than we expect.</p>
+
+          <div class="analogy-block">
+            <div class="analogy-icon">🧠</div>
+            <div class="analogy-text"><strong>AI is like a very well-read friend</strong> who has read every book and article ever written — but who has never actually lived in the world. They can tell you how to cook dal bhat from a recipe, but they have never tasted it. They can describe Kathmandu from books, but they have never walked in Thamel. Their knowledge is vast but their real-world experience is zero. Keep this in mind when checking their answers.</div>
+          </div>
+
+          <p><span class="emphasis">What AI is NOT so good at:</span> Getting today's news (it has a knowledge cutoff date), knowing your personal situation, making important medical or legal decisions for you, and sometimes it gets specific facts or numbers wrong — especially recent ones.</p>
+          <p><span class="emphasis">Is AI safe to use?</span> Yes — for everyday tasks, absolutely. You do not need to be afraid of it. But use it wisely: always review its answers before acting on them, do not share private personal information, and for very important decisions (health, legal, financial) — use AI as a starting point, then consult a real professional.</p>
+          <p>Most importantly: <span class="emphasis">AI is a tool, not a replacement for your judgment.</span> You are still the decision-maker. AI just helps you think faster and work better. Your wisdom, your values, your relationships — AI cannot replace any of these. It can only support them.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">A</span> Anita's Smart AI Habit, Lalitpur</div>
+          <p>Anita Tamang, 41, a secondary school teacher in Lalitpur, was initially worried that using AI for her lesson materials was "cheating" — and that maybe AI would give wrong information to her students.</p>
+          <p>Her principal gave her wise advice: "Use AI to create the first draft. Then check it yourself. Your expertise makes it right. AI just saves you the starting time."</p>
+          <div class="dialogue">"Now I use AI to create lesson outlines, write student worksheet templates, and generate quiz questions. I always review everything before using it with my class. My preparation time is cut in half — and my lessons are actually more creative." — Anita Tamang, Teacher, Lalitpur</div>
+          <p><strong style="color:var(--green)">Anita's rule: AI creates the first version. Her knowledge creates the final version. This is the smart, safe way to use AI — as a helper, not a replacement for your expertise.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise — Lesson 5</p>
+        <div class="task-box">
+          <div class="task-title">Task 5: Test AI's Limits — And Learn from Them</div>
+          <p>This is a fun, interesting experiment that will teach you a lot. Give AI a task where you can judge the quality of the answer yourself.</p>
+          <ol>
+            <li><strong>Ask AI about something specific to your life</strong> — your neighbourhood, your specific profession, or a very local business situation. Notice where the answer is good and where it is a little generic.</li>
+            <li><strong>Ask AI a question about today's news</strong> — something very recent. Notice that AI might not know — and it will honestly tell you so. This teaches you its limits.</li>
+            <li><strong>Ask AI to write something and then improve it yourself.</strong> Edit one sentence. Add one local detail AI would not know. Notice: the combination of AI + Your Knowledge = Excellent result.</li>
+          </ol>
+          <div class="task-share">🎓 Write one sentence about what you learned about AI's limits in this lesson. Share it in the group — this insight will help your classmates too!</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Wisdom and safety — do not skip this</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Trusting AI blindly for important decisions</strong>For health questions, legal situations, or major financial decisions — always consult a real doctor, lawyer, or expert. Use AI to understand the topic better before your consultation, but never replace professional advice with AI's answer alone.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Believing AI always knows the latest news or current events</strong>ChatGPT's knowledge has a cutoff date — it does not know what happened yesterday or last week. For current events, stock prices, recent news, or today's weather — use Google or a news app, not ChatGPT.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Feeling guilty or like a "cheater" for using AI</strong>Using AI is like using a calculator for maths — it is a tool that helps you work smarter. The great minds of history always used the best tools available. Today, AI is one of those tools. Using it wisely is a sign of intelligence, not laziness.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="testimonials-section" id="testimonials">
+  <div class="testimonials-inner">
+    <p class="section-eyebrow-white">✦ Real Stories, Real People</p>
+    <h2>What People Like You Are Saying After Module 1</h2>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I was so afraid before. After just one module, I had my first AI conversation and I wrote my shop's best-ever Facebook post. My daughter could not believe it was me."</p>
+        <div class="testi-person">Meena Lama</div>
+        <div class="testi-role">Boutique Owner, Kathmandu</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I am 53 years old and I always thought technology was for young people. This module taught me that AI is just like talking to a smart friend. It changed how I see myself."</p>
+        <div class="testi-person">Rajesh Koirala</div>
+        <div class="testi-role">Hotel Manager, Pokhara</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The Nepal examples made everything feel real and possible. Within 3 days of Module 1, I was using AI every morning and saving at least 2 hours of work. Life-changing."</p>
+        <div class="testi-person">Sushila Adhikari</div>
+        <div class="testi-role">Secondary School Teacher, Lalitpur</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="faq-section" id="faq">
+  <h2>Questions You Are Probably Thinking Right Now</h2>
+  <p class="faq-sub">Honest, simple answers — no marketing language.</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need to know English to use AI? My English is not strong. <span class="faq-arrow">+</span></div>
+    <div class="faq-a">Not at all. You can talk to ChatGPT in Nepali, Hindi, or broken English — it understands all of them beautifully. If you type in Nepali, it will reply in Nepali. AI has no language barrier for you. In fact, many students in this course write entirely in Nepali and get excellent results. Your language is never a limitation.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">I am 50+ years old. Is this really for me? <span class="faq-arrow">+</span></div>
+    <div class="faq-a">Absolutely yes — and in many ways, this course is especially designed for you. If you can send a WhatsApp message, you can use ChatGPT. The skills are that similar. In fact, many of our most successful students are 45–60 years old. They bring life experience that makes their AI interactions far more powerful than a young beginner who does not know what questions to ask. Your age is not a weakness — it is your superpower.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is ChatGPT really free? What do I need to buy? <span class="faq-arrow">+</span></div>
+    <div class="faq-a">ChatGPT has a completely free version that is more than enough for everything we do in Module 1 — and for most of what we do in the full course. You do not need to pay for any premium version to get started. Some advanced lessons use a paid version (called ChatGPT Plus), but this is optional and only about $20/month — and we will always show you free alternatives first.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">I do not have a laptop. Can I learn on just my phone? <span class="faq-arrow">+</span></div>
+    <div class="faq-a">Yes — 100%. Everything in this course is designed to work on a smartphone. ChatGPT has a free app on both iPhone and Android. All our lesson videos are mobile-friendly. Many of our students in Nepal learn entirely on their phones, sometimes with slow internet — and they succeed. All you need is a phone that can run WhatsApp.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How is this different from just watching YouTube videos about AI? <span class="faq-arrow">+</span></div>
+    <div class="faq-a">YouTube videos are mostly made for English-speaking, technically educated audiences in the West. They use complicated words, move too fast, and do not give you a structured path from beginner to confident user. This course is the opposite: it starts from absolute zero, uses Nepali real-life examples, gives you hands-on tasks in every lesson, has a WhatsApp community for support, and follows a clear, progressive structure so you never feel lost or overwhelmed.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What if I try and get completely stuck? <span class="faq-arrow">+</span></div>
+    <div class="faq-a">You will never be alone. Every student in this course gets access to our private WhatsApp group where you can ask any question at any time. Our community of fellow learners — and the course team — respond quickly. Getting stuck is part of learning, and we make sure getting unstuck is fast and easy. Many students say the community alone is worth the price of the course.</div>
+  </div>
+</section>
+
+<!-- ===================== MODULE CLOSING ===================== -->
+<section class="closing-section" id="enroll">
+  <div class="closing-box">
+    <div class="closing-badge">✦ Module 1 Complete</div>
+    <h2>Look how far you have come.<br>Take a moment to feel proud.</h2>
+    <p>When you started this module, AI felt like a distant, complicated, scary thing that was "not for people like you." But look at you now. You understand what AI really is. You know how to talk to it. You know how to ask it the right questions. You have completed your first real AI task. <strong style="color:var(--gold-light)">You are no longer a complete beginner. You have crossed the first bridge — and the view from here is beautiful.</strong></p>
+
+    <div class="closing-achievements">
+      <div class="ach-item">
+        <span class="ach-icon">🧠</span>
+        <span class="ach-label">AI Explained<br>in Simple Terms</span>
+      </div>
+      <div class="ach-item">
+        <span class="ach-icon">💬</span>
+        <span class="ach-label">First Real AI<br>Conversation Done</span>
+      </div>
+      <div class="ach-item">
+        <span class="ach-icon">✍️</span>
+        <span class="ach-label">Strong Prompts<br>Mastered</span>
+      </div>
+      <div class="ach-item">
+        <span class="ach-icon">⏱️</span>
+        <span class="ach-label">Real Time<br>Already Saved</span>
+      </div>
+      <div class="ach-item">
+        <span class="ach-icon">🛡️</span>
+        <span class="ach-label">Using AI<br>Safely &amp; Wisely</span>
+      </div>
+    </div>
+
+    <div class="curiosity-box">
+      <h3>👀 &nbsp; Here is a preview of what comes next in Module 2…</h3>
+      <p>In Module 2, we go from "using AI" to "making money with AI." You will learn exactly how to use AI to write content people will pay for, generate business ideas tailored to Nepal's market, and discover 5 specific ways people in South Asia are earning real income with AI skills — right now. The transformation in Module 2 is bigger than anything in Module 1. And you are now completely ready for it.</p>
+    </div>
+
+    <button class="cta-button" onclick="alert('Enroll page coming soon! Contact us on WhatsApp to join.')">
+      Continue to Module 2 → Enroll Now
+    </button>
+    <span class="cta-sub">Join 500+ learners from Nepal, India, and South Asia already inside the course</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p><strong>AI Saathi</strong> — Nepal's first AI course for everyday people. &nbsp;·&nbsp; Designed with love for the people of South Asia.</p>
+  <p style="margin-top:8px;">Questions? WhatsApp us anytime. &nbsp;·&nbsp; <strong style="color:rgba(255,255,255,0.55)">© 2025 AI Saathi. All rights reserved.</strong></p>
+</footer>
+
+<script>
+// Scroll progress bar
+window.addEventListener('scroll', function() {
+  var scrollTop = window.scrollY;
+  var docHeight = document.body.scrollHeight - window.innerHeight;
+  var pct = (scrollTop / docHeight) * 100;
+  document.getElementById('pgBar').style.width = pct + '%';
+});
+
+// FAQ toggle
+function toggleFaq(el) {
+  var answer = el.nextElementSibling;
+  var isOpen = answer.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-a').forEach(function(a) { a.classList.remove('open'); });
+  document.querySelectorAll('.faq-q').forEach(function(q) { q.classList.remove('open'); });
+  // Open this one if it was closed
+  if (!isOpen) {
+    answer.classList.add('open');
+    el.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>

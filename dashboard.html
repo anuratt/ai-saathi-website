@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — My Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+:root{
+  --brand:#E8611A;--brand-deep:#C0470D;--brand-pale:#FFF3EC;--brand-glow:rgba(232,97,26,0.25);
+  --gold:#F0A500;--gold-light:#FFD166;--gold-pale:#FFFAED;
+  --forest:#1B5E3B;--forest-pale:#E8F5EE;
+  --ink:#0E0D12;--ink2:#1C1B24;
+  --body:#3D3B50;--muted:#888599;
+  --pale:#F7F6F2;--white:#FFFFFF;
+  --border:rgba(0,0,0,0.08);--r:14px;
+  --shadow:0 4px 20px rgba(14,13,18,0.09);--shadow-lg:0 8px 36px rgba(14,13,18,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--pale);color:var(--body);min-height:100vh;}
+.nav{background:var(--ink);padding:0 16px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--brand);}
+.nav-inner{max-width:820px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.nav-brand{font-family:'Fraunces',serif;font-weight:900;font-size:22px;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-home{font-size:20px;text-decoration:none;opacity:0.6;transition:opacity .2s;flex-shrink:0;}
+.nav-home:hover{opacity:1;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-user{font-size:13px;color:rgba(255,255,255,0.5);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-logout{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;cursor:pointer;transition:all .2s;}
+.nav-logout:hover{color:white;border-color:rgba(255,255,255,0.3);}
+.main{max-width:820px;margin:0 auto;padding:24px 14px 80px;}
+.welcome-card{background:linear-gradient(135deg,var(--ink) 0%,#0A1F12 60%,var(--ink2) 100%);border-radius:20px;padding:28px;margin-bottom:20px;color:white;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.welcome-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(232,97,26,0.18),transparent 70%);}
+.wc-inner{position:relative;z-index:1;}
+.wc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+.wc-greeting{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.wc-name{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(20px,4vw,26px);color:white;}
+.wc-badge{background:rgba(240,165,0,0.12);border:1px solid rgba(240,165,0,0.25);border-radius:10px;padding:10px 14px;text-align:center;flex-shrink:0;}
+.wc-badge-num{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:var(--gold-light);}
+.wc-badge-label{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;}
+.wc-progress-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.wc-bar-bg{background:rgba(255,255,255,0.1);border-radius:6px;height:8px;overflow:hidden;}
+.wc-bar-fill{background:linear-gradient(90deg,var(--brand),var(--gold));height:100%;border-radius:6px;transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+.wc-stats{display:flex;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);}
+.wc-stat{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,0.08);}
+.wc-stat:last-child{border-right:none;}
+.wc-stat-num{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--gold-light);}
+.wc-stat-label{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.unlock-prompt{background:linear-gradient(135deg,var(--brand),var(--brand-deep));border-radius:16px;padding:20px;margin-bottom:20px;display:none;align-items:center;gap:14px;}
+.unlock-prompt.show{display:flex;}
+.up-icon{font-size:32px;flex-shrink:0;}
+.up-text strong{display:block;color:white;font-size:15px;margin-bottom:3px;}
+.up-text span{color:rgba(255,255,255,0.7);font-size:13px;}
+.up-btn{margin-top:10px;background:white;color:var(--brand);font-weight:800;font-size:13px;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-block;}
+.continue-cta{background:var(--brand);border-radius:var(--r);padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;text-decoration:none;color:white;box-shadow:0 6px 24px var(--brand-glow);transition:all .2s;}
+.continue-cta:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--brand-glow);}
+.continue-cta.hidden{display:none;}
+.cta-icon{font-size:32px;flex-shrink:0;}
+.cta-text small{display:block;font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1.5px;}
+.cta-text strong{display:block;font-size:15px;font-weight:800;}
+.cta-arrow{margin-left:auto;font-size:20px;}
+.sect-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sect-title{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);}
+.sect-meta{font-size:12px;color:var(--muted);}
+.module-list{display:flex;flex-direction:column;gap:10px;}
+.module-card{background:white;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s;text-decoration:none;color:inherit;display:block;box-shadow:var(--shadow);}
+.module-card:hover:not(.locked){box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+.module-card.locked{opacity:0.6;cursor:not-allowed;}
+.module-card.completed{border-left:4px solid var(--forest);}
+.module-card.in-progress{border-left:4px solid var(--brand);}
+.module-card.next-up{border-left:4px solid var(--gold);}
+.mc-inner{padding:16px;display:flex;align-items:center;gap:14px;}
+.mc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.mc-icon.done-bg{background:var(--forest-pale);}
+.mc-icon.active-bg{background:var(--brand-pale);}
+.mc-icon.locked-bg{background:var(--pale);}
+.mc-icon.next-bg{background:var(--gold-pale);}
+.mc-content{flex:1;min-width:0;}
+.mc-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.mc-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:3px;}
+.mc-sub{font-size:12px;color:var(--muted);}
+.mc-bar-wrap{height:3px;background:var(--pale);border-radius:3px;margin-top:7px;overflow:hidden;}
+.mc-bar{height:100%;border-radius:3px;}
+.mc-bar.done{background:var(--forest);}
+.mc-bar.prog{background:var(--brand);}
+.mc-status{flex-shrink:0;}
+.mc-tag{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.tag-done{background:var(--forest-pale);color:var(--forest);}
+.tag-prog{background:var(--brand-pale);color:var(--brand);}
+.tag-next{background:var(--gold-pale);color:#9A6800;}
+.tag-locked{background:var(--pale);color:var(--muted);}
+.mc-lock{background:var(--pale);border-top:1px solid var(--border);padding:9px 16px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.mc-lock a{color:var(--brand);font-weight:700;}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+@media(max-width:480px){.bottom-grid{grid-template-columns:1fr;}}
+.support-card{background:var(--forest);border-radius:var(--r);padding:20px;}
+.support-card strong{display:block;color:white;font-size:15px;margin-bottom:4px;}
+.support-card span{font-size:13px;color:rgba(255,255,255,0.6);}
+.support-btn{margin-top:12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:white;font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;text-decoration:none;display:inline-block;}
+.cert-card{background:linear-gradient(135deg,var(--gold-pale),#FFF6D0);border:1.5px solid rgba(240,165,0,0.2);border-radius:var(--r);padding:20px;}
+.cert-card strong{display:block;color:var(--ink);font-size:15px;margin-bottom:4px;}
+.cert-card span{font-size:13px;color:var(--body);}
+.cert-btn{margin-top:12px;background:var(--gold);color:white;font-size:13px;font-weight:700;padding:9px 14px;border-radius:8px;text-decoration:none;display:inline-block;opacity:.45;pointer-events:none;}
+.cert-btn.active{opacity:1;pointer-events:auto;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-home" title="Home">🏠</a>
+    <div class="nav-brand">AI Saathi</div>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser">Loading...</span>
+      <button class="nav-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div class="welcome-card">
+    <div class="wc-inner">
+      <div class="wc-top">
+        <div><div class="wc-greeting">My Learning Journey</div><div class="wc-name" id="wcName">नमस्ते!</div></div>
+        <div class="wc-badge"><div class="wc-badge-num" id="wcPct">0%</div><div class="wc-badge-label">Complete</div></div>
+      </div>
+      <div class="wc-progress-label"><span>Course Progress</span><span id="wcPText">0 of 8 modules</span></div>
+      <div class="wc-bar-bg"><div class="wc-bar-fill" id="wcBar" style="width:0%"></div></div>
+      <div class="wc-stats">
+        <div class="wc-stat"><div class="wc-stat-num" id="wcDone">0</div><div class="wc-stat-label">Done</div></div>
+        <div class="wc-stat"><div class="wc-stat-num">8</div><div class="wc-stat-label">Total</div></div>
+        <div class="wc-stat"><div class="wc-stat-num" id="wcStreak">1</div><div class="wc-stat-label">Streak 🔥</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="unlock-prompt" id="unlockPrompt">
+    <div class="up-icon">🔓</div>
+    <div class="up-text">
+      <strong>Course Unlock गर्नुस् — रू.९९९ मात्र</strong>
+      <span>सबै ८ modules को lifetime access पाउनुस्।</span>
+      <br><a href="payment.html" class="up-btn">अहिले किन्नुहोस् →</a>
+    </div>
+  </div>
+  <a href="#" class="continue-cta hidden" id="continueCta">
+    <div class="cta-icon">▶️</div>
+    <div class="cta-text"><small>Continue Learning</small><strong id="ctaTitle">Loading...</strong></div>
+    <div class="cta-arrow">→</div>
+  </a>
+  <div class="sect-head">
+    <div class="sect-title">📚 Course Modules</div>
+    <div class="sect-meta" id="sectMeta">8 modules</div>
+  </div>
+  <div class="module-list" id="moduleList"></div>
+  <div class="bottom-grid">
+    <div class="support-card">
+      <strong>💬 WhatsApp Support</strong>
+      <span>Instructor लाई सिधै सोध्नुहोस्।</span>
+      <a href="https://wa.me/9779841189356?text=नमस्ते%20sir%2C%20AI%20Saathi%20course%20मा%20मलाई%20एउटा%20प्रश्न%20छ।" class="support-btn" target="_blank">📱 Instructor लाई सोध्नुहोस्</a>
+    </div>
+    <div class="cert-card">
+      <strong>🎓 Certificate</strong>
+      <span>८ modules complete भएपछि available।</span>
+      <a href="#" class="cert-btn" id="certBtn">Download</a>
+    </div>
+  </div>
+</main>
+<script>
+const MODULES=[
+  {id:1,title:"AI Saathi: Your Smart Life, Simplified",sub:"AI foundations — zero to start",emoji:"🤖",file:"AI_Saathi_Module1_Complete.html"},
+  {id:2,title:"The Writing Superpower",sub:"Write anything in minutes",emoji:"✍️",file:"AI_Course_Module2_Nepal.html"},
+  {id:3,title:"ChatGPT for Daily Life & Business",sub:"AI in your everyday work",emoji:"💬",file:"AI_Course_Module3_Nepal.html"},
+  {id:4,title:"Making Money with AI",sub:"रू.१५K–८०K income roadmap",emoji:"💰",file:"AI_Course_Module4_Nepal.html"},
+  {id:5,title:"AI Images, Video & Voice",sub:"Create without a designer",emoji:"🎨",file:"AI_Course_Module5_Nepal.html"},
+  {id:6,title:"Research, Data & Smarter Decisions",sub:"AI as your personal advisor",emoji:"📊",file:"AI_Course_Module6_Nepal.html"},
+  {id:7,title:"Advanced Prompting & Automation",sub:"Level up your AI skills",emoji:"⚡",file:"AI_Course_Module7_Nepal__1_.html"},
+  {id:8,title:"Your AI Future",sub:"Graduate and keep growing",emoji:"🚀",file:"AI_Course_Module8_Nepal__1_.html"},
+];
+function getState(){try{return JSON.parse(localStorage.getItem('ai_saathi_progress'))||{completed:[],started:[]};}catch(e){return{completed:[],started:[]};}}
+function render(userName, hasPaid){
+  const state=getState();
+  const done=state.completed||[],started=state.started||[];
+  const pct=Math.round((done.length/8)*100);
+  document.getElementById('navUser').textContent=`नमस्ते, ${userName} 👋`;
+  document.getElementById('wcName').textContent=`नमस्ते, ${userName}! 👋`;
+  document.getElementById('wcPct').textContent=pct+'%';
+  document.getElementById('wcPText').textContent=`${done.length} of 8 modules`;
+  document.getElementById('wcDone').textContent=done.length;
+  setTimeout(()=>{document.getElementById('wcBar').style.width=pct+'%';},100);
+  if(!hasPaid) document.getElementById('unlockPrompt').classList.add('show');
+  if(done.length===8){const cb=document.getElementById('certBtn');cb.classList.add('active');cb.href='certificate.html';}
+  let contMod=null;
+  if(hasPaid){
+    contMod=MODULES.find(m=>started.includes(m.id)&&!done.includes(m.id));
+    if(!contMod) contMod=MODULES.find(m=>!done.includes(m.id));
+  }
+  if(contMod){
+    const cta=document.getElementById('continueCta');
+    cta.classList.remove('hidden');
+    cta.href=`player.html?module=${contMod.id}`;
+    document.getElementById('ctaTitle').textContent=`Module ${contMod.id}: ${contMod.title}`;
+  }
+  document.getElementById('sectMeta').textContent=hasPaid?`${done.length}/8 complete`:'🔒 Locked';
+  const list=document.getElementById('moduleList');
+  list.innerHTML='';
+  MODULES.forEach(mod=>{
+    const isDone=done.includes(mod.id),isStarted=started.includes(mod.id);
+    const isLocked=!hasPaid;
+    const isNext=contMod&&contMod.id===mod.id;
+    let cc='module-card',ic='mc-icon',ico=mod.emoji,tag='',bar='',lock='';
+    const href=`player.html?module=${mod.id}`;
+    if(isLocked){cc+=' locked';ic+=' locked-bg';ico='🔒';tag=`<span class="mc-tag tag-locked">🔒 Locked</span>`;lock=`<div class="mc-lock">🔒 <span>Unlock: <a href="payment.html">Buy Course →</a></span></div>`;}
+    else if(isDone){cc+=' completed';ic+=' done-bg';ico='✅';tag=`<span class="mc-tag tag-done">✓ Done</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar done" style="width:100%"></div></div>`;}
+    else if(isStarted){cc+=' in-progress';ic+=' active-bg';tag=`<span class="mc-tag tag-prog">▶ In Progress</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar prog" style="width:45%"></div></div>`;}
+    else{ic+=' next-bg';tag=`<span class="mc-tag tag-next">${isNext?'▶ Start':'Not Started'}</span>`;}
+    list.innerHTML+=`<a class="${cc}" href="${isLocked?'#':href}" ${isLocked?'onclick="return false"':''}><div class="mc-inner"><div class="${ic}">${ico}</div><div class="mc-content"><div class="mc-num">Module ${mod.id}</div><div class="mc-title">${mod.title}</div><div class="mc-sub">${mod.sub}</div>${bar}</div><div class="mc-status">${tag}</div></div>${lock}</a>`;
+  });
+}
+
+function doLogout(){
+  if(confirm('Logout गर्नुहुन्छ?')){
+    window.auth.signOut().then(()=>{
+      localStorage.clear();
+      window.location.href='login.html';
+    });
+  }
+}
+
+// ── Firebase Auth Guard ──
+window.auth.onAuthStateChanged(async (user)=>{
+  if(!user){ window.location.href='login.html'; return; }
+  try {
+    const doc = await window.db.collection('users').doc(user.uid).get();
+    const data = doc.exists ? doc.data() : {};
+    const userName = data.name || user.displayName || user.email.split('@')[0];
+    const hasPaid = data.hasPaid === true;
+    localStorage.setItem('ai_saathi_user', JSON.stringify({...data, name: userName, hasPaid}));
+    render(userName, hasPaid);
+  } catch(e){
+    console.error(e);
+    render(user.email, false);
+  }
+});
+</script>
+</body>
+</html>
+function render(){
+  const user=getUser(),state=getState();
+  const done=state.completed||[],started=state.started||[];
+  const hasPaid=user.hasPaid,pct=Math.round((done.length/8)*100);
+  document.getElementById('navUser').textContent=`नमस्ते, ${user.name} 👋`;
+  document.getElementById('wcName').textContent=`नमस्ते, ${user.name}! 👋`;
+  document.getElementById('wcPct').textContent=pct+'%';
+  document.getElementById('wcPText').textContent=`${done.length} of 8 modules`;
+  document.getElementById('wcDone').textContent=done.length;
+  setTimeout(()=>{document.getElementById('wcBar').style.width=pct+'%';},100);
+  if(!hasPaid) document.getElementById('unlockPrompt').classList.add('show');
+  if(done.length===8){const cb=document.getElementById('certBtn');cb.classList.add('active');cb.href='certificate.html';}
+  let contMod=null;
+  if(hasPaid){
+    contMod=MODULES.find(m=>started.includes(m.id)&&!done.includes(m.id));
+    if(!contMod) contMod=MODULES.find(m=>!done.includes(m.id));
+  }
+  if(contMod){
+    const cta=document.getElementById('continueCta');
+    cta.classList.remove('hidden');
+    cta.href=`player.html?module=${contMod.id}`;
+    document.getElementById('ctaTitle').textContent=`Module ${contMod.id}: ${contMod.title}`;
+  }
+  document.getElementById('sectMeta').textContent=hasPaid?`${done.length}/8 complete`:'🔒 Locked';
+  const list=document.getElementById('moduleList');
+  list.innerHTML='';
+  MODULES.forEach(mod=>{
+    const isDone=done.includes(mod.id),isStarted=started.includes(mod.id);
+    const isLocked=!hasPaid;
+    const isNext=contMod&&contMod.id===mod.id;
+    let cc='module-card',ic='mc-icon',ico=mod.emoji,tag='',bar='',lock='';
+    const href=`player.html?module=${mod.id}`;
+    if(isLocked){cc+=' locked';ic+=' locked-bg';ico='🔒';tag=`<span class="mc-tag tag-locked">🔒 Locked</span>`;lock=`<div class="mc-lock">🔒 <span>Unlock: <a href="payment.html">Buy Course →</a></span></div>`;}
+    else if(isDone){cc+=' completed';ic+=' done-bg';ico='✅';tag=`<span class="mc-tag tag-done">✓ Done</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar done" style="width:100%"></div></div>`;}
+    else if(isStarted){cc+=' in-progress';ic+=' active-bg';tag=`<span class="mc-tag tag-prog">▶ In Progress</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar prog" style="width:45%"></div></div>`;}
+    else{ic+=' next-bg';tag=`<span class="mc-tag tag-next">${isNext?'▶ Start':'Not Started'}</span>`;}
+    list.innerHTML+=`<a class="${cc}" href="${isLocked?'#':href}" ${isLocked?'onclick="return false"':''}><div class="mc-inner"><div class="${ic}">${ico}</div><div class="mc-content"><div class="mc-num">Module ${mod.id}</div><div class="mc-title">${mod.title}</div><div class="mc-sub">${mod.sub}</div>${bar}</div><div class="mc-status">${tag}</div></div>${lock}</a>`;
+  });
+}
+</script>
+</body>
+</html>

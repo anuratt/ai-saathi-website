@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+:root{
+  --saffron:#E8611A;--saffron-pale:#FFF3EC;
+  --gold:#F5A623;--gold-pale:#FFFAED;
+  --forest:#1B5E3B;--forest-pale:#EAF5EE;
+  --red:#D63031;--red-bg:#FFF0EF;
+  --ink:#1A1A2E;--ink-mid:#3D3D5C;--muted:#7A7A99;
+  --white:#fff;--off:#FDFCF9;--border:#E8E0D0;
+  --admin-bg:#0F1117;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Lato',sans-serif;background:var(--admin-bg);color:white;min-height:100vh;}
+
+/* AUTH WALL */
+.auth-wall{
+  position:fixed;inset:0;background:var(--admin-bg);
+  display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;
+}
+.auth-card{
+  background:#1A1E2E;border:1px solid rgba(255,255,255,0.08);border-radius:16px;
+  padding:32px;width:100%;max-width:360px;text-align:center;
+}
+.auth-card h2{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--gold);margin-bottom:6px;}
+.auth-card p{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.auth-input{
+  width:100%;padding:13px;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);border-radius:9px;
+  color:white;font-size:15px;margin-bottom:12px;outline:none;
+  font-family:'Lato',sans-serif;
+}
+.auth-input:focus{border-color:var(--saffron);}
+.auth-btn{
+  width:100%;padding:13px;background:var(--saffron);color:white;
+  font-weight:800;font-size:15px;border:none;border-radius:9px;cursor:pointer;
+}
+.auth-err{color:#FF6B6B;font-size:13px;margin-top:8px;display:none;}
+
+/* LAYOUT */
+.admin-wrap{display:none;flex-direction:column;min-height:100vh;}
+
+/* TOP NAV */
+.admin-nav{
+  background:#1A1E2E;border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.admin-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--gold);}
+.admin-nav-right{display:flex;align-items:center;gap:14px;}
+.nav-badge{
+  background:rgba(232,97,26,0.15);border:1px solid rgba(232,97,26,0.3);
+  color:var(--saffron);font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;
+}
+.btn-logout{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5);font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;
+}
+
+/* STATS ROW */
+.stats-row{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+  padding:20px;max-width:1000px;margin:0 auto;width:100%;
+}
+@media(min-width:600px){.stats-row{grid-template-columns:repeat(4,1fr);}}
+.stat-card{
+  background:#1A1E2E;border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:16px;
+}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;}
+.stat-label{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+
+/* MAIN CONTENT */
+.admin-main{max-width:1000px;margin:0 auto;padding:0 20px 60px;width:100%;}
+
+/* TABS */
+.admin-tabs{display:flex;gap:4px;margin-bottom:20px;background:#1A1E2E;border-radius:10px;padding:4px;width:fit-content;}
+.admin-tab{
+  padding:8px 16px;font-size:13px;font-weight:700;border-radius:7px;
+  cursor:pointer;color:rgba(255,255,255,0.4);transition:all .2s;white-space:nowrap;
+}
+.admin-tab.active{background:var(--saffron);color:white;}
+
+/* TABLE */
+.table-wrap{background:#1A1E2E;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);}
+.table-header{
+  padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.table-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;}
+.search-input{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:7px;padding:8px 12px;color:white;font-size:13px;
+  font-family:'Lato',sans-serif;outline:none;width:200px;
+}
+.search-input::placeholder{color:rgba(255,255,255,0.3);}
+
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.3);
+  border-bottom:1px solid rgba(255,255,255,0.06);text-align:left;white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,0.03);}
+tbody td{padding:13px 16px;font-size:14px;color:rgba(255,255,255,0.8);}
+tbody td .name{font-weight:700;color:white;}
+tbody td .meta{font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;}
+
+/* STATUS BADGES */
+.badge{
+  display:inline-block;font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:12px;white-space:nowrap;
+}
+.badge.pending{background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.25);}
+.badge.approved{background:rgba(27,94,59,0.2);color:#6FCF97;border:1px solid rgba(27,94,59,0.3);}
+.badge.rejected{background:rgba(214,48,49,0.15);color:#FF6B6B;border:1px solid rgba(214,48,49,0.25);}
+
+/* ACTION BUTTONS */
+.action-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-approve{
+  background:rgba(27,94,59,0.25);color:#6FCF97;border:1px solid rgba(27,94,59,0.4);
+  font-size:12px;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-approve:hover{background:var(--forest);color:white;}
+.btn-reject{
+  background:rgba(214,48,49,0.15);color:#FF6B6B;border:1px solid rgba(214,48,49,0.3);
+  font-size:12px;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-reject:hover{background:var(--red);color:white;}
+.btn-view-ss{
+  background:rgba(245,166,35,0.1);color:var(--gold);border:1px solid rgba(245,166,35,0.2);
+  font-size:12px;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-view-ss:hover{background:rgba(245,166,35,0.25);}
+
+/* SCREENSHOT MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:#1A1E2E;border-radius:16px;padding:24px;max-width:500px;width:100%;
+}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px;}
+.modal img{width:100%;border-radius:10px;max-height:400px;object-fit:contain;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;}
+.modal-close{
+  background:rgba(255,255,255,0.06);color:white;border:none;
+  font-size:14px;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;margin-left:auto;
+}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:rgba(255,255,255,0.3);}
+.empty-state .empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* RESPONSIVE */
+.table-scroll{overflow-x:auto;}
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  thead th:nth-child(4),tbody td:nth-child(4){display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH WALL -->
+<div class="auth-wall" id="authWall">
+  <div class="auth-card">
+    <h2>🛡 Admin Panel</h2>
+    <p>AI Saathi — Authorized Access Only</p>
+    <input type="password" id="adminPin" class="auth-input" placeholder="Admin PIN हाल्नुहोस्" onkeydown="if(event.key==='Enter')checkPin()">
+    <button class="auth-btn" onclick="checkPin()">Enter</button>
+    <div class="auth-err" id="pinErr">❌ Incorrect PIN</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-wrap" id="adminWrap">
+
+  <!-- NAV -->
+  <nav class="admin-nav">
+    <div class="admin-brand">⚙ AI Saathi Admin</div>
+    <div class="admin-nav-right">
+      <span class="nav-badge" id="pendingBadge">0 Pending</span>
+      <button class="btn-logout" onclick="adminLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal" style="color:var(--gold);">0</div>
+      <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statPaid" style="color:#6FCF97;">0</div>
+      <div class="stat-label">Paid / Active</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statPending" style="color:var(--gold);">0</div>
+      <div class="stat-label">Pending Review</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statRevenue" style="color:var(--saffron);">रू. 0</div>
+      <div class="stat-label">Revenue</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchTab('pending')">⏳ Pending (</span><span id="tabPendingCount">0</span>)</div>
+      <div class="admin-tab" onclick="switchTab('approved')">✅ Approved</div>
+      <div class="admin-tab" onclick="switchTab('all')">👥 All Students</div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title" id="tableTitle">Pending Payment Requests</div>
+        <input type="text" class="search-input" placeholder="Search..." oninput="filterTable(this.value)">
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Method</th>
+              <th>Date</th>
+              <th>TXN ID</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENSHOT MODAL -->
+<div class="modal-overlay" id="ssModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">📸 Payment Screenshot</div>
+    <img id="ssModalImg" src="" alt="Payment screenshot">
+    <div id="ssModalInfo" style="margin-top:14px;font-size:14px;color:rgba(255,255,255,0.6);"></div>
+    <div class="modal-actions">
+      <button class="modal-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// ADMIN PIN — change this to something strong!
+// ─────────────────────────────────────────────
+const ADMIN_PIN = '2025'; // ← Change this to a strong PIN
+
+function checkPin(){
+  const pin = document.getElementById('adminPin').value;
+  if(pin === ADMIN_PIN){
+    document.getElementById('authWall').style.display = 'none';
+    document.getElementById('adminWrap').style.display = 'flex';
+    loadData();
+  } else {
+    document.getElementById('pinErr').style.display = 'block';
+    document.getElementById('adminPin').value = '';
+  }
+}
+
+function adminLogout(){
+  document.getElementById('authWall').style.display = 'flex';
+  document.getElementById('adminWrap').style.display = 'none';
+}
+
+let allRequests = [];
+let currentTab = 'pending';
+
+// ── LIVE: Load from Firestore in real-time ──
+function loadData(){
+  document.getElementById('tableBody').innerHTML =
+    '<tr><td colspan="6" style="text-align:center;padding:32px;color:rgba(255,255,255,0.3);">Loading...</td></tr>';
+
+  window.db.collection('payment_requests')
+    .orderBy('submittedAt', 'desc')
+    .onSnapshot(snapshot => {
+      allRequests = snapshot.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          uid: data.uid || null,
+          name: data.name || '—',
+          phone: data.phone || '—',
+          email: data.email || '—',
+          method: data.method || '—',
+          txnId: data.txnId || '',
+          date: data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleDateString('ne-NP') : '—',
+          status: data.status || 'pending',
+          screenshotData: data.screenshotData || null,
+        };
+      });
+      renderAll();
+    }, err => {
+      console.error(err);
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="6" style="text-align:center;padding:32px;color:#FF6B6B;">Error loading data. Check Firestore rules.</td></tr>';
+    });
+}
+
+function renderAll(){
+  const pending = allRequests.filter(r => r.status === 'pending');
+  const approved = allRequests.filter(r => r.status === 'approved');
+  document.getElementById('statTotal').textContent = allRequests.length;
+  document.getElementById('statPaid').textContent = approved.length;
+  document.getElementById('statPending').textContent = pending.length;
+  document.getElementById('statRevenue').textContent = 'रू. ' + (approved.length * 999).toLocaleString();
+  document.getElementById('pendingBadge').textContent = pending.length + ' Pending';
+  document.getElementById('tabPendingCount').textContent = pending.length;
+  renderTable(currentTab);
+}
+
+function renderTable(tab){
+  currentTab = tab;
+  let data, title;
+  if(tab === 'pending'){ data = allRequests.filter(r=>r.status==='pending'); title='⏳ Pending Payment Requests'; }
+  else if(tab === 'approved'){ data = allRequests.filter(r=>r.status==='approved'); title='✅ Approved Students'; }
+  else { data = allRequests; title='👥 All Students'; }
+  document.getElementById('tableTitle').textContent = title;
+  document.querySelectorAll('.admin-tab').forEach((t,i) => {
+    t.classList.toggle('active', ['pending','approved','all'][i]===tab);
+  });
+  buildRows(data);
+}
+
+function buildRows(data){
+  const tbody = document.getElementById('tableBody');
+  if(!data.length){
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📭</div><p>No records found</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(r => `
+    <tr id="row-${r.id}">
+      <td><div class="name">${r.name}</div><div class="meta">${r.email} · ${r.phone}</div></td>
+      <td><span class="badge pending" style="background:transparent;border:none;">${r.method}</span></td>
+      <td>${r.date}</td>
+      <td><code style="font-family:'JetBrains Mono';font-size:12px;color:rgba(255,255,255,0.5);">${r.txnId||'—'}</code></td>
+      <td><span class="badge ${r.status}">${r.status==='pending'?'⏳ Pending':r.status==='approved'?'✅ Approved':'❌ Rejected'}</span></td>
+      <td>
+        <div class="action-btns">
+          ${r.screenshotData ? `<button class="btn-view-ss" onclick="viewScreenshot('${r.id}')">📸 Screenshot</button>` : ''}
+          ${r.status==='pending' ? `
+            <button class="btn-approve" onclick="approvePayment('${r.id}')">✅ Approve</button>
+            <button class="btn-reject" onclick="rejectPayment('${r.id}')">❌ Reject</button>
+          ` : ''}
+          ${r.status==='approved' ? `<button class="btn-view-ss" onclick="copyWhatsApp('${r.id}')">📲 WA Message</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── APPROVE: sets hasPaid=true on the user's Firestore doc ──
+async function approvePayment(id){
+  const r = allRequests.find(x=>x.id===id);
+  if(!r) return;
+  if(!confirm(`✅ Approve payment from ${r.name}?\n\nयसले तिनीहरूलाई सबै modules को access दिनेछ।`)) return;
+
+  try {
+    // 1. Update payment request status
+    await window.db.collection('payment_requests').doc(id).update({
+      status: 'approved',
+      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 2. Grant course access — find user by UID first, then by email
+    let granted = false;
+    if(r.uid){
+      await window.db.collection('users').doc(r.uid).set({
+        hasPaid: true,
+        name: r.name,
+        phone: r.phone,
+        email: r.email,
+        paymentDate: firebase.firestore.FieldValue.serverTimestamp(),
+        paymentMethod: r.method
+      }, { merge: true });
+      granted = true;
+    } else {
+      // Fallback: find by email
+      const snap = await window.db.collection('users').where('email','==',r.email).get();
+      if(!snap.empty){
+        await snap.docs[0].ref.set({
+          hasPaid: true,
+          paymentDate: firebase.firestore.FieldValue.serverTimestamp(),
+          paymentMethod: r.method
+        }, { merge: true });
+        granted = true;
+      }
+    }
+
+    const msg = granted
+      ? `✅ ${r.name} को access granted!\n\nWhatsApp मा notify गर्नुहोस्:\n${r.phone}`
+      : `✅ Payment approved तर user account फेला परेन.\nManually notify गर्नुहोस्: ${r.phone}`;
+    alert(msg);
+  } catch(err){
+    console.error(err);
+    alert('Error: ' + err.message);
+  }
+}
+
+// ── REJECT ──
+async function rejectPayment(id){
+  const r = allRequests.find(x=>x.id===id);
+  if(!r) return;
+  const reason = prompt(`❌ Rejection reason for ${r.name}:`);
+  if(reason === null) return;
+  try {
+    await window.db.collection('payment_requests').doc(id).update({
+      status: 'rejected',
+      rejectionReason: reason,
+      rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert(`❌ Rejected. Notify ${r.name} on WhatsApp: ${r.phone}`);
+  } catch(err){
+    alert('Error: ' + err.message);
+  }
+}
+
+// ── WHATSAPP MESSAGE COPY ──
+function copyWhatsApp(id){
+  const r = allRequests.find(x=>x.id===id);
+  const msg = `नमस्ते ${r.name}! 🎉\n\nAI Saathi course को payment confirm भयो। तपाईंको account activate भइसक्यो।\n\nLogin गर्नुहोस्: dashboard.html\n\nकुनै प्रश्न भए यही WhatsApp मा सोध्नुहोस्!\n\n— AI Saathi Team`;
+  navigator.clipboard.writeText(msg).then(() => alert('✅ WhatsApp message copied!\nPaste to: ' + r.phone));
+}
+
+// ── VIEW SCREENSHOT ──
+function viewScreenshot(id){
+  const r = allRequests.find(x=>x.id===id);
+  document.getElementById('ssModalImg').src = r.screenshotData || '';
+  document.getElementById('ssModalInfo').innerHTML = `<strong>${r.name}</strong> · ${r.method} · ${r.date} · TXN: ${r.txnId}`;
+  document.getElementById('ssModal').classList.add('show');
+}
+function closeModal(){ document.getElementById('ssModal').classList.remove('show'); }
+
+function switchTab(tab){ renderTable(tab); }
+
+function filterTable(query){
+  const q = query.toLowerCase();
+  let data = currentTab==='pending' ? allRequests.filter(r=>r.status==='pending') :
+             currentTab==='approved' ? allRequests.filter(r=>r.status==='approved') : allRequests;
+  if(q) data = data.filter(r =>
+    r.name.toLowerCase().includes(q) ||
+    r.email.toLowerCase().includes(q) ||
+    r.phone.includes(q) ||
+    (r.txnId||'').toLowerCase().includes(q)
+  );
+  buildRows(data);
+}
+</script>
+</body>
+</html>

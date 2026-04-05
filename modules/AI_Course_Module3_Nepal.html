@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi: Your Smart AI Course — Module 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9973A;
+    --gold-light: #F0C96C;
+    --gold-pale: #FDF4E3;
+    --deep: #1A1207;
+    --ink: #2D2110;
+    --muted: #7A6144;
+    --warm-white: #FEFCF7;
+    --green: #2D6A4F;
+    --green-light: #E8F5EE;
+    --red-soft: #C0392B;
+    --sky: #1A6B9A;
+    --sky-light: #E8F4FB;
+    --border: #E8D9B8;
+    --purple: #5B3A8E;
+    --purple-light: #F0EAF8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* ===== NAV ===== */
+  .course-nav {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .course-nav-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 54px;
+    font-size: 14px;
+  }
+  .nav-brand {
+    font-family: 'Dancing Script', cursive;
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--deep);
+    color: white;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 70px 40px 60px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--deep);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+  .hero-subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+  .hero-tagline {
+    font-family: 'Dancing Script', cursive;
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 40px;
+  }
+  .hero-promises {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .promise-pill {
+    background: rgba(201,151,58,0.15);
+    border: 1px solid rgba(201,151,58,0.4);
+    color: var(--gold-light);
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 30px;
+  }
+  .hero-deco {
+    position: absolute;
+    top: 0; right: 0;
+    width: 420px;
+    height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(201,151,58,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-deco2 {
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(201,151,58,0.05);
+    pointer-events: none;
+  }
+
+  /* ===== SALES STRIP ===== */
+  .sales-strip {
+    background: var(--gold);
+    color: var(--deep);
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* ===== MODULE HEADER ===== */
+  .module-header {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 50px 40px 40px;
+  }
+  .module-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .module-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 900;
+    color: var(--deep);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .module-desc {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 32px;
+    line-height: 1.75;
+  }
+  .module-meta {
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+  }
+  .meta-item {
+    flex: 1;
+    min-width: 100px;
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-item strong {
+    display: block;
+    font-size: 16px;
+    color: var(--deep);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  /* ===== INTRO CARDS ===== */
+  .course-intro {
+    max-width: 860px;
+    margin: 0 auto 0;
+    padding: 0 40px;
+  }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .intro-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .intro-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--deep);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .intro-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .intro-card ul li {
+    padding: 5px 0;
+    font-size: 15px;
+    color: var(--muted);
+    padding-left: 18px;
+    position: relative;
+  }
+  .intro-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 13px;
+  }
+  .icon-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gold-pale);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ===== LESSONS WRAP ===== */
+  .lessons-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 40px 60px;
+  }
+
+  /* ===== LESSON CARD ===== */
+  .lesson-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 0;
+    box-shadow: 0 2px 16px rgba(26,18,7,0.05);
+  }
+  .lesson-header {
+    background: var(--gold-pale);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .lesson-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    opacity: 0.6;
+    min-width: 54px;
+  }
+  .lesson-header-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .lesson-header-text p {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .lesson-body {
+    padding: 32px;
+  }
+  .section-block {
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .objective-box {
+    background: var(--sky-light);
+    border-left: 4px solid var(--sky);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 22px;
+    font-size: 16px;
+    color: var(--sky);
+    font-weight: 600;
+    line-height: 1.7;
+  }
+  .script-box {
+    background: var(--gold-pale);
+    border-radius: 12px;
+    padding: 28px 30px;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.9;
+    border: 1px solid var(--border);
+  }
+  .script-box p { margin-bottom: 18px; }
+  .script-box p:last-child { margin-bottom: 0; }
+  .emphasis {
+    font-weight: 700;
+    color: var(--deep);
+    background: rgba(201,151,58,0.15);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .steps-list {
+    list-style: none;
+    counter-reset: steps;
+  }
+  .steps-list li {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps-list li:last-child { border-bottom: none; }
+  .step-num {
+    width: 34px; height: 34px;
+    background: var(--deep);
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content {
+    flex: 1;
+    font-size: 15px;
+  }
+  .step-content strong {
+    display: block;
+    color: var(--deep);
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  .step-content span {
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .example-box {
+    background: var(--green-light);
+    border: 1px solid rgba(45,106,79,0.2);
+    border-radius: 12px;
+    padding: 26px 28px;
+  }
+  .ex-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--green);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .ex-icon {
+    width: 32px; height: 32px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .example-box p {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.8;
+  }
+  .example-box p:last-child { margin-bottom: 0; }
+  .dialogue {
+    background: white;
+    border-left: 3px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 15px;
+    margin: 16px 0;
+    line-height: 1.7;
+  }
+  .task-box {
+    background: var(--purple-light);
+    border: 1px solid rgba(91,58,142,0.2);
+    border-radius: 12px;
+    padding: 26px 28px;
+  }
+  .task-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--purple);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .task-box p {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.8;
+  }
+  .task-box ol {
+    padding-left: 20px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .task-box ol li { margin-bottom: 8px; }
+  .mistakes-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 26px 28px;
+  }
+  .m-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--red-soft);
+    margin-bottom: 18px;
+    font-weight: 700;
+  }
+  .mistake-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .mistake-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .mistake-x {
+    width: 28px; height: 28px;
+    background: var(--red-soft);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .mistake-text {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.75;
+  }
+  .mistake-text strong {
+    display: block;
+    color: var(--deep);
+    margin-bottom: 4px;
+  }
+
+  /* ===== PROMPT SHOWCASE BOX ===== */
+  .prompt-showcase {
+    background: #1A1207;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0;
+    border: 1px solid rgba(201,151,58,0.3);
+  }
+  .prompt-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .prompt-text {
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    color: #E8D9B8;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .prompt-result {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.75;
+    border-left: 3px solid var(--gold);
+  }
+  .prompt-result-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(201,151,58,0.7);
+    margin-bottom: 8px;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin: 16px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .comparison-table th {
+    background: var(--deep);
+    color: var(--gold-light);
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .comparison-table td {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .comparison-table tr:nth-child(even) td { background: var(--gold-pale); }
+  .tag-bad { color: var(--red-soft); font-weight: 700; }
+  .tag-good { color: var(--green); font-weight: 700; }
+
+  /* ===== HIGHLIGHT BOX ===== */
+  .highlight-box {
+    background: var(--deep);
+    color: white;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .highlight-box::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(201,151,58,0.1);
+  }
+  .highlight-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .highlight-box p {
+    color: rgba(255,255,255,0.78);
+    font-size: 15px;
+    line-height: 1.8;
+    position: relative;
+  }
+
+  /* ===== PRO TIP BOX ===== */
+  .pro-tip {
+    background: #E8F4FB;
+    border: 1px solid rgba(26,107,154,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin: 18px 0;
+  }
+  .pro-tip-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .pro-tip-text {
+    font-size: 15px;
+    color: var(--sky);
+    line-height: 1.75;
+  }
+  .pro-tip-text strong { color: #0f4c7a; display: block; margin-bottom: 4px; }
+
+  /* ===== LESSON DIVIDER ===== */
+  .lesson-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 36px 0;
+  }
+  .lesson-divider::before, .lesson-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .lesson-divider span { font-size: 20px; color: var(--gold); }
+
+  /* ===== PROMPT TEMPLATE CARDS ===== */
+  .prompt-template-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .prompt-template-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .ptc-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .ptc-text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* ===== MONEY SECTION ===== */
+  .money-callout {
+    background: linear-gradient(135deg, var(--green) 0%, #1e4d38 100%);
+    border-radius: 16px;
+    padding: 32px 36px;
+    color: white;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .money-callout::after {
+    content: 'Rs';
+    position: absolute;
+    right: 30px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 120px;
+    font-family: 'Playfair Display', serif;
+    color: rgba(255,255,255,0.06);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .money-callout h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #A8EDCA;
+    margin-bottom: 10px;
+  }
+  .money-callout p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.8;
+    max-width: 560px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials-section {
+    background: var(--deep);
+    padding: 60px 40px;
+    margin: 60px 0;
+  }
+  .testimonials-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .section-eyebrow-white {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .testimonials-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--gold-light);
+    margin-bottom: 32px;
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .testi-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,151,58,0.25);
+    border-radius: 12px;
+    padding: 22px 20px;
+  }
+  .testi-stars {
+    color: var(--gold);
+    font-size: 14px;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .testi-quote {
+    font-size: 15px;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.7;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .testi-person {
+    font-size: 14px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .testi-role {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ===== FAQ ===== */
+  .faq-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+  }
+  .faq-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--deep);
+    margin-bottom: 8px;
+  }
+  .faq-sub { color: var(--muted); margin-bottom: 32px; font-size: 16px; }
+  .faq-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .faq-q {
+    padding: 18px 22px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--deep);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: white;
+    user-select: none;
+  }
+  .faq-q:hover { background: var(--gold-pale); }
+  .faq-q span { color: var(--gold); font-size: 20px; transition: transform 0.25s; }
+  .faq-a {
+    padding: 0 22px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.25s;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+    background: var(--gold-pale);
+  }
+  .faq-a.open {
+    max-height: 400px;
+    padding: 16px 22px 20px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: var(--deep);
+    padding: 40px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+  }
+  .footer strong { color: var(--gold); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar-wrap {
+    background: var(--gold-pale);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+  }
+  .progress-bar-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 37.5%;
+    background: var(--gold);
+    border-radius: 3px;
+  }
+
+  @media (max-width: 700px) {
+    .hero-inner, .module-header, .lessons-wrap, .course-intro, .faq-section { padding: 32px 20px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .intro-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 34px; }
+    .course-nav { padding: 0 20px; }
+    .lesson-divider { padding: 0 20px; }
+    .testimonials-section { padding: 40px 20px; }
+    .lesson-body { padding: 20px; }
+    .lesson-header { padding: 20px 20px; }
+    .nav-links { display: none; }
+    .prompt-template-grid { grid-template-columns: 1fr; }
+    .progress-bar-wrap { padding: 14px 20px; }
+    .meta-item { min-width: 80px; padding: 12px 14px; }
+    .highlight-box { padding: 22px 22px; }
+    .money-callout { padding: 24px 24px; }
+    .money-callout::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="course-nav">
+  <div class="course-nav-inner">
+    <div class="nav-brand">AI Saathi ✦</div>
+    <div class="nav-links">
+      <a href="#module3">Module 3</a>
+      <a href="#lessons">Lessons</a>
+      <a href="#testimonials">Stories</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-deco"></div>
+  <div class="hero-deco2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Module 3 of 8 · AI Saathi Course · Beginner Friendly</div>
+    <h1>ChatGPT for<br>Daily Life &amp; Business</h1>
+    <p class="hero-subtitle">You have learned what AI is. Now you learn how to actually USE it — every single day — to save time, write better, and grow your business.</p>
+    <p class="hero-tagline">"Ek ghanta ko kaam ab das minute maa."</p>
+    <div class="hero-promises">
+      <span class="promise-pill">✦ Write Better Faster</span>
+      <span class="promise-pill">✦ Save 2+ Hours Daily</span>
+      <span class="promise-pill">✦ Grow Facebook Page</span>
+      <span class="promise-pill">✦ Handle Customers Easily</span>
+      <span class="promise-pill">✦ Real Nepali Examples</span>
+    </div>
+  </div>
+</header>
+
+<!-- SALES STRIP -->
+<div class="sales-strip">
+  ✦ This module alone has saved students 15+ hours per week. Get ready to be amazed. ✦
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-inner">
+    <span>Your progress</span>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+    <span><strong style="color:var(--deep)">Module 3 of 8</strong> — 37.5% complete</span>
+  </div>
+</div>
+
+<!-- MODULE HEADER -->
+<div style="background:var(--gold-pale); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top:0;">
+<section class="module-header" id="module3">
+  <p class="module-eyebrow">Module 3 of 8 · AI Saathi: Your Smart Life, Simplified</p>
+  <h2>ChatGPT for Daily Life &amp; Business</h2>
+  <p class="module-desc">In Modules 1 and 2, you discovered what AI is and how to talk to it. Now comes the exciting part — putting it to real work. This module shows you exactly how to use ChatGPT every single day: writing messages, running your business, replying to customers, creating posts, planning your week, and much more. By the end, AI will feel as natural to you as WhatsApp.</p>
+  <div class="module-meta">
+    <div class="meta-item"><strong>6 Lessons</strong>Full content</div>
+    <div class="meta-item"><strong>~3 hours</strong>Total time</div>
+    <div class="meta-item"><strong>30+ Prompts</strong>Copy &amp; use</div>
+    <div class="meta-item"><strong>6 Exercises</strong>Hands-on tasks</div>
+    <div class="meta-item"><strong>PDF + Video</strong>Format</div>
+  </div>
+</section>
+</div>
+
+<!-- INTRO CARDS -->
+<section class="course-intro" style="margin-top:40px;">
+  <div class="intro-grid">
+    <div class="intro-card">
+      <h4><span class="icon-circle">🎯</span>What you will be able to do</h4>
+      <ul>
+        <li>Write any message in seconds — Nepali or English</li>
+        <li>Run your business with AI as your daily assistant</li>
+        <li>Reply to customer complaints without stress</li>
+        <li>Plan your week, your budget, your to-do list</li>
+        <li>Create posts, ads, and product descriptions</li>
+        <li>Translate, summarise, and explain anything</li>
+      </ul>
+    </div>
+    <div class="intro-card">
+      <h4><span class="icon-circle">💡</span>What makes this module special</h4>
+      <ul>
+        <li>Every lesson uses a real Nepali example</li>
+        <li>30+ ready-to-use prompts included</li>
+        <li>No guessing — exact words to type are given</li>
+        <li>Works for shop owners, teachers, and parents</li>
+        <li>Practical exercises you finish in minutes</li>
+        <li>Confidence-building, step by step</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS -->
+<section class="lessons-wrap" id="lessons">
+
+  <!-- ===== LESSON 1 ===== -->
+  <div class="lesson-card" id="lesson1">
+    <div class="lesson-header">
+      <div class="lesson-num">01</div>
+      <div class="lesson-header-text">
+        <h3>The Magic Formula: How to Ask AI the Right Way</h3>
+        <p>Estimated time: 25 minutes · Foundation lesson — do not skip this</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will know the simple "RICE Formula" for writing prompts — and you will be able to get much better, more useful answers from ChatGPT every single time you use it.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>Let me ask you something. Have you ever sent a WhatsApp message that was unclear — and the person replied with something totally different from what you wanted? Maybe you wrote "send me the thing" and they had no idea what "thing" you meant? <span class="emphasis">Talking to AI is exactly the same.</span> If your question is vague, the answer will be vague. If your question is clear, the answer will be excellent.</p>
+
+          <p>This is the most important lesson in the entire course. Once you understand this, every other lesson becomes easy. I call it the <span class="emphasis">RICE Formula</span>. It stands for: <strong>Role, Instructions, Context, and Example.</strong></p>
+
+          <p><strong>R — Role:</strong> Tell AI what kind of expert you want it to be. For example: "You are a helpful Facebook marketing expert for a small clothing shop in Nepal." Giving AI a role makes its answers far more useful and specific.</p>
+
+          <p><strong>I — Instructions:</strong> Tell AI exactly what you want it to do. Be direct. "Write a short, friendly Facebook post" is much better than just "write something."</p>
+
+          <p><strong>C — Context:</strong> Give AI the background information it needs. "My shop sells handmade pashmina scarves. My customers are mostly women aged 25–45. It is the Dashain festival season." The more context, the better the answer.</p>
+
+          <p><strong>E — Example (optional but powerful):</strong> If you have an idea of what you want, show it. "Make it feel like this: 'This Dashain, dress like a queen without spending like one.'" AI will match that energy.</p>
+
+          <p>Now, do you need to use all four parts every time? No. For simple questions, one or two parts is fine. But for important things — like writing a customer email, creating an ad, or making a product description — use all four. <span class="emphasis">The better your prompt, the better your result. It is that simple.</span></p>
+
+          <p>Here is the exciting part: once you learn this formula, you will never be frustrated with AI again. When AI gives you a bad answer, it usually means the prompt was not clear enough. And now you know how to fix that.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🔑 The RICE Formula — Side by Side Comparison</p>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Without RICE (Weak Prompt)</th>
+              <th>With RICE (Strong Prompt)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag-bad">✗</span> "Write a post about my shop"</td>
+              <td><span class="tag-good">✓</span> "You are a marketing expert. Write a short, exciting Facebook post for my saree shop in Kathmandu for Dashain. We have 20% discount this week. My customers are Nepali women aged 30–50. Make it feel warm and festive."</td>
+            </tr>
+            <tr>
+              <td><span class="tag-bad">✗</span> "Write a customer reply"</td>
+              <td><span class="tag-good">✓</span> "You are a polite customer service expert. Write a kind reply to a customer who complained their order was late. Tell them the item is coming tomorrow and give a 10% discount on their next order. Keep it short and friendly."</td>
+            </tr>
+            <tr>
+              <td><span class="tag-bad">✗</span> "Help me write a message"</td>
+              <td><span class="tag-good">✓</span> "Write a professional but warm WhatsApp message to my supplier asking for a 2-week delay on payment. We are a small clothing shop. I have been their customer for 3 years."</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: Writing Your First RICE Prompt</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Start with the Role</strong>
+              <span>Begin your prompt with: "You are a [type of expert]..." — for example: "You are a friendly customer service agent for a small shop." This sets the tone for everything that follows.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Give clear Instructions</strong>
+              <span>Say exactly what you need. "Write a short message / Create a list / Explain in simple words / Give me 5 ideas for..." Be specific about length too — "in 3–4 sentences" or "in 50 words."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Add your Context</strong>
+              <span>Tell AI about your situation. What is your business? Who are your customers? What is the occasion? What problem do you have? The more detail, the better the result.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Give an Example if you have one</strong>
+              <span>Optional, but powerful. Share a sentence or phrase that shows the style you want. "Make it sound like this: ..." or "Use a tone like a friendly aunt, not a formal company."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Read the answer — and improve it</strong>
+              <span>If the answer is not perfect, do not start over. Just type: "Make it shorter" or "Make it more exciting" or "Can you add a mention of our Dashain offer?" ChatGPT remembers the conversation and will adjust.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Deepak's Hardware Shop, Hetauda</div>
+          <p>Deepak Thapa, 44, runs a hardware and plumbing supply shop in Hetauda. He had to send a message to a big contractor customer who owed him money but had not paid in two months. Deepak was worried — he needed the money, but he also did not want to lose the customer.</p>
+          <p>Before learning the RICE formula, he tried: <em>"ChatGPT, write a message to ask for money."</em> The reply was too generic and felt like a form letter.</p>
+          <p>After learning RICE, he typed:</p>
+          <div class="prompt-showcase">
+            <div class="prompt-label">Deepak's RICE Prompt</div>
+            <div class="prompt-text">"You are a polite but firm business communication expert.
+
+Write a professional WhatsApp message to a long-term contractor customer who has not paid an invoice of Rs 85,000 for 2 months. I want to remain friendly because he is a good customer, but I need the payment soon. My business is a hardware shop in Hetauda.
+
+Keep it respectful, not aggressive. End with a clear request for payment within 7 days."</div>
+          </div>
+          <div class="dialogue">"The message ChatGPT wrote was so good, I read it three times. It was firm but kind. My contractor replied within one hour and paid half the amount that same day. I paid Rs 0 for a professional business writer — ChatGPT did it for free in 10 seconds." — Deepak</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Write 3 RICE Prompts from Your Own Life</div>
+          <p>Now it is your turn. Think about three real situations in your work or personal life where you need to write something — a message, a post, a reply, a plan. Write a RICE prompt for each one. Try to use all four parts.</p>
+          <ol>
+            <li><strong>Prompt 1:</strong> Write a message for your real work or business situation</li>
+            <li><strong>Prompt 2:</strong> Write a prompt to create a social media post (Facebook or WhatsApp status)</li>
+            <li><strong>Prompt 3:</strong> Write a prompt to ask AI to help plan something in your personal life (weekly meals, a trip, a school meeting)</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Type each prompt into ChatGPT. Screenshot the best answer and share it in the WhatsApp group! 📸</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Asking only one word or one sentence</strong>Typing "write post" or "help me" gives AI almost nothing to work with. Always give context. Even two or three extra sentences make a huge difference to the quality of the answer.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Accepting the first answer without asking to improve it</strong>ChatGPT's first answer is a good starting point — not the final product. Always read it, then say "make it shorter," "make it more emotional," or "use simpler words." The second or third version is almost always better.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Thinking you need to translate everything to English first</strong>You do not. You can write your prompt in Nepali, Hindi, or a mix of both. ChatGPT will understand and reply in the same language. If you want an English reply, just add at the end: "Reply in English please."</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider"><span>✦</span></div>
+
+  <!-- ===== LESSON 2 ===== -->
+  <div class="lesson-card" id="lesson2">
+    <div class="lesson-header">
+      <div class="lesson-num">02</div>
+      <div class="lesson-header-text">
+        <h3>Writing Messages Like a Pro — WhatsApp, Email &amp; Customer Replies</h3>
+        <p>Estimated time: 30 minutes · Practical skill lesson — use every day</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will be able to use ChatGPT to write any message — professional, friendly, or firm — in seconds. No more wasting 20 minutes staring at your phone not knowing what to write.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>Be honest with me — how many times have you spent 15, 20, even 30 minutes trying to write a single message? You write something, you delete it. You write again, you think it sounds rude. You write once more, and now it sounds too weak. <span class="emphasis">Writing the right message is one of the most stressful daily tasks for business owners and professionals.</span></p>
+
+          <p>This lesson will end that frustration forever.</p>
+
+          <p>ChatGPT is an extraordinary writer. It can write messages in any tone — formal, casual, apologetic, firm, emotional, professional. And here is the beautiful part: <span class="emphasis">you just need to tell it the situation in simple words, and it will find the perfect language for you.</span></p>
+
+          <p>Let us talk about the four main types of messages you write every day:</p>
+
+          <p><strong>1. Customer messages</strong> — Replies to questions, complaints, orders. These need to be polite, clear, and quick. ChatGPT can handle all of them.</p>
+
+          <p><strong>2. Supplier and business messages</strong> — Negotiating prices, asking for delays, ordering stock, requesting quotes. These need to sound professional but not unfriendly.</p>
+
+          <p><strong>3. Personal messages</strong> — Messages to relatives, neighbours, school teachers. Sometimes in Nepali, sometimes in formal English. AI handles both.</p>
+
+          <p><strong>4. Follow-up messages</strong> — When someone has not replied, or when you need to remind someone politely. These are the hardest to write alone — but easy with AI.</p>
+
+          <p>Here is a golden rule: <span class="emphasis">When you are emotional — angry, hurt, embarrassed — NEVER send a business message without first asking ChatGPT to improve it.</span> Emotional messages often make situations worse. AI will take your frustrated words and turn them into calm, professional language that gets results.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">💬 30 Ready-to-Use Prompt Templates for Messages</p>
+        <div class="prompt-template-grid">
+          <div class="prompt-template-card">
+            <div class="ptc-label">📦 Customer complaint reply</div>
+            <div class="ptc-text">"Write a polite reply to a customer who says their product arrived damaged. Apologise sincerely, offer to replace it, and thank them for telling us."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">💰 Payment reminder</div>
+            <div class="ptc-text">"Write a friendly but firm WhatsApp reminder to a customer who has not paid Rs 12,000 for 3 weeks. Keep it respectful — they are a regular customer."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🤝 Supplier negotiation</div>
+            <div class="ptc-text">"Write a professional message to my cloth supplier asking for a 10% discount if I order double the usual quantity this month."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">⏰ Delivery delay notice</div>
+            <div class="ptc-text">"Write a short WhatsApp message to 10 customers telling them their orders will be 2 days late due to the bandh. Sound sorry and give them a small coupon."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🏫 School teacher message</div>
+            <div class="ptc-text">"Write a polite message in Nepali to my child's class teacher asking for a meeting to discuss my child's recent low marks in maths."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🔁 Follow-up message</div>
+            <div class="ptc-text">"Write a follow-up WhatsApp message to a potential wholesale customer who was interested last week but has not replied. Sound friendly, not desperate."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: Using AI for Daily Messages</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Decide what type of message you need</strong>
+              <span>Is it a complaint reply? A business negotiation? A reminder? A personal message? Knowing the type helps you write a better prompt.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Tell AI the situation in simple words</strong>
+              <span>You do not need to write perfectly. Just describe the situation like you would tell a friend: "My customer says the cloth colour was wrong. She is upset. I want to apologise and offer a replacement."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Tell AI the tone you want</strong>
+              <span>Add words like: "polite and professional" / "warm and friendly" / "firm but kind" / "apologetic" / "exciting and salesy." This changes the style completely.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Tell AI the platform and length</strong>
+              <span>"For WhatsApp — keep it under 3 sentences" or "For email — formal and complete." WhatsApp messages should be short. Emails can be longer.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Copy, personalise, and send</strong>
+              <span>Copy the message from ChatGPT. Add the person's name or any specific detail AI missed. Then send. Done in under 2 minutes — what used to take 20.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Kamala's Boutique, Lalitpur</div>
+          <p>Kamala Shrestha, 39, runs a boutique in Patan selling custom-stitched clothing. One Friday evening, three customers complained at the same time — one about a wrong size, one about a delayed delivery, and one about a colour that looked different from the Facebook photo.</p>
+          <p>Before AI, Kamala would have spent her whole evening stressed and writing. With ChatGPT, she handled all three complaints in under 15 minutes. For each one, she described the situation quickly, and ChatGPT wrote a warm, professional reply. She copy-pasted each one with minor edits.</p>
+          <div class="dialogue">"One customer replied to my AI-written message and said, 'Thank you for such a kind and professional response — this is why I always shop from you.' She had no idea I used AI to write it. I was so proud. That evening, instead of being stressed, I had tea with my family." — Kamala</div>
+          <p>Kamala now uses ChatGPT to reply to every WhatsApp complaint and query. She estimates it saves her <strong style="color:var(--green)">1.5 hours every single day.</strong></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Handle 3 Real Message Situations Using AI</div>
+          <p>Think of 3 real messages you need to write this week — or messages you have been avoiding. Use ChatGPT to write all three.</p>
+          <ol>
+            <li><strong>A customer/client message</strong> — reply to a complaint, a question, or a follow-up</li>
+            <li><strong>A business message</strong> — to a supplier, a partner, or a bank</li>
+            <li><strong>A personal message</strong> — to a teacher, a relative, or a neighbour</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Notice how you feel AFTER sending the AI-written messages. Less stressed? More confident? Tell us in the group! 🎯</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Sending the AI message without reading it first</strong>AI is very good, but it does not know your customer's full history or specific relationship. Always read the message once before sending. Check the name is correct, the details are right, and the tone feels true to you.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using very formal language when the customer expects casual language</strong>If your customer always writes in casual Nepali and you suddenly send a very formal English message, it can feel strange or even rude. Tell AI what kind of relationship you have: "We are friendly — use casual Nepali, not formal."</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using AI only when you are stuck</strong>Do not save AI for emergencies. Start using it for EVERY message, even easy ones. As you use it more, you will get faster at giving good prompts and you will discover new ways AI can help you that you had not imagined.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider"><span>✦</span></div>
+
+  <!-- ===== LESSON 3 ===== -->
+  <div class="lesson-card" id="lesson3">
+    <div class="lesson-header">
+      <div class="lesson-num">03</div>
+      <div class="lesson-header-text">
+        <h3>AI for Your Business — Products, Prices &amp; Planning</h3>
+        <p>Estimated time: 35 minutes · Business owners, this lesson will change everything</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will know how to use ChatGPT as your free business advisor — to write product descriptions, set better prices, plan your inventory, and make smarter business decisions with AI guidance.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>What if you had a business advisor — someone with an MBA from a top university — available 24 hours a day, 7 days a week, who would never charge you a single rupee? <span class="emphasis">That is exactly what ChatGPT is for your business.</span></p>
+
+          <p>Most small business owners in Nepal make decisions based on feeling and experience. That is valuable. But imagine combining your years of experience with AI's knowledge of business, marketing, pricing, and customer psychology. That combination is incredibly powerful.</p>
+
+          <p>Let us look at the four key ways ChatGPT can become your business partner today:</p>
+
+          <p><strong>1. Writing product descriptions that actually sell.</strong> On Facebook Marketplace, on your WhatsApp catalogue, on Daraz — the words around your product matter more than most people think. A boring description loses customers. A compelling description makes them want to buy immediately. ChatGPT can write beautiful, selling product descriptions in minutes.</p>
+
+          <p><strong>2. Pricing strategy and calculation help.</strong> Are you pricing too low and losing profit? Too high and losing customers? ChatGPT can help you think through your pricing, calculate margins, and even suggest how to present prices so they feel fair to customers.</p>
+
+          <p><strong>3. Business planning and idea generation.</strong> "What products should I add for Tihar?" "How should I handle the slow season?" "What are some low-cost ways to attract new customers?" ChatGPT has read millions of business books and articles. It can give you genuine, practical ideas in seconds.</p>
+
+          <p><strong>4. Creating your shop's standard messages and replies.</strong> Instead of typing the same reply 100 times a day, you can ask ChatGPT to write 10 standard replies for common questions — price, delivery time, return policy, custom orders. Then you just copy-paste the right one. <span class="emphasis">This alone saves 30–60 minutes every day.</span></p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🛍️ Real Prompt Examples — Product Descriptions</p>
+
+        <div class="prompt-showcase">
+          <div class="prompt-label">Prompt: Writing a Product Description</div>
+          <div class="prompt-text">"You are an expert e-commerce copywriter for Nepali markets.
+
+Write a short, exciting Facebook product description for a handwoven lokta paper notebook I am selling. It is made by artisans in Baglung. Price is Rs 350. It is eco-friendly and makes a great gift.
+
+Make it feel special and cultural. Include 3 emojis. Keep it under 80 words."</div>
+          <div class="prompt-result">
+            <div class="prompt-result-label">ChatGPT's Answer (Example)</div>
+            🌿 Crafted with Love from the Mountains of Baglung!<br><br>
+            Each lokta paper notebook tells a story — woven by skilled artisans using ancient Nepali traditions. Eco-friendly, durable, and beautifully unique. No two notebooks are the same. ✍️<br><br>
+            Perfect as a personal journal or a heartfelt gift for someone special. Limited pieces available.<br><br>
+            📦 Price: Rs 350 | Free delivery in Kathmandu valley<br>
+            Comment "MINE" to order yours today! 🙏
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: Using AI as Your Business Advisor</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Describe your business clearly</strong>
+              <span>Start every business conversation with: "I run a [type of business] in [city/area]. My main customers are [describe them]. My price range is [price range]." This context makes ALL advice much more relevant.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Ask specific business questions</strong>
+              <span>Instead of "help my business," ask: "What are 5 low-cost ways to attract more customers during the slow season in July–August for a clothing shop in Pokhara?" Specific questions get specific, useful answers.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Use AI for product listing on Facebook or Daraz</strong>
+              <span>Describe your product to AI — material, size, price, unique features — and ask it to write a compelling listing. Always include: "Make it suitable for [Nepali/Facebook/WhatsApp] audience."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Create your standard message library</strong>
+              <span>Ask AI to write 5–10 standard replies for your most common customer questions. Save them in a WhatsApp folder. Next time someone asks "Ke delivery free cha?" — you have a great reply ready in 5 seconds.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Ask for seasonal business strategies</strong>
+              <span>Nepal has many festivals and seasons. Ask: "It is approaching Tihar. Give me 5 specific ideas to increase sales in my grocery shop this week." You will get practical, actionable ideas immediately.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Raju's Online Food Business, Birgunj</div>
+          <p>Raju Gupta, 41, started selling homemade momo and tarkari from his home kitchen in Birgunj, selling through Facebook and WhatsApp. He was good at cooking but struggled with everything else — writing posts, creating a price list, handling custom orders, and planning for big orders during festivals.</p>
+          <p>After this module, he used ChatGPT to create an entire business system:</p>
+          <ul style="margin: 12px 0 12px 20px; color: var(--ink); font-size: 15px; line-height: 1.9;">
+            <li>A full product menu with descriptions and prices in beautiful formatting</li>
+            <li>Standard WhatsApp replies for 12 common customer questions</li>
+            <li>A Tihar special offer plan with 4 bundle deals and their prices</li>
+            <li>A Facebook post calendar for the month</li>
+          </ul>
+          <div class="dialogue">"Before AI, I was a cook who also had to be a writer, marketer, and customer service manager. That was too much. Now ChatGPT handles the words and I focus on the cooking. My orders doubled in 6 weeks." — Raju</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Build Your AI Business Starter Kit</div>
+          <p>By the end of this exercise, you will have a real, usable set of AI-generated materials for your business or work. Complete all three:</p>
+          <ol>
+            <li><strong>Write 3 product descriptions</strong> for your top-selling products using AI. Format them for Facebook Marketplace.</li>
+            <li><strong>Create 5 standard WhatsApp replies</strong> for your most common customer questions. Ask ChatGPT to write them.</li>
+            <li><strong>Ask ChatGPT for a seasonal strategy</strong> — "What are 5 ideas to grow my [type of business] in the next 30 days?" Pick one idea and commit to trying it this week.</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Save all these in your phone notes or a WhatsApp message to yourself. This is your AI Business Kit! 🗂️</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using AI-generated prices without thinking</strong>ChatGPT can suggest pricing strategies, but it does not know your exact costs, your local market rates, or your relationship with suppliers. Use its advice as a starting point, then apply your own knowledge and experience to make the final decision.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Copying product descriptions without personalising them</strong>ChatGPT writes based on the information you give it. If all your competitors use the same AI prompts, descriptions can start to sound similar. Add 1–2 specific details about YOUR product that make it unique — a personal story, a specific quality, your exact location. This makes the description authentically yours.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Only using AI for writing, not for thinking</strong>This is the biggest missed opportunity. ChatGPT is not just a writing assistant — it is a strategic thinking partner. Ask it hard business questions: "My sales drop every July. What might be causing this and how can I fix it?" You will be surprised by how useful its answer is.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider"><span>✦</span></div>
+
+  <!-- ===== LESSON 4 ===== -->
+  <div class="lesson-card" id="lesson4">
+    <div class="lesson-header">
+      <div class="lesson-num">04</div>
+      <div class="lesson-header-text">
+        <h3>AI for Social Media — Facebook Posts, Captions &amp; Ads That Actually Work</h3>
+        <p>Estimated time: 35 minutes · Create a month of content in one hour</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will be able to create engaging, professional social media content for Facebook, TikTok, and WhatsApp in minutes — posts, captions, ads, and stories that attract customers and grow your audience.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>Let me tell you something that might surprise you. Right now, the biggest Facebook pages in Nepal — the ones with 50,000 followers, the ones that seem to always have perfect posts — many of them are using AI to write their content. <span class="emphasis">The secret is out. And now you have access to the exact same tool.</span></p>
+
+          <p>Social media is one of the most powerful and most free marketing tools available to every Nepali business owner today. You do not need to pay for a marketing agency. You do not need a degree in communication. You just need to post consistently — and with AI, consistently becomes easy.</p>
+
+          <p>Here is the hard truth about social media: <span class="emphasis">the biggest reason most small businesses fail on Facebook is not because of bad products — it is because of inconsistent posting.</span> You post for two weeks, then life gets busy, and suddenly three months pass with no posts. Your followers forget you. New customers never find you.</p>
+
+          <p>ChatGPT solves this completely. In one sitting — 30 to 45 minutes — you can ask AI to write an entire month of Facebook posts. That means you never have to worry about "what do I post today?" again. Every morning, you open your planned list, copy the post, add a photo, and post. Done. It takes 2 minutes.</p>
+
+          <p>And the posts are not generic. When you give AI good context about your business and your customers, it writes posts that feel personal, engaging, and real. <span class="emphasis">Better than most people could write if they spent an hour on it.</span></p>
+
+          <p>For Facebook specifically, the posts that work best are:</p>
+          <p>• Stories about real people and real situations (like our Sunita example earlier)<br>
+          • Helpful tips that educate your audience<br>
+          • Limited-time offers with clear, simple language<br>
+          • Engaging questions that invite comments<br>
+          • Festival greetings that feel warm and genuine</p>
+          <p>ChatGPT can write all of these for you — in any language, any style, any length.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📱 Prompt Templates for Social Media</p>
+        <div class="prompt-template-grid">
+          <div class="prompt-template-card">
+            <div class="ptc-label">📢 Weekly offer post</div>
+            <div class="ptc-text">"Write an exciting Facebook post for a 25% discount sale this weekend only at my clothing shop. Use emojis. Keep it short and create urgency. Target Nepali women aged 25–45."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🎁 Festival greeting post</div>
+            <div class="ptc-text">"Write a warm Dashain greeting post for my food delivery business's Facebook page. Include a special offer and wish customers well. Warm and family-focused tone."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">💡 Educational / tips post</div>
+            <div class="ptc-text">"Write a Facebook post with 5 quick tips for how to wash and store pashmina scarves. Educational, helpful tone. For my shawl shop's page."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">❓ Engagement question post</div>
+            <div class="ptc-text">"Write a Facebook post that asks my followers a fun question about their favourite local food. Something that will get lots of comments. For my restaurant's page in Pokhara."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🎬 TikTok video script</div>
+            <div class="ptc-text">"Write a 30-second TikTok script showing how I make my handmade jewellery. Fun and energetic. I want viewers to comment and follow. Nepali audience."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">📅 Monthly content plan</div>
+            <div class="ptc-text">"Create a 30-day Facebook post plan for my bakery in Bhaktapur. Include a mix of: product posts, tips, offers, stories, and questions. One post per day."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: Creating a Month of Content in One Hour</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Tell ChatGPT about your business and audience</strong>
+              <span>Start the conversation: "I run a [type of business] in [place]. My Facebook page has [number] followers. My customers are mostly [description]. I post in [language]. I want to create content for the next 30 days."</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Ask for a content calendar</strong>
+              <span>Ask: "Give me a 30-day content calendar. Include these types: product posts (10), tips (8), offers (5), questions (4), festival posts (3)." ChatGPT will create a full plan with topics for each day.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Write 5–10 posts in one sitting</strong>
+              <span>Pick the first 5–10 topics from your calendar and ask AI to write the full posts. Say: "Now write the full Facebook post for Day 1, Day 2, and Day 3 from our calendar." Do this in batches.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Save all posts in a WhatsApp message or Notes app</strong>
+              <span>Copy all the posts into your phone's notes app or send them to yourself in WhatsApp. Label them: "Post for Monday 12 Kartik" etc. Now they are ready to go — no more last-minute scrambling.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Add photos and post daily</strong>
+              <span>Each morning, copy the day's post, add a real photo of your product or shop (always add a real photo — it increases trust enormously), and publish. 2 minutes per day. That is all.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Mina's Tiffin Service, Kathmandu</div>
+          <p>Mina Tamang, 36, started a tiffin (lunch delivery) service from her home in Lalitpur. She had 200 Facebook followers and posted maybe once a month — whenever she had time, which was almost never. She was a great cook but felt she had nothing interesting to write.</p>
+          <p>After this lesson, she spent one Saturday evening with ChatGPT. She gave it all her business details and asked for a 30-day content plan. Then she wrote all 30 posts in two hours. The content included: behind-the-scenes cooking videos, customer testimonials, weekly menu announcements, "Did you know?" nutrition tips, and Tihar special posts.</p>
+          <div class="dialogue">"I could not believe I had 30 posts ready to go. I scheduled them in advance using Facebook's scheduler. By week two, people were commenting and sharing every day. By week three, I had 23 new regular tiffin customers. My income went from Rs 15,000 to Rs 38,000 in one month. I did not change my cooking. I just got better at telling people about it." — Mina</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Create Your 2-Week Social Media Plan</div>
+          <p>This week, you will create and schedule 14 days of social media content using ChatGPT. Here is your plan:</p>
+          <ol>
+            <li><strong>Day 1 — Plan:</strong> Ask ChatGPT to create a 14-day content calendar for your business page</li>
+            <li><strong>Day 1 — Write:</strong> Ask ChatGPT to write all 14 posts based on the calendar topics</li>
+            <li><strong>Day 1 — Save:</strong> Copy all posts into your Notes app with dates</li>
+            <li><strong>Days 2–14 — Post:</strong> Every day, open your notes, add a photo, and post. 2 minutes per day.</li>
+            <li><strong>Day 14 — Review:</strong> Which post got the most reactions? What did your audience love? Report back to the WhatsApp group!</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Share your Day 1 post in the WhatsApp group for feedback and encouragement! 🚀</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Posting without a photo or video</strong>Text-only posts on Facebook get very little reach. Always add a real, clear photo of your product, your shop, or yourself. People buy from people they can see. A blurry phone photo is better than no photo at all. A bright, clear photo is better still.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Making every post a sales post</strong>If every post says "buy this," people will stop following you. Mix your content: 40% helpful tips and stories, 40% product information, 20% direct sales offers. People follow pages that add value to their life, not just pages that want their money.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Asking AI to "write something nice" without giving details</strong>For social media posts, give AI your specific product details, the specific occasion, your exact audience, and the exact action you want people to take (comment, share, click a link, WhatsApp you). The more specific you are, the more powerful the post.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider"><span>✦</span></div>
+
+  <!-- ===== LESSON 5 ===== -->
+  <div class="lesson-card" id="lesson5">
+    <div class="lesson-header">
+      <div class="lesson-num">05</div>
+      <div class="lesson-header-text">
+        <h3>AI for Personal Life — Planning, Learning &amp; Everyday Help</h3>
+        <p>Estimated time: 28 minutes · For every person, not just business owners</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will see how ChatGPT can help you with everyday personal tasks — planning meals, learning new things, helping your children with school, managing your budget, and making smart decisions — even when you have no expert to ask.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>This lesson is a little different. We are stepping away from business for a moment and looking at something even more personal: <span class="emphasis">how AI can make your everyday life easier, less stressful, and more enjoyable.</span></p>
+
+          <p>Think about all the times you wish you could ask an expert, but it is too expensive, too far, or too complicated. A doctor for a simple health question. A lawyer to understand a form. A teacher to help your child with a subject. A travel agent to plan a trip. A nutritionist for a meal plan. <span class="emphasis">ChatGPT cannot replace a real professional — but for everyday questions, it is like having a knowledgeable friend who is always available and never impatient.</span></p>
+
+          <p>Here are some of the most valuable personal uses that our students have discovered:</p>
+
+          <p><strong>Helping children with homework and school topics.</strong> "Explain photosynthesis to a 12-year-old in simple Nepali" or "Help my daughter understand this maths problem step by step." ChatGPT is the most patient tutor in the world. It explains the same thing 10 different ways until your child understands.</p>
+
+          <p><strong>Understanding documents and forms.</strong> Got a bank notice you do not understand? A government form? A legal letter? Photograph it, describe it to ChatGPT, and ask: "Explain what this means in simple language." It will break it down clearly so you can act with confidence.</p>
+
+          <p><strong>Meal planning and cooking help.</strong> "Plan a healthy, affordable weekly meal plan for a family of 4 in Nepal — budget Rs 3,000 — using local vegetables." ChatGPT creates a real, practical plan with recipes and a shopping list. Useful and completely free.</p>
+
+          <p><strong>Learning new things quickly.</strong> Want to understand how to apply for a visa? How does insurance work? What is the best way to save money? What are your rights as a tenant? Ask ChatGPT — and ask follow-up questions until you fully understand. <span class="emphasis">Never feel embarrassed for asking a "dumb" question to AI. It is the only teacher that never judges.</span></p>
+
+          <p><strong>Trip planning.</strong> "Plan a 5-day family trip to Pokhara from Kathmandu. Budget Rs 50,000 for 4 people. Include accommodation, food, activities, and transportation options." ChatGPT creates a real, detailed itinerary that you can adjust as you like.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🏡 Everyday Life Prompts to Copy and Try Today</p>
+        <div class="prompt-template-grid">
+          <div class="prompt-template-card">
+            <div class="ptc-label">📚 Children's homework help</div>
+            <div class="ptc-text">"Explain the causes of the French Revolution to a 14-year-old student in simple English. Use bullet points and a short story example."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">🥗 Meal planning</div>
+            <div class="ptc-text">"Create a 7-day healthy meal plan for a Nepali family of 4. Use local ingredients. Budget Rs 4,000. Include breakfast, lunch, and dinner."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">💊 Health information</div>
+            <div class="ptc-text">"What are some natural home remedies for a mild cough and cold that are common in Nepal? List simple options I can try before seeing a doctor."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">✈️ Trip planning</div>
+            <div class="ptc-text">"Plan a 3-day trip to Chitwan from Kathmandu for 2 adults. Budget Rs 25,000. Include transport, food, hotel, and activities. Give day-by-day schedule."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">💰 Budget planning</div>
+            <div class="ptc-text">"Help me create a monthly budget. My income is Rs 45,000. I have rent, food, school fees, and savings goals. Give me a simple plan."</div>
+          </div>
+          <div class="prompt-template-card">
+            <div class="ptc-label">📋 Understanding a document</div>
+            <div class="ptc-text">"I received a notice from the bank about loan interest changes. I will describe what it says. Can you explain it in simple words and tell me what I should do?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Priya the Mother, Biratnagar</div>
+          <p>Priya Acharya, 43, is a homemaker in Biratnagar. Her 15-year-old son was struggling in science class, and private tuition was too expensive — Rs 3,000 per month they could not afford. Her daughter, visiting from college, showed her how to use ChatGPT as a free tutor.</p>
+          <p>Now every evening, her son sits with his phone and asks ChatGPT to explain whatever topic confused him in school. He types in Nepali if needed. The AI explains the concept three different ways until he gets it. It gives him practice problems, checks his answers, and explains his mistakes patiently.</p>
+          <div class="dialogue">"My son's science marks went from 45 to 72 in one exam. His class teacher asked what happened — he told her he started studying differently. We saved Rs 3,000 per month. That money now goes into his future education fund. I tell every mother in our neighbourhood about this." — Priya</div>
+          <p>Priya also uses ChatGPT to plan weekly meals, write formal letters to government offices, and recently used it to understand a complicated insurance document her husband brought home.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Solve 3 Real Personal Problems with AI Today</div>
+          <p>Choose 3 things from your personal life that you could use help with right now. They can be small or big. Use ChatGPT for each one.</p>
+          <ol>
+            <li><strong>A learning question</strong> — Something you have always wanted to understand but never had anyone to explain it simply</li>
+            <li><strong>A planning task</strong> — Weekly meals, a trip, a budget, a family event — let AI help you plan it</li>
+            <li><strong>A document or situation you find confusing</strong> — Describe it to AI and ask for a simple explanation</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Share your favourite personal use case in the WhatsApp group. You might inspire another student! 🌟</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Trusting AI completely for medical or legal advice</strong>ChatGPT can give you very useful general health and legal information — and it is great for understanding what something means or what questions to ask. But for serious health symptoms, legal documents, or major financial decisions, always consult a real doctor, lawyer, or advisor. Use AI to prepare yourself for those conversations, not to replace them.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Giving AI sensitive personal information like passwords or account numbers</strong>Never type your bank account numbers, passwords, national ID number, or financial account details into ChatGPT. This information is not necessary for any task AI can help with — and it is always better to be cautious with your private data online.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Thinking AI is only for "important" things</strong>AI is incredibly useful for tiny everyday things too. "What should I cook for dinner with potatoes, eggs, and tomatoes?" "Give me a simple morning routine for someone who has 30 minutes before work." "Write a short birthday message for my aunt in Nepali." Let AI become part of your daily life — not just your big challenges.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lesson-divider"><span>✦</span></div>
+
+  <!-- ===== LESSON 6 ===== -->
+  <div class="lesson-card" id="lesson6">
+    <div class="lesson-header">
+      <div class="lesson-num">06</div>
+      <div class="lesson-header-text">
+        <h3>Saving Time: How to Use AI to Finish 1-Hour Tasks in 10 Minutes</h3>
+        <p>Estimated time: 30 minutes · The lesson that gives you your time back</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="section-block">
+        <p class="section-label">🎯 Lesson Objective</p>
+        <div class="objective-box">
+          By the end of this lesson, you will have a complete personal "AI Time-Saving System" — a set of habits and prompts that save you 2–3 hours every single day, freeing your time for family, rest, and the things that truly matter.
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📖 Teaching Content (Full Lesson Script)</p>
+        <div class="script-box">
+          <p>I want to ask you a question. What would you do with an extra 2 hours every day? More time with your children? More rest? More time to grow your business? More time for yourself? <span class="emphasis">That is what this lesson is about — getting those 2 hours back.</span></p>
+
+          <p>Most people who use AI are still only using it for 10–20% of what it can do. They use it to write one post, one message. But AI can help you with almost every task that involves thinking, writing, planning, summarising, or deciding. Once you build the habit of asking AI first, you will be amazed at how much time you save.</p>
+
+          <p>Let me share the "AI First" mindset with you. Before you start any task that will take more than 5 minutes, ask yourself: <span class="emphasis">"Could I ask AI to help me with this?" If yes — ask AI first. Then improve the result.</span> This one habit alone can save you hours every week.</p>
+
+          <p>Here are the top time-stealing tasks for most people — and how AI handles them:</p>
+
+          <p><strong>Summarising long documents or articles:</strong> Got a 10-page report, a long news article, or a lengthy government document? Paste it into ChatGPT and say: "Summarise this in 5 bullet points." 30 seconds instead of 30 minutes.</p>
+
+          <p><strong>Translating between languages:</strong> Need to translate a product description from Nepali to English? Or understand an English email? Paste it and ask: "Translate this to Nepali in simple words." Perfect every time.</p>
+
+          <p><strong>Preparing for meetings and conversations:</strong> Before an important meeting with your bank, a supplier, or a new customer, tell ChatGPT the situation and ask: "Give me 5 questions I should ask and 3 things I should be careful about." You walk in prepared and confident.</p>
+
+          <p><strong>Drafting reports, proposals, or applications:</strong> Need to write a leave application? A loan proposal? A business plan outline? Tell ChatGPT the details and ask it to write a professional draft. What takes you 2 hours takes AI 30 seconds. You spend 10 minutes personalising — done.</p>
+
+          <p><strong>Creating checklists and plans:</strong> "Give me a checklist for opening a new shop in Nepal." "Create a step-by-step plan for applying for a bank loan." "What do I need to prepare for Dashain food shopping for 20 people?" ChatGPT creates organised, practical plans faster than you can think through them yourself.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⏰ Your AI Time-Saving System — Daily Habits</p>
+        <div class="highlight-box">
+          <h4>The "AI First" Daily Routine</h4>
+          <p><strong style="color:var(--gold-light)">Morning (5 minutes):</strong> Ask AI to summarise the day's news in your industry or area, create a to-do list for your day, and draft any important message you need to send.<br><br>
+          <strong style="color:var(--gold-light)">During Work:</strong> Before writing any message longer than 3 sentences — ask AI to write it. Before making a decision — ask AI for pros and cons. Before a meeting — ask AI to help you prepare.<br><br>
+          <strong style="color:var(--gold-light)">Evening (5 minutes):</strong> Ask AI to plan tomorrow's social media post, review any document you received that day, or answer any question that came up.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">📋 Step-by-Step: Building Your AI Time-Saving Habit</p>
+        <ol class="steps-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Make ChatGPT your phone's home screen shortcut</strong>
+              <span>Go to the ChatGPT app or website. Add it to your phone's home screen so it is the first thing you see. The easier it is to access, the more you will use it. Habit starts with accessibility.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Create a "prompt library" in your phone's notes</strong>
+              <span>Save your 10 most useful prompts in your phone's notes app. Label them: "Customer complaint reply," "Facebook post," "Payment reminder," etc. When you need them, open your notes, copy the prompt, fill in the details, paste into ChatGPT. Takes 30 seconds.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Start every writing task with AI</strong>
+              <span>Any time you need to write something — do NOT stare at a blank screen. Open ChatGPT first. Give it the situation. Get a draft. Now your job is to improve it, not create from nothing. This single change will save you enormous mental energy every day.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Use AI for research before decisions</strong>
+              <span>Thinking of buying a new phone? Starting a new product line? Moving to a new location? Ask ChatGPT first: "What are the pros and cons of [decision]? What questions should I ask before deciding?" Get a thoughtful, balanced view in 60 seconds.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Track the time you save each week</strong>
+              <span>For one week, write down every task you completed using AI and estimate how long it would have taken without AI. At the end of the week, add it up. Most students are shocked — the number is usually between 8 and 15 hours saved. That is almost two working days!</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">🇳🇵 Real-Life Nepal Example</p>
+        <div class="example-box">
+          <div class="ex-title"><span class="ex-icon">N</span>Story: Sanjaya the Teacher, Dang</div>
+          <p>Sanjaya Oli, 38, is a secondary school teacher in Dang. Every week he had to write lesson plans, assignment questions, parent letters, school event notices, and recommendation letters for students — all on top of his actual teaching. He often worked late into the night and was exhausted.</p>
+          <p>After this module, Sanjaya built an AI routine around his work. He now asks ChatGPT to:</p>
+          <ul style="margin: 12px 0 12px 20px; color: var(--ink); font-size: 15px; line-height: 1.9;">
+            <li>Create lesson plans in 5 minutes instead of 45</li>
+            <li>Write exam questions for any topic in 2 minutes</li>
+            <li>Draft parent communication letters instantly</li>
+            <li>Summarise long education circulars from the government</li>
+            <li>Create student report card comments (just gives AI the student's performance and AI writes the comment)</li>
+          </ul>
+          <div class="dialogue">"I used to stay at school until 7pm every day. Now I finish everything by 4:30pm. I am home for dinner with my children every evening. My wife cannot believe the change. AI gave me back my family time." — Sanjaya</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">✏️ Your Exercise for This Lesson</p>
+        <div class="task-box">
+          <div class="task-title">Task: Build Your Personal AI Time-Saving System</div>
+          <p>This is the most important exercise of the module. It will take 20–30 minutes but will save you hundreds of hours over the coming months.</p>
+          <ol>
+            <li><strong>List your 5 biggest time-wasting tasks</strong> — the things that take the most time in your work or life each week</li>
+            <li><strong>For each task, write an AI prompt</strong> that could do 80% of that task for you</li>
+            <li><strong>Save all 5 prompts in your phone's notes</strong> — label them clearly</li>
+            <li><strong>Use AI for each task</strong> at least once this week and compare the time taken</li>
+            <li><strong>Report back:</strong> How many minutes or hours did you save? Share in the group!</li>
+          </ol>
+          <p style="margin-top: 14px; color: var(--purple); font-weight: 700;">Your prompt library is your personal superpower. Protect it and grow it every week. 💪</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">⚠️ Common Mistakes to Avoid</p>
+        <div class="mistakes-box">
+          <div class="m-title">Watch Out For These</div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Using AI as a replacement for your judgment, not a helper</strong>AI saves you time on thinking and writing — but the final decision, the final check, and the final approval should always come from you. AI is very smart, but it does not know your specific situation, your relationships, or your values as well as you do. Use AI to think faster, not to stop thinking.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Starting a new task every time instead of continuing a conversation</strong>ChatGPT remembers everything within one conversation. If you are working on a business plan, do not close and start a new chat every time. Keep adding to the same conversation: "Now add a section on marketing" or "Let us come back to the pricing section — I want to change it." Building on one conversation is faster and smarter.</div>
+          </div>
+          <div class="mistake-item">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-text"><strong>Waiting until you are "better at AI" to start saving time</strong>Do not wait. Start today, with whatever you know now. You will get better every time you use it. The students who progress fastest are not the ones who study AI the most — they are the ones who use it the most. Every prompt you write teaches you something new.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="pro-tip">
+          <div class="pro-tip-icon">💡</div>
+          <div class="pro-tip-text">
+            <strong>Module 3 Completion — A Message from Your Instructor</strong>
+            Congratulations — you have just completed the most practical module in this entire course. You now know how to write better messages, run your business smarter, create social media content, improve your personal life, and build a daily AI habit that saves you hours. These are skills that most people in Nepal — and the world — still do not have. You are ahead. Now use these skills every single day. In Module 4, we go even deeper — you will learn how to make money directly from your new AI skills. Get ready. 🎯
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="testimonials">
+  <div class="testimonials-inner">
+    <p class="section-eyebrow-white">Real Stories · Real Results</p>
+    <h2>What Students Say After Module 3</h2>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I used to spend 2 hours every Monday writing Facebook posts for my shop. After Module 3, I create a whole month's content in one evening. My followers went from 340 to 1,200 in six weeks. I still cannot believe it."</p>
+        <div class="testi-person">Binita Karmacharya</div>
+        <div class="testi-role">Clothing boutique owner, Lalitpur</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The RICE Formula lesson changed everything for me. Before, ChatGPT would give me useless answers. Now every answer is exactly what I need. My wife thinks I became a technology expert overnight!"</p>
+        <div class="testi-person">Mahesh Dhakal</div>
+        <div class="testi-role">Hardware shop owner, Butwal</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I used AI to plan my daughter's wedding — budget, venue questions, vendor messages, invitation wording. What should have been a 2-month stress became a 2-week organised plan. AI felt like a wise friend."</p>
+        <div class="testi-person">Sarada Thapa</div>
+        <div class="testi-role">Teacher and homemaker, Pokhara</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <p class="module-eyebrow">Common Questions</p>
+  <h2>You Might Be Wondering...</h2>
+  <p class="faq-sub">Real questions from students who just finished Module 3</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Do I need to know English well to use all these prompts? <span>+</span>
+    </div>
+    <div class="faq-a">
+      Absolutely not. You can write every prompt in Nepali, Hindi, or a mix of both, and ChatGPT will understand you perfectly. It will reply in the same language you use. If you want the reply in English, just add "Please reply in English" at the end of your prompt. Many of our best students use ChatGPT entirely in Nepali. Your language is not a barrier — it never was.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What if I try the RICE formula and still get a bad answer? <span>+</span>
+    </div>
+    <div class="faq-a">
+      That happens sometimes — and it is totally normal, even for experienced users. When it happens, do not start over. Simply say: "That was not quite what I wanted. Let me give you more details." Then add 2–3 sentences of additional context. Most of the time, the second or third attempt is much better. Think of it like directing an employee — sometimes they need a little more guidance.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Is it cheating to use AI to write messages and posts for my business? <span>+</span>
+    </div>
+    <div class="faq-a">
+      Not at all. Using AI for writing is exactly like using a calculator for maths or a GPS for navigation. No one calls that cheating. Your ideas, your business, your products, and your customer relationships are all yours. AI just helps you express them more clearly and efficiently. Every major company in the world — big and small — is using AI for writing today. You are simply keeping up.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      I do not have a business. Is this module still useful for me? <span>+</span>
+    </div>
+    <div class="faq-a">
+      Very much so. Lessons 1, 5, and 6 are especially designed for personal use — helping your children, planning meals, understanding documents, saving time at work, preparing for important conversations. Many of our students are homemakers, teachers, and employees who use AI every day for personal tasks and find it enormously helpful. This module has something for everyone.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      How long before I start seeing real results from using AI? <span>+</span>
+    </div>
+    <div class="faq-a">
+      You will save time from the very first day. Most students notice they are saving 30–60 minutes by the end of their first week. Business results — more sales, more followers, better customer satisfaction — typically start showing within 2–4 weeks of consistent use. The students who see the fastest results are the ones who complete all the exercises and use AI every single day, even for small things.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      My internet is slow and sometimes ChatGPT does not load. What should I do? <span>+</span>
+    </div>
+    <div class="faq-a">
+      Slow internet is common in many parts of Nepal, and we understand. A few tips: Use ChatGPT during off-peak hours (early morning or late evening) when traffic is lower. The basic version of ChatGPT uses very little data — much less than watching a video. If you have a data plan, 30 minutes of ChatGPT uses less data than 2 minutes of YouTube. Also, Wi-Fi at local restaurants or hotels is often fast enough. Even with occasional interruptions, the time you save far outweighs the inconvenience.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p><strong>AI Saathi</strong> — Your Smart Life, Simplified</p>
+  <p style="margin-top: 8px;">Module 3 Complete · Next: Module 4 — Making Money with AI Skills →</p>
+  <p style="margin-top: 16px; font-size: 13px;">© 2025 AI Saathi Course · Designed for Nepal &amp; South Asia · All lessons in this course are for educational purposes.</p>
+</footer>
+
+<script>
+  function toggleFaq(el) {
+    const answer = el.nextElementSibling;
+    const icon = el.querySelector('span');
+    const isOpen = answer.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-q span').forEach(s => { s.textContent = '+'; s.style.transform = ''; });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      answer.classList.add('open');
+      icon.textContent = '−';
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+</script>
+
+</body>
+</html>

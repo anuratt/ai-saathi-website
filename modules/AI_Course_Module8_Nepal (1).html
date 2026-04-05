@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 8: Your AI Future</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #06070C;
+  --surface: #0C0E16;
+  --surface2: #111420;
+  --surface3: #171B2A;
+  --gold: #F5C842;
+  --gold-dim: rgba(245,200,66,0.10);
+  --gold-border: rgba(245,200,66,0.26);
+  --gold-glow: rgba(245,200,66,0.06);
+  --amber: #F59E0B;
+  --amber-dim: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.24);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.10);
+  --green-border: rgba(34,197,94,0.25);
+  --teal: #2DD4BF;
+  --teal-dim: rgba(45,212,191,0.10);
+  --teal-border: rgba(45,212,191,0.25);
+  --violet: #8B5CF6;
+  --violet-dim: rgba(139,92,246,0.10);
+  --violet-border: rgba(139,92,246,0.24);
+  --sky: #38BDF8;
+  --sky-dim: rgba(56,189,248,0.09);
+  --sky-border: rgba(56,189,248,0.22);
+  --pink: #EC4899;
+  --pink-dim: rgba(236,72,153,0.09);
+  --pink-border: rgba(236,72,153,0.22);
+  --orange: #FB923C;
+  --orange-dim: rgba(251,146,60,0.10);
+  --orange-border: rgba(251,146,60,0.24);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.09);
+  --red-border: rgba(248,113,113,0.22);
+  --text: #EDF0FA;
+  --text-muted: #657090;
+  --text-dim: #2C3150;
+  --border: rgba(255,255,255,0.05);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Source Serif 4',Georgia,serif;
+  background:var(--bg); color:var(--text);
+  font-size:17px; line-height:1.84; overflow-x:hidden;
+}
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--gold-dim); border-radius:2px; }
+
+/* GRAIN */
+.grain {
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* NAV */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(6,7,12,0.92); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border); padding:0 32px;
+}
+.nav-inner {
+  max-width:1060px; margin:0 auto;
+  height:58px; display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--gold); letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:10px;
+}
+.nav-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--gold);
+  animation:pulse-gold 2s infinite;
+}
+@keyframes pulse-gold {
+  0%,100%{ box-shadow:0 0 0 0 rgba(245,200,66,0.6); }
+  50%{ box-shadow:0 0 0 9px rgba(245,200,66,0); }
+}
+.nav-pill {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  color:var(--gold); padding:5px 14px; border-radius:20px;
+}
+.nav-right {
+  display:flex; align-items:center; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted);
+}
+.progress-dots { display:flex; gap:5px; }
+.pd { width:8px; height:8px; border-radius:50%; background:var(--surface3); border:1px solid var(--border); }
+.pd.done { background:var(--green); border-color:var(--green); }
+.pd.active { background:var(--gold); border-color:var(--gold); transform:scale(1.3); }
+
+/* HERO — GRADUATION SPECIAL */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; padding:120px 40px 100px;
+  position:relative; overflow:hidden;
+}
+.hero-orb1 {
+  position:absolute; top:-100px; right:-80px;
+  width:800px; height:800px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,200,66,0.13) 0%, rgba(245,158,11,0.07) 38%, transparent 65%);
+  pointer-events:none;
+}
+.hero-orb2 {
+  position:absolute; bottom:-80px; left:-80px;
+  width:560px; height:560px; border-radius:50%;
+  background:radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 62%);
+  pointer-events:none;
+}
+.hero-orb3 {
+  position:absolute; top:30%; left:40%;
+  width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(245,200,66,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.025) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse at 60% 35%, black 15%, transparent 68%);
+}
+.hero-inner { max-width:1060px; margin:0 auto; width:100%; position:relative; z-index:1; }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  padding:7px 18px; border-radius:30px; margin-bottom:32px;
+}
+.hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse-gold 2s infinite; }
+.hero-eyebrow-text {
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--gold);
+}
+
+.hero h1 {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(40px,7.5vw,88px);
+  line-height:1.0; letter-spacing:-3px; margin-bottom:20px;
+}
+.line1 { display:block; color:var(--text); }
+.line2 {
+  display:block; color:transparent;
+  background:linear-gradient(100deg, var(--gold) 0%, var(--amber) 35%, var(--teal) 70%, var(--green) 100%);
+  -webkit-background-clip:text; background-clip:text;
+}
+.line3 { display:block; color:var(--text-muted); font-size:0.41em; font-weight:600; letter-spacing:-0.3px; margin-top:12px; }
+
+.hero-sub {
+  font-size:20px; color:var(--text-muted); max-width:640px;
+  margin-bottom:48px; font-style:italic; line-height:1.7; font-weight:300;
+}
+
+.hero-stats { display:flex; gap:44px; flex-wrap:wrap; margin-bottom:48px; }
+.stat-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:38px;
+  color:var(--gold); line-height:1; letter-spacing:-1px; margin-bottom:4px;
+}
+.stat-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+}
+
+.hero-cta-row { display:flex; gap:14px; flex-wrap:wrap; }
+.cta-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(100deg, var(--gold), var(--amber));
+  color:var(--bg);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+  letter-spacing:0.3px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+  box-shadow:0 0 40px rgba(245,200,66,0.3);
+}
+.cta-primary:hover { transform:translateY(-2px); box-shadow:0 0 56px rgba(245,200,66,0.48); }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); color:var(--text-muted);
+  font-family:'Syne',sans-serif; font-weight:600; font-size:14px;
+  padding:14px 28px; border-radius:40px; text-decoration:none; transition:all 0.2s;
+}
+.cta-secondary:hover { border-color:var(--gold); color:var(--gold); }
+
+/* GRADUATION STRIP */
+.graduation-strip {
+  padding:28px 40px;
+  background:linear-gradient(90deg, var(--gold-dim), transparent, var(--gold-dim));
+  border-top:1px solid var(--gold-border); border-bottom:1px solid var(--gold-border);
+  text-align:center;
+  font-family:'Syne',sans-serif; font-weight:700; font-size:17px;
+  color:var(--gold); letter-spacing:0.5px;
+}
+
+/* SECTION */
+.section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.section-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+}
+.section-label::before { content:''; width:20px; height:1px; background:var(--text-dim); }
+.section-title {
+  font-family:'Syne',sans-serif; font-size:clamp(28px,4vw,44px);
+  font-weight:800; letter-spacing:-1.5px; color:var(--text);
+  line-height:1.1; margin-bottom:18px;
+}
+.section-desc { font-size:17px; color:var(--text-muted); max-width:660px; margin-bottom:48px; line-height:1.8; }
+
+/* JOURNEY MAP */
+.journey { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:40px; }
+.journey-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:22px 18px; text-align:center;
+  position:relative; overflow:hidden; transition:all 0.25s;
+}
+.journey-card:hover { border-color:var(--gold-border); transform:translateY(-2px); }
+.journey-module {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px;
+}
+.journey-icon { font-size:28px; margin-bottom:10px; display:block; }
+.journey-title { font-family:'Syne',sans-serif; font-weight:700; font-size:13px; color:var(--text); margin-bottom:6px; }
+.journey-skill { font-size:12px; color:var(--text-muted); line-height:1.6; }
+.journey-check {
+  position:absolute; top:14px; right:14px;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--green-dim); border:1px solid var(--green-border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:var(--green);
+}
+
+/* LESSON BLOCK */
+.lesson-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden; margin-bottom:28px;
+}
+.lesson-topbar {
+  padding:28px 32px; display:flex; justify-content:space-between;
+  align-items:flex-start; position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.lesson-accent { position:absolute; top:0; left:0; width:100%; height:3px; }
+.ltb-left { flex:1; }
+.lesson-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.tag-dot { width:6px; height:6px; border-radius:50%; }
+.lesson-title-big {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:23px;
+  color:var(--text); letter-spacing:-0.5px; line-height:1.2; margin-bottom:14px;
+}
+.lesson-meta-row {
+  display:flex; flex-wrap:wrap; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted); font-weight:600;
+}
+.lesson-num-badge {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:64px;
+  color:var(--surface3); letter-spacing:-3px; line-height:1;
+  flex-shrink:0; margin-left:24px; user-select:none;
+}
+.lesson-body { padding:32px 32px; }
+
+/* BLOCKS */
+.block { margin-bottom:34px; }
+.block:last-child { margin-bottom:0; }
+.block-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.block-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.block-header-text {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+}
+
+/* OBJECTIVE BOX */
+.objective-box {
+  background:var(--surface2); border-left:3px solid var(--gold);
+  padding:20px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:16px; color:var(--text); line-height:1.78;
+}
+
+/* SCRIPT BOX */
+.script-box {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 30px;
+}
+.script-box p { margin-bottom:18px; color:var(--text); line-height:1.84; }
+.script-box p:last-child { margin-bottom:0; }
+.script-box strong { color:var(--text); font-weight:600; }
+.script-box em { color:var(--text-muted); font-style:italic; }
+.script-box h4 {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
+  color:var(--gold); margin:24px 0 10px; letter-spacing:-0.3px;
+}
+
+/* ACTION PLAN BOX */
+.action-plan {
+  background:var(--surface2); border:1px solid var(--gold-border);
+  border-radius:var(--radius); overflow:hidden; margin:20px 0;
+}
+.ap-header {
+  padding:20px 26px; background:var(--gold-dim);
+  border-bottom:1px solid var(--gold-border);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:16px; color:var(--gold);
+  display:flex; align-items:center; gap:12px;
+}
+.ap-body { padding:0; }
+.ap-week {
+  padding:20px 26px; border-bottom:1px solid var(--border);
+  display:flex; gap:20px; align-items:flex-start;
+}
+.ap-week:last-child { border-bottom:none; }
+.ap-week-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:13px;
+  color:var(--gold); background:var(--gold-dim); border:1px solid var(--gold-border);
+  padding:6px 12px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+}
+.ap-week-content { flex:1; }
+.ap-week-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:6px; }
+.ap-week-tasks { font-size:14px; color:var(--text-muted); line-height:1.75; }
+.ap-week-tasks li { margin-left:18px; margin-bottom:4px; }
+
+/* CALLOUTS */
+.callout {
+  display:flex; gap:16px; padding:20px 24px;
+  border-radius:var(--radius-sm); margin:20px 0;
+}
+.callout-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+.callout-text { font-size:15px; line-height:1.75; }
+.callout-text strong { font-weight:700; display:block; margin-bottom:5px; }
+.c-gold { background:var(--gold-dim); border:1px solid var(--gold-border); }
+.c-gold .callout-text { color:rgba(245,200,66,0.88); }
+.c-green { background:var(--green-dim); border:1px solid var(--green-border); }
+.c-green .callout-text { color:rgba(34,197,94,0.88); }
+.c-teal { background:var(--teal-dim); border:1px solid var(--teal-border); }
+.c-teal .callout-text { color:rgba(45,212,191,0.88); }
+.c-violet { background:var(--violet-dim); border:1px solid var(--violet-border); }
+.c-violet .callout-text { color:rgba(196,181,253,0.88); }
+.c-sky { background:var(--sky-dim); border:1px solid var(--sky-border); }
+.c-sky .callout-text { color:rgba(56,189,248,0.88); }
+
+/* NEPAL EXAMPLE */
+.nepal-example {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+}
+.ne-header {
+  padding:20px 26px; display:flex; gap:16px; align-items:center;
+  background:rgba(245,200,66,0.06); border-bottom:1px solid var(--border);
+}
+.ne-flag { font-size:28px; flex-shrink:0; }
+.ne-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+.ne-subtitle { font-size:13px; color:var(--text-muted); margin-top:3px; }
+.ne-body { padding:24px 26px; }
+.ne-body p { font-size:16px; color:var(--text); line-height:1.82; margin-bottom:14px; }
+.ne-body p:last-child { margin-bottom:0; }
+.ne-quote {
+  background:rgba(245,200,66,0.06); border-left:3px solid var(--gold);
+  padding:16px 20px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:15px; color:rgba(240,244,255,0.78); font-style:italic;
+  line-height:1.78; margin:16px 0;
+}
+.ne-result {
+  display:flex; align-items:center; gap:12px;
+  background:var(--green-dim); border:1px solid var(--green-border);
+  padding:12px 18px; border-radius:var(--radius-sm); margin-top:4px;
+}
+.ne-result-icon { font-size:20px; }
+.ne-result-text { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--green); }
+
+/* STEPS */
+.steps { display:flex; flex-direction:column; gap:12px; }
+.step {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:18px 20px; border-radius:var(--radius-sm); transition:border-color 0.2s;
+}
+.step:hover { border-color:var(--gold-border); }
+.step-num {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:var(--bg);
+}
+.step-content { flex:1; }
+.step-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.step-desc { font-size:14px; color:var(--text-muted); line-height:1.72; }
+
+/* BADGES */
+.badge {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px;
+}
+.badge-gold { background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border); }
+.badge-green { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+.badge-teal { background:var(--teal-dim); color:var(--teal); border:1px solid var(--teal-border); }
+.badge-violet { background:var(--violet-dim); color:var(--violet); border:1px solid var(--violet-border); }
+
+/* SKILLS GRID */
+.skills-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0; }
+.skill-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:18px 20px;
+  transition:border-color 0.2s;
+}
+.skill-card:hover { border-color:var(--gold-border); }
+.skill-icon { font-size:24px; margin-bottom:10px; display:block; }
+.skill-name { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--text); margin-bottom:6px; }
+.skill-status {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--green);
+}
+
+/* FUTURE HORIZONS */
+.horizons { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+.horizon-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px 22px; position:relative; overflow:hidden;
+  transition:all 0.25s;
+}
+.horizon-card:hover { border-color:var(--gold-border); transform:translateY(-2px); }
+.horizon-tag {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.horizon-title { font-family:'Syne',sans-serif; font-weight:700; font-size:17px; color:var(--text); margin-bottom:10px; }
+.horizon-desc { font-size:14px; color:var(--text-muted); line-height:1.72; margin-bottom:14px; }
+.horizon-reality { font-size:13px; color:var(--text-dim); font-style:italic; line-height:1.65; }
+
+/* TASK BOX */
+.task-box {
+  background:rgba(245,200,66,0.05); border:1px solid var(--gold-border);
+  border-radius:var(--radius); padding:26px 30px;
+}
+.task-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.task-header-icon { font-size:28px; }
+.task-header-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:17px;
+  color:var(--gold); letter-spacing:-0.3px;
+}
+.task-body p, .task-body li { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:10px; }
+.task-body ol { padding-left:20px; }
+.task-body li { padding-left:4px; }
+.task-body strong { color:var(--text); }
+.task-cta {
+  margin-top:16px; padding:14px 18px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  border-radius:var(--radius-sm); font-size:14px; color:var(--gold);
+  font-family:'Syne',sans-serif; font-weight:700; line-height:1.6;
+}
+
+/* DIVIDER */
+.lesson-divider {
+  max-width:1060px; margin:0 auto 28px; padding:0 40px;
+  display:flex; align-items:center; gap:20px;
+}
+.ld-line { flex:1; height:1px; background:var(--border); }
+.ld-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* GRADUATION CEREMONY */
+.graduation-box {
+  max-width:1060px; margin:0 auto 60px; padding:0 40px;
+}
+.grad-inner {
+  background:var(--surface);
+  border:1px solid var(--gold-border);
+  border-radius:24px; overflow:hidden; position:relative;
+}
+.grad-glow {
+  position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+  width:600px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,200,66,0.1) 0%, transparent 65%);
+  pointer-events:none;
+}
+.grad-header {
+  text-align:center; padding:60px 40px 40px; position:relative;
+}
+.grad-icon { font-size:64px; display:block; margin-bottom:20px; }
+.grad-title {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(28px,5vw,52px); letter-spacing:-2px;
+  color:transparent;
+  background:linear-gradient(100deg, var(--gold), var(--amber), var(--teal));
+  -webkit-background-clip:text; background-clip:text;
+  margin-bottom:16px;
+}
+.grad-subtitle { font-size:18px; color:var(--text-muted); max-width:540px; margin:0 auto; line-height:1.7; }
+.grad-skills {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--border); margin:0;
+}
+.grad-skill {
+  background:var(--surface2); padding:24px 20px; text-align:center;
+}
+.grad-skill-icon { font-size:24px; display:block; margin-bottom:8px; }
+.grad-skill-name {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  color:var(--text); margin-bottom:4px;
+}
+.grad-skill-module { font-size:12px; color:var(--text-dim); }
+.grad-footer {
+  padding:32px 40px; text-align:center;
+  border-top:1px solid var(--border);
+}
+.grad-cta {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(100deg, var(--gold), var(--amber));
+  color:var(--bg);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:16px;
+  padding:16px 36px; border-radius:40px; text-decoration:none;
+  box-shadow:0 0 50px rgba(245,200,66,0.35);
+  transition:all 0.2s;
+}
+.grad-cta:hover { transform:translateY(-2px); box-shadow:0 0 70px rgba(245,200,66,0.5); }
+
+/* TESTI */
+.testi-section { background:var(--surface); border-top:1px solid var(--border); padding:80px 40px; }
+.testi-inner { max-width:1060px; margin:0 auto; }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
+.testi-card {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 24px;
+}
+.testi-stars { color:var(--gold); font-size:16px; margin-bottom:14px; letter-spacing:3px; }
+.testi-quote { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:20px; font-style:italic; }
+.testi-name { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--text); }
+.testi-role { font-size:13px; color:var(--text-dim); margin-top:3px; }
+
+/* FAQ */
+.faq-section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.faq-item {
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  overflow:hidden; margin-bottom:10px;
+}
+.faq-q {
+  padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-family:'Syne',sans-serif; font-weight:600; font-size:15px; color:var(--text);
+  background:var(--surface); transition:background 0.2s; gap:16px;
+}
+.faq-q:hover { background:var(--surface2); }
+.faq-icon { font-size:20px; color:var(--gold); flex-shrink:0; }
+.faq-a {
+  max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s;
+  background:var(--surface2); font-size:15px; color:var(--text-muted); line-height:1.8;
+  padding:0 24px;
+}
+.faq-a.open { max-height:500px; padding:20px 24px; }
+
+/* FINAL FOOTER */
+footer {
+  background:var(--surface); border-top:1px solid var(--border);
+  padding:60px 40px; text-align:center;
+}
+.footer-logo {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:24px;
+  color:var(--gold); letter-spacing:-1px; margin-bottom:12px;
+}
+.footer-tagline { font-size:15px; color:var(--text-muted); margin-bottom:24px; }
+.footer-modules {
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:24px;
+}
+.footer-module {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text-dim); padding:5px 12px; border-radius:20px;
+}
+.footer-bottom { font-size:13px; color:var(--text-dim); line-height:1.7; }
+
+@media(max-width:768px) {
+  .journey { grid-template-columns:repeat(2,1fr); }
+  .skills-grid { grid-template-columns:1fr 1fr; }
+  .horizons { grid-template-columns:1fr; }
+  .grad-skills { grid-template-columns:repeat(2,1fr); }
+  .testi-grid { grid-template-columns:1fr; }
+  .hero h1 { letter-spacing:-2px; }
+  .lesson-topbar { flex-direction:column; }
+  .lesson-num-badge { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-dot"></div>
+      AI Saathi
+    </div>
+    <div class="nav-pill">MODULE 8 · FINAL</div>
+    <div class="nav-right">
+      <span>8 of 8</span>
+      <div class="progress-dots">
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd active"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-orb3"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">Module 8 · The Final Chapter 🎓</span>
+    </div>
+    <h1>
+      <span class="line1">Your AI-Powered</span>
+      <span class="line2">Future Starts Now</span>
+      <span class="line3">Build Your Plan · Stay Ahead · Live the Life AI Makes Possible</span>
+    </h1>
+    <p class="hero-sub">You came in knowing nothing about AI. You are leaving as someone who can use it to write, earn, create, research, automate, and grow. This final module turns everything you learned into <em>a concrete plan for your life and business</em>.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">4</div>
+        <div class="stat-label">Final Lessons</div>
+      </div>
+      <div>
+        <div class="stat-num">8</div>
+        <div class="stat-label">Modules Completed</div>
+      </div>
+      <div>
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Possibilities Ahead</div>
+      </div>
+    </div>
+    <div class="hero-cta-row">
+      <a href="#lessons" class="cta-primary">▶ Begin Your Final Module</a>
+      <a href="#journey" class="cta-secondary">Your Full Journey →</a>
+    </div>
+  </div>
+</section>
+
+<!-- GRADUATION STRIP -->
+<div class="graduation-strip">
+  🏆 You have completed 7 modules. One more and you will be an official AI Saathi Graduate. Let's finish strong.
+</div>
+
+<!-- JOURNEY RECAP -->
+<section class="section" id="journey">
+  <div class="section-label">Your Journey So Far</div>
+  <h2 class="section-title">Look how far you have come</h2>
+  <p class="section-desc">Before this course, AI was a mysterious and slightly intimidating technology. Look at what you have mastered in just 7 modules. Take a moment to feel proud — this is real, hard-earned knowledge.</p>
+
+  <div class="journey">
+    <div class="journey-card">
+      <div class="journey-module">Module 1</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">🤖</span>
+      <div class="journey-title">AI Foundations</div>
+      <div class="journey-skill">What AI is, how to talk to it, and why you are still valuable</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 2</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">✍️</span>
+      <div class="journey-title">Writing Superpower</div>
+      <div class="journey-skill">Social posts, messages, ads, and content — all created by AI</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 3</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">🏪</span>
+      <div class="journey-title">Business AI</div>
+      <div class="journey-skill">Customer service, planning, operations — AI as your business partner</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 4</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">💰</span>
+      <div class="journey-title">Making Money</div>
+      <div class="journey-skill">AI freelancing, services, and income streams — real money from real skills</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 5</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">🎨</span>
+      <div class="journey-title">Images, Video & Voice</div>
+      <div class="journey-skill">Visual content, AI art, voice tools — the creative revolution</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 6</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">🔬</span>
+      <div class="journey-title">Research & Data</div>
+      <div class="journey-skill">Smarter decisions, market research, and understanding your numbers</div>
+    </div>
+    <div class="journey-card">
+      <div class="journey-module">Module 7</div>
+      <div class="journey-check">✓</div>
+      <span class="journey-icon">⚡</span>
+      <div class="journey-title">Advanced Prompting</div>
+      <div class="journey-skill">RACE, role prompting, chain prompting, and simple automation</div>
+    </div>
+    <div class="journey-card" style="border-color:var(--gold-border); background:rgba(245,200,66,0.04);">
+      <div class="journey-module" style="color:var(--gold);">Module 8</div>
+      <span class="journey-icon">🌟</span>
+      <div class="journey-title" style="color:var(--gold);">Your AI Future</div>
+      <div class="journey-skill">Build your plan. Stay ahead. This is where it all comes together.</div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS -->
+<section id="lessons" style="max-width:1060px; margin:0 auto; padding:0 40px 80px;">
+
+  <!-- LESSON 1 -->
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--gold),var(--amber))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--gold)">
+          <div class="tag-dot" style="background:var(--gold)"></div>
+          Lesson 1 · Your Personal AI Audit
+        </div>
+        <div class="lesson-title-big">What AI Has Already Done for You — And What to Do Next</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 20 minutes</span>
+          <span class="badge badge-gold">Reflection</span>
+          <span class="badge badge-green">Action Planning</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">01</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">📊</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          Before moving forward, you need to look back. The most successful students of this course do a simple audit: they count the hours saved, the money earned or saved, and the tasks they no longer dread. Seeing these numbers is motivating — and it helps you decide where to focus next.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>When you started this course, you probably had one of two feelings: curious and hopeful, or skeptical and maybe even a little scared. Both are completely normal. AI is a big change.</p>
+          <p>Now, after seven modules, you are not just someone who heard about AI. You are someone who <strong>uses</strong> it. That puts you ahead of roughly 90% of people in Nepal and most of South Asia who still have not taken this step. Sit with that for a moment.</p>
+          <p>But knowing something and using it strategically are different things. This lesson is about turning your AI knowledge into an ongoing practice — a part of how you work and live every single day.</p>
+          <h4>Your Personal AI Audit — Take 10 Minutes Right Now</h4>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--gold); color:var(--bg);">1</div>
+          <div class="step-content">
+            <div class="step-title">Count the time you have saved</div>
+            <div class="step-desc">Think of every task you have done with AI help since starting this course — writing posts, translating, researching, drafting messages. Estimate how long each would have taken without AI. Add it up. Most students are surprised — it is usually 3–8 hours already, even as beginners.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--amber); color:var(--bg);">2</div>
+          <div class="step-content">
+            <div class="step-title">Identify your three biggest AI wins so far</div>
+            <div class="step-desc">What are the three things AI has helped you with most? A post that performed better? A customer message you were proud of? A business decision made with better research? Write these down. These are your proof points — they show you exactly where AI adds the most value for YOUR life.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--teal); color:var(--bg);">3</div>
+          <div class="step-content">
+            <div class="step-title">Find your biggest AI gap</div>
+            <div class="step-desc">What task do you still do manually that AI could help with? What module from this course have you not applied yet? This is your next priority. Often the biggest opportunity is the thing that felt most intimidating — but now you have the knowledge to attempt it.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-gold">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text">
+          <strong>A Honest Truth About AI Learning</strong>
+          You will not use every skill from every module equally. That is normal. The key is finding the 3–4 AI applications that fit your specific life and business, and becoming excellent at those. Depth beats breadth. One AI skill used every day is worth more than ten skills used once.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">📊</div>
+            <div class="task-header-title">Task 1: Your AI Impact Audit</div>
+          </div>
+          <div class="task-body">
+            <p>Open a notes document and write your answers to these questions honestly:</p>
+            <ol>
+              <li><strong>Hours saved so far:</strong> Best estimate of total time AI has saved you since starting this course</li>
+              <li><strong>Best result so far:</strong> The single AI output you were most pleased with (a post, a message, an image, a plan)</li>
+              <li><strong>Biggest remaining opportunity:</strong> The one task in your work or life that still takes too long, which AI could probably help with</li>
+              <li><strong>The habit I want to build:</strong> One specific AI practice you will commit to doing every week from now on</li>
+            </ol>
+          </div>
+          <div class="task-cta">🎯 Keep this document. It will become your AI growth journal — something you look back on in 6 months with pride.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Lesson 2</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--teal),var(--green))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--teal)">
+          <div class="tag-dot" style="background:var(--teal)"></div>
+          Lesson 2 · Your 90-Day Plan
+        </div>
+        <div class="lesson-title-big">Build Your Personalized AI Action Plan</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 25 minutes</span>
+          <span class="badge badge-teal">Planning</span>
+          <span class="badge badge-gold">High Impact</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">02</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--teal-dim)">🗺️</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          Knowledge without a plan stays knowledge. A plan turns knowledge into results. In this lesson you will build a specific, realistic 90-day AI action plan for your own life — a roadmap that shows you exactly what to do in the next 3 months to get maximum value from everything you have learned.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--teal-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>Most people who finish courses feel energized for a few days and then slowly drift back to their old ways. Not because they are lazy — but because they never made a specific plan. "I will use AI more" is not a plan. "I will write all my Facebook posts using the RACE framework every Monday morning" is a plan.</p>
+          <p>Your 90-day AI plan has three phases. Each phase builds on the previous one. By the end of month three, AI will be as natural a part of your work as using your phone.</p>
+        </div>
+      </div>
+
+      <div class="action-plan">
+        <div class="ap-header">📅 Your 90-Day AI Action Plan Template</div>
+        <div class="ap-body">
+          <div class="ap-week">
+            <div class="ap-week-num" style="background:var(--violet-dim); border-color:var(--violet-border); color:var(--violet);">Month 1<br><small style="font-weight:400; font-size:11px;">Foundation</small></div>
+            <div class="ap-week-content">
+              <div class="ap-week-title">🔧 Build Your Daily AI Habit</div>
+              <div class="ap-week-tasks">
+                <li>Set up ChatGPT custom instructions with your full business context (Module 7)</li>
+                <li>Create your personal prompt library — save your 10 most-used prompts</li>
+                <li>Choose ONE type of content to always create with AI (social posts, customer replies, or product descriptions)</li>
+                <li>Do one AI session per week minimum — put it in your calendar like an appointment</li>
+                <li>Measure: by end of Month 1, AI should be saving you at least 3 hours/week</li>
+              </div>
+            </div>
+          </div>
+          <div class="ap-week">
+            <div class="ap-week-num" style="background:var(--teal-dim); border-color:var(--teal-border); color:var(--teal);">Month 2<br><small style="font-weight:400; font-size:11px;">Growth</small></div>
+            <div class="ap-week-content">
+              <div class="ap-week-title">📈 Expand to New Areas</div>
+              <div class="ap-week-tasks">
+                <li>Add a second AI application — try something from a module you have not used yet</li>
+                <li>Start using AI for one business decision per week (research, pricing, strategy)</li>
+                <li>Try creating one piece of visual content with AI tools (image for a post, product photo description)</li>
+                <li>Start a simple chain prompting project — create one complete campaign using 4–5 linked prompts</li>
+                <li>Measure: by end of Month 2, you should have one clear AI-powered result you can point to</li>
+              </div>
+            </div>
+          </div>
+          <div class="ap-week">
+            <div class="ap-week-num" style="background:var(--gold-dim); border-color:var(--gold-border); color:var(--gold);">Month 3<br><small style="font-weight:400; font-size:11px;">Mastery</small></div>
+            <div class="ap-week-content">
+              <div class="ap-week-title">🏆 Make AI Earn Money for You</div>
+              <div class="ap-week-tasks">
+                <li>Offer one AI-powered service to a client, customer, or neighbor (even free at first)</li>
+                <li>Calculate the total hours AI saved you over 90 days — assign that time a money value</li>
+                <li>Teach one person in your family or community one AI skill — teaching deepens your own knowledge</li>
+                <li>Review and refresh your prompt library — delete what did not work, upgrade what did</li>
+                <li>Set your Year 1 AI goal: what would you like AI to help you achieve by this time next year?</li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-teal">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-text">
+          <strong>Make It Yours</strong>
+          This plan is a template — not a rigid rulebook. Adapt it to your reality. If you run a seasonal business, your month 1 might be a quiet month where you build habits, and month 3 might be festival season where you use everything. The key is: write down YOUR specific version of this plan, with your own tasks.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🇳🇵</div>
+          <div class="block-header-text">Nepal Story</div>
+        </div>
+        <div class="nepal-example">
+          <div class="ne-header">
+            <div class="ne-flag">🌄</div>
+            <div>
+              <div class="ne-title">The Thapa Family Business, Chitwan</div>
+              <div class="ne-subtitle">How a 90-day plan transformed a family resort</div>
+            </div>
+          </div>
+          <div class="ne-body">
+            <p>Binita runs a small jungle resort near Sauraha in Chitwan with her husband. Before this course, they were losing bookings to larger resorts with better English websites and more active social media.</p>
+            <p>After finishing the course, Binita made a specific 90-day plan. Month 1: she used AI to rewrite their entire English website content — no longer embarrassed by the language. Month 2: she built a content calendar for Instagram and Facebook using chain prompting, focusing on wildlife photos with AI-written captions. Month 3: she started offering her AI content writing skills to two other small resorts in the area for NPR 5,000/month each.</p>
+            <div class="ne-quote">
+              "By the end of three months, I was earning extra money from other resorts while our own bookings went up 40%. The plan made it feel achievable. I knew exactly what to do each week — I was not guessing."
+            </div>
+            <div class="ne-result">
+              <div class="ne-result-icon">🌟</div>
+              <div class="ne-result-text">Resort bookings +40% · New AI service income: NPR 10,000/month · Timeline: 90 days</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">🗺️</div>
+            <div class="task-header-title">Task 2: Write Your Personal 90-Day Plan</div>
+          </div>
+          <div class="task-body">
+            <p>Using the template above as a guide, write your own version. Be specific — not "use AI more" but "every Tuesday I will use AI to write 3 social posts for the week." Include:</p>
+            <ol>
+              <li>Your specific Month 1 daily/weekly AI habit (with exact days and tasks)</li>
+              <li>One new area you want to expand into in Month 2 (from a module you have not fully applied)</li>
+              <li>One AI-powered income goal for Month 3 (even if small — NPR 2,000 from one client counts)</li>
+            </ol>
+            <p>Write this on paper, take a photo, and put it somewhere you see every day.</p>
+          </div>
+          <div class="task-cta">📌 Share your plan with one person you trust. When we tell someone our plans, we are 60% more likely to follow through.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Lesson 3</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--violet),var(--sky))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--violet)">
+          <div class="tag-dot" style="background:var(--violet)"></div>
+          Lesson 3 · The Future of AI
+        </div>
+        <div class="lesson-title-big">What is Coming Next — And How to Stay Ahead</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 22 minutes</span>
+          <span class="badge badge-violet">Future Skills</span>
+          <span class="badge badge-sky">Staying Current</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">03</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--violet-dim)">🔭</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          AI is not slowing down — it is accelerating. Every month brings new tools, new capabilities, and new opportunities. This lesson gives you an honest look at what is coming so you can prepare intelligently — without stress. The people who stay curious and adaptable will stay ahead. That is you.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--violet-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>When the internet arrived in Nepal in the 1990s, only a few people in Kathmandu had access. Those who learned to use it first — to email, to search, to sell online — had an enormous advantage over those who waited. The same thing is happening with AI right now, today, in 2024 and 2025.</p>
+          <p>Here is what is coming that is relevant to your life and business — explained simply, without the technical confusion.</p>
+        </div>
+      </div>
+
+      <div class="horizons">
+        <div class="horizon-card">
+          <div class="horizon-tag" style="color:var(--violet)">🤖 Coming Soon</div>
+          <div class="horizon-title">AI Agents — AI That Takes Action for You</div>
+          <div class="horizon-desc">Right now, AI answers your questions. Soon, AI "agents" will take actions — booking appointments, sending emails, updating your product listings, searching the web — all automatically, based on your instructions.</div>
+          <div class="horizon-reality" style="color:var(--violet);">How to prepare: Get comfortable with giving AI very clear, structured instructions (which you already know how to do with RACE prompting). The same skill applies.</div>
+        </div>
+        <div class="horizon-card">
+          <div class="horizon-tag" style="color:var(--gold)">🎤 Already Here</div>
+          <div class="horizon-title">AI in Nepali and Regional Languages</div>
+          <div class="horizon-desc">AI tools are rapidly improving in Nepali, Hindi, Maithili, and other regional languages. Within 2–3 years, you will be able to have full, sophisticated conversations with AI entirely in Nepali.</div>
+          <div class="horizon-reality" style="color:var(--gold);">How to prepare: Start experimenting with Nepali prompts now. The more you practice, the earlier you will benefit as the tools improve.</div>
+        </div>
+        <div class="horizon-card">
+          <div class="horizon-tag" style="color:var(--teal)">📱 Coming to Your Phone</div>
+          <div class="horizon-title">AI Built Into Every App</div>
+          <div class="horizon-desc">In 2–3 years, AI will be embedded into WhatsApp, Instagram, Google Maps, banking apps, and most tools you already use. You will not need to know it is AI — it will just make everything smarter.</div>
+          <div class="horizon-reality" style="color:var(--teal);">How to prepare: Build comfort with AI interaction now. When it arrives everywhere, you will already understand how to get the best from it.</div>
+        </div>
+        <div class="horizon-card">
+          <div class="horizon-tag" style="color:var(--green)">💼 New Opportunities</div>
+          <div class="horizon-title">AI Skills = Job Market Power</div>
+          <div class="horizon-desc">Companies in Nepal, India, the Gulf, and beyond are actively looking for people who can use AI tools for marketing, content, customer service, and operations. This is a real career opportunity — not theoretical.</div>
+          <div class="horizon-reality" style="color:var(--green);">How to prepare: Start offering AI services. Even helping one local business use AI builds your portfolio and your confidence.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="script-box">
+          <h4>How to Stay Current — Without Spending Hours Every Day</h4>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num" style="background:var(--gold); color:var(--bg);">1</div>
+            <div class="step-content">
+              <div class="step-title">The 15-Minute Weekly AI Update</div>
+              <div class="step-desc">Once a week, ask ChatGPT: "What are the most important new AI developments from the past week that a small business owner in Nepal should know about?" This keeps you current without overwhelming yourself.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="background:var(--teal); color:var(--bg);">2</div>
+            <div class="step-content">
+              <div class="step-title">Try One New AI Tool Per Month</div>
+              <div class="step-desc">Just one. Spend 30 minutes exploring a tool you have never used. It might be useless for you — or it might become your favorite tool. You will not know until you try.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="background:var(--violet); color:#fff;">3</div>
+            <div class="step-content">
+              <div class="step-title">Teach Someone New Each Month</div>
+              <div class="step-desc">The best way to stay sharp is to teach. Share what you know with a family member, a neighbor, or a colleague. Teaching forces you to truly understand what you know — and it makes your community stronger.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-violet">
+        <div class="callout-icon">🧘</div>
+        <div class="callout-text">
+          <strong>A Calm Truth About the Future</strong>
+          It is easy to feel anxious about how fast AI is moving. Here is what is true: the fundamentals you learned in this course — how to communicate clearly with AI, how to structure prompts, how to use AI as a tool for YOUR goals — these skills will remain relevant regardless of how the specific tools change. You are not learning one tool. You are learning a new way of thinking.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 4 — FINAL -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Final Lesson</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--gold),var(--green),var(--teal),var(--violet))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--gold)">
+          <div class="tag-dot" style="background:var(--gold)"></div>
+          Final Lesson · Your Graduation Message
+        </div>
+        <div class="lesson-title-big">What You Have Become — And What to Do With It</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 20 minutes</span>
+          <span class="badge badge-gold">Graduation</span>
+          <span class="badge badge-green">Legacy</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">04</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🌟</div>
+          <div class="block-header-text">A Message From Your Course</div>
+        </div>
+        <div class="script-box">
+          <p>Do you remember the first time you looked at a WhatsApp message and did not know how to reply because you were not sure if you were pressing the right buttons? And then one day, without even thinking, you were recording voice messages, sharing photos, making video calls — all without remembering the moment it became easy.</p>
+          <p>AI will feel the same way. Right now it might still feel a little awkward, a little unsure. Give it three more months. By then, opening ChatGPT will feel as natural as opening WhatsApp.</p>
+          <p><strong>Here is what this course has actually done for you:</strong> It has not given you knowledge about a technology. It has shown you that you are adaptable. That you can learn new things. That technology is not the enemy of the everyday person — it is the tool that levels the playing field.</p>
+
+          <h4>Three Things to Remember Always</h4>
+        </div>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-card">
+          <span class="skill-icon">🧠</span>
+          <div class="skill-name">Your judgment is irreplaceable</div>
+          <div class="skill-status">ALWAYS REMEMBER</div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🤝</span>
+          <div class="skill-name">AI is your partner, not your boss</div>
+          <div class="skill-status">ALWAYS REMEMBER</div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🌱</span>
+          <div class="skill-name">Every expert started as a beginner</div>
+          <div class="skill-status">ALWAYS REMEMBER</div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🔍</span>
+          <div class="skill-name">Always review AI's work before using it</div>
+          <div class="skill-status">GOOD PRACTICE</div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">📚</span>
+          <div class="skill-name">Stay curious — the field changes fast</div>
+          <div class="skill-status">GOOD PRACTICE</div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🌍</span>
+          <div class="skill-name">Share what you know with your community</div>
+          <div class="skill-status">YOUR RESPONSIBILITY</div>
+        </div>
+      </div>
+
+      <div class="block" style="margin-top:28px;">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🇳🇵</div>
+          <div class="block-header-text">A Final Nepal Story</div>
+        </div>
+        <div class="nepal-example">
+          <div class="ne-header">
+            <div class="ne-flag">🏔️</div>
+            <div>
+              <div class="ne-title">Ram, Age 58. Kirtipur, Kathmandu</div>
+              <div class="ne-subtitle">A retired school teacher who became an AI community trainer</div>
+            </div>
+          </div>
+          <div class="ne-body">
+            <p>Ram had spent 30 years as a school teacher in Kirtipur. When he retired, he was given a smartphone by his son and told to "learn technology." He felt lost and embarrassed — too old, too late, too complicated.</p>
+            <p>He started this course with zero confidence. He almost quit in Module 2 when the prompting felt confusing. But he kept going. By Module 5, he was creating images for his daughter's small clothing business. By Module 7, he was writing RACE prompts that his daughter's business partners were impressed by.</p>
+            <div class="ne-quote">
+              "I spent my whole career teaching others. I never imagined that at 58, I would be the one learning something so new and feeling like a student again — in the best possible way. Now I teach AI to six other retired teachers in my neighborhood. We meet every Saturday. We call ourselves the 'Kirtipur AI Club.' We are the oldest AI students in the neighborhood and we don't care."
+            </div>
+            <div class="ne-result">
+              <div class="ne-result-icon">🎓</div>
+              <div class="ne-result-text">Age is not a barrier. Curiosity is the only requirement. Ram is proof.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">🎓</div>
+            <div class="task-header-title">Your Final Task: The Graduation Commitment</div>
+          </div>
+          <div class="task-body">
+            <p>Write down — on paper, right now — four sentences. These are your graduation commitments:</p>
+            <ol>
+              <li>"The ONE AI skill I will use every single week from now on is ____________"</li>
+              <li>"By three months from now, I want AI to have helped me achieve ____________"</li>
+              <li>"The first person I will teach one AI skill to is ____________ and I will do it by ____________"</li>
+              <li>"The thing that surprised me most about AI is ____________"</li>
+            </ol>
+            <p>Sign your name at the bottom. This is your personal AI graduation certificate — the promise you make to yourself to keep going.</p>
+          </div>
+          <div class="task-cta">🏆 Congratulations. You are now an AI Saathi Graduate. Share this with someone who matters to you.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- GRADUATION CEREMONY -->
+<div class="graduation-box">
+  <div class="grad-inner">
+    <div class="grad-glow"></div>
+    <div class="grad-header">
+      <span class="grad-icon">🎓</span>
+      <div class="grad-title">You Are Now an<br>AI Saathi Graduate</div>
+      <div class="grad-subtitle">You came. You learned. You practiced. You finished. Not everyone does. Be proud — this is the beginning of something new.</div>
+    </div>
+    <div class="grad-skills">
+      <div class="grad-skill">
+        <span class="grad-skill-icon">🤖</span>
+        <div class="grad-skill-name">AI Foundations</div>
+        <div class="grad-skill-module">Module 1 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">✍️</span>
+        <div class="grad-skill-name">Writing & Content</div>
+        <div class="grad-skill-module">Module 2 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">🏪</span>
+        <div class="grad-skill-name">Business AI</div>
+        <div class="grad-skill-module">Module 3 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">💰</span>
+        <div class="grad-skill-name">Earning with AI</div>
+        <div class="grad-skill-module">Module 4 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">🎨</span>
+        <div class="grad-skill-name">Creative AI</div>
+        <div class="grad-skill-module">Module 5 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">🔬</span>
+        <div class="grad-skill-name">Research & Data</div>
+        <div class="grad-skill-module">Module 6 ✓</div>
+      </div>
+      <div class="grad-skill">
+        <span class="grad-skill-icon">⚡</span>
+        <div class="grad-skill-name">Advanced Prompting</div>
+        <div class="grad-skill-module">Module 7 ✓</div>
+      </div>
+      <div class="grad-skill" style="background:var(--gold-dim); border-color:var(--gold-border);">
+        <span class="grad-skill-icon">🌟</span>
+        <div class="grad-skill-name" style="color:var(--gold)">Your AI Future</div>
+        <div class="grad-skill-module" style="color:var(--gold);">Module 8 ✓</div>
+      </div>
+    </div>
+    <div class="grad-footer">
+      <p style="color:var(--text-muted); margin-bottom:24px; font-size:15px;">Your journey with AI is just beginning. Come back to these modules whenever you need a refresher. The tools change — your curiosity and commitment do not.</p>
+      <a href="#journey" class="grad-cta">🏆 View My Full Journey</a>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <div class="section-label">Graduation Stories</div>
+    <h2 class="section-title">What graduates say after completing all 8 modules</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"I started this course thinking it was too complicated for someone like me. I finished it thinking: why did nobody teach me this sooner? I am now using AI every single day. My husband asks me to help him use it too. I feel like the smart one in the room for the first time."</div>
+        <div class="testi-name">Sarita Tamang</div>
+        <div class="testi-role">Homebaker & online seller, Bhaktapur</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"Eight modules felt like a lot. But looking back, I wish there were eight more. Each module opened a door I did not even know existed. The best money I spent this year. I recommend it to every shopkeeper I know in Thamel."</div>
+        <div class="testi-name">Bikram Maharjan</div>
+        <div class="testi-role">Souvenir shop owner, Thamel, Kathmandu</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"My biggest fear was that AI would make my skills useless. Now I understand that my local knowledge — what tourists actually want in Chitwan, which trails are safe, which families make the best dhido — that is priceless. AI just helps me tell that story better to the world."</div>
+        <div class="testi-name">Sunita Gurung</div>
+        <div class="testi-role">Eco-tourism guide, Chitwan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-label">Final Questions</div>
+  <h2 class="section-title">After graduation — what now?</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      The AI tools keep changing. How do I stay updated without it becoming a full-time job?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">Set a simple weekly routine: 15 minutes every Monday to ask ChatGPT what is new in AI for your field. Follow one YouTube channel or newsletter (in Nepali or English) that covers AI news in simple language. And try one new feature per month — just one. The goal is consistent small steps, not exhaustive research.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Is it too late to start using AI professionally? Have I missed the wave?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">No — and this might be the most important answer in the entire course. In Nepal and most of South Asia, the vast majority of small businesses are still not using AI at all. This means right now, in 2024 and 2025, you are genuinely ahead of the curve. The best time to start was yesterday. The second best time is today. You have already started.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What if AI makes big mistakes in my business communications?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">This is why we always review AI's work before sending or posting. Think of AI as an extremely fast first-draft writer who occasionally gets facts wrong or uses slightly off tone. Your job is editor and quality checker — not to write from scratch. With practice, you will develop a quick eye for what needs adjusting. The review process gets faster as you learn what AI tends to get right and wrong for YOUR type of business.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      My children are better at technology than me. Should I ask them to do my AI work?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">You can — but do not rely on this completely. Your children understand technology better. You understand your business, your customers, your community, and your market far better. The best outcome is to learn together: you teach them what the business needs, they help you learn the tools. But the person who understands the prompts and the context should ultimately be you — because you are the one with the business knowledge that makes AI actually useful.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      I want to teach AI to others in my community. Where do I start?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">Start exactly where this course started — with Module 1. Gather 3–5 interested people, one phone or laptop between you is enough, and simply share what you know. You do not need to know everything — you just need to know enough to take them through their first conversation with AI and show them one real, useful result. That first "wow" moment when someone sees AI work for the first time is the spark that makes people want to learn more. You have already experienced that spark. Now help others feel it too.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🌟 AI Saathi</div>
+  <div class="footer-tagline">Built for the everyday people of Nepal and South Asia.<br>Every lesson, every story, every example — made for you.</div>
+  <div class="footer-modules">
+    <span class="footer-module">M1: Foundations ✓</span>
+    <span class="footer-module">M2: Writing ✓</span>
+    <span class="footer-module">M3: Business ✓</span>
+    <span class="footer-module">M4: Money ✓</span>
+    <span class="footer-module">M5: Creative ✓</span>
+    <span class="footer-module">M6: Research ✓</span>
+    <span class="footer-module">M7: Prompting ✓</span>
+    <span class="footer-module" style="color:var(--gold); border-color:var(--gold-border); background:var(--gold-dim);">M8: Future ✓</span>
+  </div>
+  <div class="footer-bottom">
+    Full course complete · You are now an AI Saathi Graduate<br>
+    <span style="font-size:12px;">This course material is protected. For educational and commercial use by license only.</span>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('.faq-icon');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-icon').forEach(i => i.textContent = '+');
+  if (!isOpen) {
+    answer.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 7: Advanced Prompting & Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #07080D;
+  --surface: #0D0F17;
+  --surface2: #131622;
+  --surface3: #191D2C;
+  --violet: #8B5CF6;
+  --violet-dim: rgba(139,92,246,0.10);
+  --violet-border: rgba(139,92,246,0.26);
+  --violet-glow: rgba(139,92,246,0.05);
+  --pink: #EC4899;
+  --pink-dim: rgba(236,72,153,0.10);
+  --pink-border: rgba(236,72,153,0.25);
+  --gold: #F5C842;
+  --gold-dim: rgba(245,200,66,0.09);
+  --gold-border: rgba(245,200,66,0.24);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.10);
+  --green-border: rgba(34,197,94,0.24);
+  --orange: #FB923C;
+  --orange-dim: rgba(251,146,60,0.10);
+  --orange-border: rgba(251,146,60,0.24);
+  --sky: #38BDF8;
+  --sky-dim: rgba(56,189,248,0.09);
+  --sky-border: rgba(56,189,248,0.22);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.09);
+  --red-border: rgba(248,113,113,0.22);
+  --text: #EDF0FA;
+  --text-muted: #657090;
+  --text-dim: #2E344E;
+  --border: rgba(255,255,255,0.052);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Source Serif 4',Georgia,serif;
+  background:var(--bg); color:var(--text);
+  font-size:17px; line-height:1.84; overflow-x:hidden;
+}
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--violet-dim); border-radius:2px; }
+
+/* GRAIN */
+.grain {
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* NAV */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(7,8,13,0.9); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border); padding:0 32px;
+}
+.nav-inner {
+  max-width:1060px; margin:0 auto;
+  height:58px; display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--violet); letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:10px;
+}
+.nav-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--violet);
+  animation:pulse-v 2s infinite;
+}
+@keyframes pulse-v {
+  0%,100%{ box-shadow:0 0 0 0 rgba(139,92,246,0.6); }
+  50%{ box-shadow:0 0 0 8px rgba(139,92,246,0); }
+}
+.nav-pill {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  background:var(--violet-dim); border:1px solid var(--violet-border);
+  color:var(--violet); padding:5px 14px; border-radius:20px;
+}
+.nav-right {
+  display:flex; align-items:center; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted);
+}
+.progress-dots { display:flex; gap:5px; }
+.pd { width:8px; height:8px; border-radius:50%; background:var(--surface3); border:1px solid var(--border); }
+.pd.done { background:var(--green); border-color:var(--green); }
+.pd.active { background:var(--violet); border-color:var(--violet); transform:scale(1.3); }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; padding:120px 40px 100px;
+  position:relative; overflow:hidden;
+}
+.hero-orb1 {
+  position:absolute; top:-120px; right:-80px;
+  width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.12) 0%, rgba(236,72,153,0.06) 45%, transparent 70%);
+  pointer-events:none;
+}
+.hero-orb2 {
+  position:absolute; bottom:-100px; left:-60px;
+  width:480px; height:480px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
+  background-size:72px 72px;
+  mask-image:radial-gradient(ellipse at 70% 30%, black 15%, transparent 65%);
+}
+.hero-inner { max-width:1060px; margin:0 auto; width:100%; position:relative; z-index:1; }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--violet-dim); border:1px solid var(--violet-border);
+  padding:7px 18px; border-radius:30px; margin-bottom:32px;
+}
+.hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--violet); animation:pulse-v 2s infinite; }
+.hero-eyebrow-text {
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--violet);
+}
+
+.hero h1 {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(40px,7.5vw,88px);
+  line-height:1.0; letter-spacing:-3px; margin-bottom:20px;
+}
+.line1 { display:block; color:var(--text); }
+.line2 {
+  display:block; color:transparent;
+  background:linear-gradient(100deg, var(--violet) 0%, var(--pink) 60%, var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text;
+}
+.line3 { display:block; color:var(--text-muted); font-size:0.42em; font-weight:600; letter-spacing:-0.5px; margin-top:12px; }
+
+.hero-sub {
+  font-size:19px; color:var(--text-muted); max-width:600px;
+  margin-bottom:48px; font-style:italic; line-height:1.72; font-weight:300;
+}
+
+.hero-stats { display:flex; gap:44px; flex-wrap:wrap; margin-bottom:48px; }
+.stat-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:38px;
+  color:var(--violet); line-height:1; letter-spacing:-1px; margin-bottom:4px;
+}
+.stat-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+}
+
+.hero-cta-row { display:flex; gap:14px; flex-wrap:wrap; }
+.cta-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(100deg, var(--violet), var(--pink));
+  color:#fff;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+  letter-spacing:0.3px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+  box-shadow:0 0 40px rgba(139,92,246,0.3);
+}
+.cta-primary:hover { transform:translateY(-2px); box-shadow:0 0 56px rgba(139,92,246,0.48); }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); color:var(--text-muted);
+  font-family:'Syne',sans-serif; font-weight:600; font-size:14px;
+  padding:14px 28px; border-radius:40px; text-decoration:none; transition:all 0.2s;
+}
+.cta-secondary:hover { border-color:var(--violet); color:var(--violet); }
+
+/* INTRO STRIP */
+.intro-strip {
+  background:var(--violet-dim); border-top:1px solid var(--violet-border); border-bottom:1px solid var(--violet-border);
+  padding:20px 40px; text-align:center;
+  font-family:'Syne',sans-serif; font-weight:700; font-size:16px;
+  color:var(--violet); letter-spacing:0.3px;
+}
+
+/* SECTION */
+.section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.section-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+}
+.section-label::before { content:''; width:20px; height:1px; background:var(--text-dim); }
+.section-title {
+  font-family:'Syne',sans-serif; font-size:clamp(28px,4vw,44px);
+  font-weight:800; letter-spacing:-1.5px; color:var(--text);
+  line-height:1.1; margin-bottom:18px;
+}
+.section-desc { font-size:17px; color:var(--text-muted); max-width:660px; margin-bottom:48px; line-height:1.8; }
+
+/* POWER GRID */
+.power-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+.power-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:26px 22px; position:relative; overflow:hidden;
+  transition:all 0.25s;
+}
+.power-card:hover { transform:translateY(-3px); border-color:var(--violet-border); }
+.pc-emoji { font-size:30px; margin-bottom:14px; display:block; }
+.pc-title { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; color:var(--text); margin-bottom:8px; }
+.pc-desc { font-size:14px; color:var(--text-muted); line-height:1.7; margin-bottom:12px; }
+.pc-example {
+  font-size:13px; color:var(--text-dim); font-style:italic;
+  padding-top:12px; border-top:1px solid var(--border); line-height:1.6;
+}
+
+/* LESSON BLOCK */
+.lesson-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden; margin-bottom:28px;
+}
+.lesson-topbar {
+  padding:28px 32px; display:flex; justify-content:space-between;
+  align-items:flex-start; position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.lesson-accent { position:absolute; top:0; left:0; width:100%; height:3px; }
+.ltb-left { flex:1; }
+.lesson-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.tag-dot { width:6px; height:6px; border-radius:50%; }
+.lesson-title-big {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:23px;
+  color:var(--text); letter-spacing:-0.5px; line-height:1.2; margin-bottom:14px;
+}
+.lesson-meta-row {
+  display:flex; flex-wrap:wrap; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted); font-weight:600;
+}
+.lesson-num-badge {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:64px;
+  color:var(--surface3); letter-spacing:-3px; line-height:1;
+  flex-shrink:0; margin-left:24px; user-select:none;
+}
+.lesson-body { padding:32px 32px; }
+
+/* BLOCKS */
+.block { margin-bottom:34px; }
+.block:last-child { margin-bottom:0; }
+.block-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.block-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.block-header-text {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+}
+
+/* OBJECTIVE BOX */
+.objective-box {
+  background:var(--surface2); border-left:3px solid var(--violet);
+  padding:20px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:16px; color:var(--text); line-height:1.78;
+}
+
+/* SCRIPT BOX */
+.script-box {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 30px;
+}
+.script-box p { margin-bottom:18px; color:var(--text); line-height:1.84; }
+.script-box p:last-child { margin-bottom:0; }
+.script-box strong { color:var(--text); font-weight:600; }
+.script-box em { color:var(--text-muted); font-style:italic; }
+.script-box h4 {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
+  color:var(--violet); margin:24px 0 10px; letter-spacing:-0.3px;
+}
+
+/* TERMINAL */
+.terminal {
+  background:#050508; border:1px solid rgba(139,92,246,0.2);
+  border-radius:12px; overflow:hidden; margin:20px 0;
+  font-family:'JetBrains Mono',monospace;
+}
+.terminal-bar {
+  background:#090A10; padding:10px 16px;
+  display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid rgba(139,92,246,0.12);
+}
+.t-dot { width:12px; height:12px; border-radius:50%; }
+.t-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; margin-left:auto;
+}
+.terminal-body { padding:24px 26px; }
+.t-comment { color:var(--text-dim); font-size:13px; margin-bottom:6px; }
+.t-prompt { color:#C4B5FD; font-size:14px; line-height:1.78; white-space:pre-wrap; }
+.t-cursor { color:var(--violet); font-weight:700; }
+.t-divider { height:1px; background:rgba(255,255,255,0.04); margin:18px 0; }
+.t-result { color:var(--green); font-size:13px; line-height:1.7; }
+.t-result-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px;
+}
+.t-output { color:rgba(240,244,255,0.6); font-size:13px; line-height:1.75; margin-top:4px; }
+
+/* CALLOUTS */
+.callout {
+  display:flex; gap:16px; padding:20px 24px;
+  border-radius:var(--radius-sm); margin:20px 0;
+}
+.callout-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+.callout-text { font-size:15px; line-height:1.75; }
+.callout-text strong { font-weight:700; display:block; margin-bottom:5px; }
+.c-violet { background:var(--violet-dim); border:1px solid var(--violet-border); }
+.c-violet .callout-text { color:rgba(196,181,253,0.9); }
+.c-gold { background:var(--gold-dim); border:1px solid var(--gold-border); }
+.c-gold .callout-text { color:rgba(245,200,66,0.88); }
+.c-green { background:var(--green-dim); border:1px solid var(--green-border); }
+.c-green .callout-text { color:rgba(34,197,94,0.88); }
+.c-pink { background:var(--pink-dim); border:1px solid var(--pink-border); }
+.c-pink .callout-text { color:rgba(236,72,153,0.88); }
+.c-orange { background:var(--orange-dim); border:1px solid var(--orange-border); }
+.c-orange .callout-text { color:rgba(251,146,60,0.88); }
+.c-red { background:var(--red-dim); border:1px solid var(--red-border); }
+.c-red .callout-text { color:rgba(248,113,113,0.88); }
+
+/* NEPAL EXAMPLE */
+.nepal-example {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+}
+.ne-header {
+  padding:20px 26px; display:flex; gap:16px; align-items:center;
+  background:rgba(139,92,246,0.07); border-bottom:1px solid var(--border);
+}
+.ne-flag { font-size:28px; flex-shrink:0; }
+.ne-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+.ne-subtitle { font-size:13px; color:var(--text-muted); margin-top:3px; }
+.ne-body { padding:24px 26px; }
+.ne-body p { font-size:16px; color:var(--text); line-height:1.82; margin-bottom:14px; }
+.ne-body p:last-child { margin-bottom:0; }
+.ne-quote {
+  background:rgba(139,92,246,0.07); border-left:3px solid var(--violet);
+  padding:16px 20px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:15px; color:rgba(240,244,255,0.78); font-style:italic;
+  line-height:1.78; margin:16px 0;
+}
+.ne-result {
+  display:flex; align-items:center; gap:12px;
+  background:var(--green-dim); border:1px solid var(--green-border);
+  padding:12px 18px; border-radius:var(--radius-sm); margin-top:4px;
+}
+.ne-result-icon { font-size:20px; }
+.ne-result-text { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--green); }
+
+/* STEPS */
+.steps { display:flex; flex-direction:column; gap:12px; }
+.step {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:18px 20px; border-radius:var(--radius-sm); transition:border-color 0.2s;
+}
+.step:hover { border-color:var(--violet-border); }
+.step-num {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff;
+}
+.step-content { flex:1; }
+.step-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.step-desc { font-size:14px; color:var(--text-muted); line-height:1.72; }
+
+/* BADGES */
+.badge {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px;
+  white-space:nowrap;
+}
+.badge-violet { background:var(--violet-dim); color:var(--violet); border:1px solid var(--violet-border); }
+.badge-green { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+.badge-gold { background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border); }
+.badge-pink { background:var(--pink-dim); color:var(--pink); border:1px solid var(--pink-border); }
+.badge-orange { background:var(--orange-dim); color:var(--orange); border:1px solid var(--orange-border); }
+
+/* COMPARISON before/after */
+.old-new {
+  display:grid; grid-template-columns:1fr 1fr; gap:2px;
+  border-radius:var(--radius); overflow:hidden; margin:20px 0;
+}
+.on-old {
+  background:rgba(248,113,113,0.07); border:1px solid rgba(248,113,113,0.18);
+  padding:22px 24px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+}
+.on-new {
+  background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.18);
+  padding:22px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.on-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;
+}
+.on-old .on-label { color:var(--red); }
+.on-new .on-label { color:var(--green); }
+.on-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.on-list li { font-size:14px; line-height:1.6; color:var(--text); padding-left:20px; position:relative; }
+.on-list li::before { position:absolute; left:0; font-weight:700; }
+.on-old .on-list li::before { content:'✗'; color:var(--red); }
+.on-new .on-list li::before { content:'✓'; color:var(--green); }
+
+/* TASK BOX */
+.task-box {
+  background:rgba(245,200,66,0.05); border:1px solid var(--gold-border);
+  border-radius:var(--radius); padding:26px 30px;
+}
+.task-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.task-header-icon { font-size:28px; }
+.task-header-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:17px;
+  color:var(--gold); letter-spacing:-0.3px;
+}
+.task-body p, .task-body li { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:10px; }
+.task-body ol { padding-left:20px; }
+.task-body li { padding-left:4px; }
+.task-body strong { color:var(--text); }
+.task-cta {
+  margin-top:16px; padding:14px 18px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  border-radius:var(--radius-sm); font-size:14px; color:var(--gold);
+  font-family:'Syne',sans-serif; font-weight:700; line-height:1.6;
+}
+
+/* MISTAKES */
+.mistakes {
+  background:rgba(251,146,60,0.06); border:1px solid var(--orange-border);
+  border-radius:var(--radius); padding:24px 28px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.mistake { display:flex; gap:14px; align-items:flex-start; }
+.mistake-x {
+  width:28px; height:28px; border-radius:8px;
+  background:rgba(251,146,60,0.15); color:var(--orange);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; flex-shrink:0;
+}
+.mistake-content { flex:1; }
+.mistake-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.mistake-desc { font-size:14px; color:var(--text-muted); line-height:1.72; }
+
+/* DATA STORY */
+.data-story { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0; }
+.ds-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:20px 18px; text-align:center;
+}
+.ds-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:34px;
+  letter-spacing:-1.5px; line-height:1; margin-bottom:8px;
+}
+.ds-label { font-size:13px; color:var(--text-muted); line-height:1.6; }
+
+/* DIVIDER */
+.lesson-divider {
+  max-width:1060px; margin:0 auto 28px; padding:0 40px;
+  display:flex; align-items:center; gap:20px;
+}
+.ld-line { flex:1; height:1px; background:var(--border); }
+.ld-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* PROMPT FRAMEWORK BOX */
+.framework-box {
+  background:var(--surface2); border:1px solid var(--violet-border);
+  border-radius:var(--radius); overflow:hidden; margin:20px 0;
+}
+.fw-header {
+  padding:18px 24px; background:var(--violet-dim);
+  border-bottom:1px solid var(--violet-border);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:15px; color:var(--violet);
+}
+.fw-body { padding:22px 24px; display:flex; flex-direction:column; gap:14px; }
+.fw-row { display:flex; gap:14px; align-items:flex-start; }
+.fw-letter {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--violet); width:28px; flex-shrink:0; margin-top:1px;
+}
+.fw-content { flex:1; }
+.fw-term { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--text); margin-bottom:3px; }
+.fw-example { font-size:13px; color:var(--text-muted); line-height:1.65; }
+.fw-example em { color:rgba(196,181,253,0.7); font-style:normal; }
+
+/* AUTOMATION PIPELINE */
+.pipeline {
+  display:flex; flex-direction:column; gap:0; margin:20px 0;
+}
+.pipe-step {
+  display:flex; gap:16px; align-items:stretch;
+}
+.pipe-left {
+  display:flex; flex-direction:column; align-items:center; width:36px; flex-shrink:0;
+}
+.pipe-circle {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff;
+}
+.pipe-line { flex:1; width:2px; background:var(--border); margin:4px auto; }
+.pipe-content {
+  flex:1; background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:16px 20px; margin-bottom:8px;
+  transition:border-color 0.2s;
+}
+.pipe-content:hover { border-color:var(--violet-border); }
+.pipe-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--text); margin-bottom:4px; }
+.pipe-desc { font-size:13px; color:var(--text-muted); line-height:1.65; }
+.pipe-tool { font-size:12px; color:var(--violet); margin-top:6px; font-family:'Syne',sans-serif; font-weight:600; }
+
+/* COMPLETE SECTION */
+.complete-section {
+  max-width:1060px; margin:60px auto; padding:60px;
+  background:var(--surface); border:1px solid var(--violet-border);
+  border-radius:24px; text-align:center; position:relative; overflow:hidden;
+}
+.complete-section::before {
+  content:''; position:absolute; top:-80px; left:50%; transform:translateX(-50%);
+  width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.09) 0%, transparent 65%);
+  pointer-events:none;
+}
+.complete-section h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(24px,4vw,38px);
+  color:var(--violet); letter-spacing:-1px; margin-bottom:14px; position:relative;
+}
+.complete-section > p {
+  color:var(--text-muted); font-size:17px; line-height:1.8; margin-bottom:32px;
+  max-width:600px; margin-left:auto; margin-right:auto; position:relative;
+}
+.next-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; position:relative; }
+.next-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:18px 20px; text-align:left;
+  transition:border-color 0.2s;
+}
+.next-card:hover { border-color:var(--violet-border); }
+.next-card-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--violet); margin-bottom:8px;
+}
+.next-card-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.next-card-desc { font-size:13px; color:var(--text-muted); line-height:1.6; }
+
+/* TESTI */
+.testi-section { background:var(--surface); border-top:1px solid var(--border); padding:80px 40px; }
+.testi-inner { max-width:1060px; margin:0 auto; }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
+.testi-card {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 24px;
+}
+.testi-stars { color:var(--gold); font-size:16px; margin-bottom:14px; letter-spacing:3px; }
+.testi-quote { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:20px; font-style:italic; }
+.testi-name { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--text); }
+.testi-role { font-size:13px; color:var(--text-dim); margin-top:3px; }
+
+/* FAQ */
+.faq-section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.faq-item {
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  overflow:hidden; margin-bottom:10px;
+}
+.faq-q {
+  padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-family:'Syne',sans-serif; font-weight:600; font-size:15px; color:var(--text);
+  background:var(--surface); transition:background 0.2s; gap:16px;
+}
+.faq-q:hover { background:var(--surface2); }
+.faq-icon { font-size:20px; color:var(--violet); flex-shrink:0; transition:transform 0.3s; }
+.faq-a {
+  max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s;
+  background:var(--surface2); font-size:15px; color:var(--text-muted); line-height:1.8;
+  padding:0 24px;
+}
+.faq-a.open { max-height:400px; padding:20px 24px; }
+
+/* FOOTER */
+footer {
+  background:var(--surface); border-top:1px solid var(--border);
+  padding:40px; text-align:center;
+  font-family:'Syne',sans-serif; font-size:13px; color:var(--text-dim);
+  line-height:1.8;
+}
+footer strong { color:var(--violet); }
+
+@media(max-width:768px) {
+  .power-grid { grid-template-columns:1fr; }
+  .data-story { grid-template-columns:1fr 1fr; }
+  .old-new { grid-template-columns:1fr; }
+  .testi-grid { grid-template-columns:1fr; }
+  .next-grid { grid-template-columns:1fr; }
+  .decision-grid { grid-template-columns:1fr; }
+  .hero h1 { letter-spacing:-2px; }
+  .lesson-topbar { flex-direction:column; }
+  .lesson-num-badge { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-dot"></div>
+      AI Saathi
+    </div>
+    <div class="nav-pill">MODULE 7</div>
+    <div class="nav-right">
+      <span>7 of 8</span>
+      <div class="progress-dots">
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd active"></div>
+        <div class="pd"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">Module 7 · Advanced Skills</span>
+    </div>
+    <h1>
+      <span class="line1">Master the</span>
+      <span class="line2">Art of Prompting</span>
+      <span class="line3">Advanced Prompting & Automation — Work Smarter, Not Harder</span>
+    </h1>
+    <p class="hero-sub">You know how to talk to AI. Now learn to <em>command</em> it. In this module you will discover the secret formulas that get dramatically better results — and how to automate tasks so AI works for you even while you sleep.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">4</div>
+        <div class="stat-label">Power Lessons</div>
+      </div>
+      <div>
+        <div class="stat-num">90<span style="font-size:22px">min</span></div>
+        <div class="stat-label">Total Time</div>
+      </div>
+      <div>
+        <div class="stat-num">10×</div>
+        <div class="stat-label">Better Results</div>
+      </div>
+    </div>
+    <div class="hero-cta-row">
+      <a href="#lessons" class="cta-primary">▶ Start Lesson 1</a>
+      <a href="#overview" class="cta-secondary">See What You'll Learn →</a>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO STRIP -->
+<div class="intro-strip">
+  🧠 You have come far. Now let's turn you from an AI <em>user</em> into an AI <em>power user</em>. This module changes everything.
+</div>
+
+<!-- OVERVIEW -->
+<section class="section" id="overview">
+  <div class="section-label">What's Inside</div>
+  <h2 class="section-title">Four lessons that level you up</h2>
+  <p class="section-desc">Most people use AI like a basic calculator. After this module, you will use it like a professional tool — giving precise instructions that produce professional results every single time.</p>
+
+  <div class="power-grid">
+    <div class="power-card">
+      <span class="pc-emoji">🎯</span>
+      <div class="pc-title">The RACE Framework</div>
+      <div class="pc-desc">The 4-part formula that turns weak prompts into powerful ones. Works for ANY task.</div>
+      <div class="pc-example">Lesson 1 · 20 min</div>
+    </div>
+    <div class="power-card">
+      <span class="pc-emoji">🎭</span>
+      <div class="pc-title">Persona & Role Prompting</div>
+      <div class="pc-desc">Tell AI to BE an expert — a lawyer, a marketing guru, a financial advisor — and get expert-level answers.</div>
+      <div class="pc-example">Lesson 2 · 22 min</div>
+    </div>
+    <div class="power-card">
+      <span class="pc-emoji">🔄</span>
+      <div class="pc-title">Chain Prompting</div>
+      <div class="pc-desc">Break big tasks into steps. Build on each answer to create something truly impressive.</div>
+      <div class="pc-example">Lesson 3 · 24 min</div>
+    </div>
+    <div class="power-card">
+      <span class="pc-emoji">⚡</span>
+      <div class="pc-title">Simple Automation</div>
+      <div class="pc-desc">Set up AI workflows that save you hours every week — even without any coding knowledge.</div>
+      <div class="pc-example">Lesson 4 · 24 min</div>
+    </div>
+    <div class="power-card">
+      <span class="pc-emoji">🗂️</span>
+      <div class="pc-title">Custom Instructions</div>
+      <div class="pc-desc">Set up AI to always know your name, business, and style — so you never repeat yourself.</div>
+      <div class="pc-example">Bonus · 10 min</div>
+    </div>
+    <div class="power-card">
+      <span class="pc-emoji">🇳🇵</span>
+      <div class="pc-title">Nepal Business Templates</div>
+      <div class="pc-desc">Ready-to-use advanced prompts for festivals, trekking season, local market posts, and more.</div>
+      <div class="pc-example">Throughout Module</div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSONS -->
+<section id="lessons" style="max-width:1060px; margin:0 auto; padding:0 40px 80px;">
+
+  <!-- LESSON 1 -->
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--violet),var(--pink))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--violet)">
+          <div class="tag-dot" style="background:var(--violet)"></div>
+          Lesson 1 · The Foundation
+        </div>
+        <div class="lesson-title-big">The RACE Framework: Never Write a Weak Prompt Again</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 20 minutes</span>
+          <span class="badge badge-violet">Core Skill</span>
+          <span class="badge badge-green">High Impact</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">01</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--violet-dim)">🎯</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          You have been talking to AI like asking a stranger for directions — vague, incomplete, hoping they understand. After this lesson, you will give AI instructions like a professional briefing an assistant — specific, complete, and structured. The difference in results is enormous.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--violet-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>Imagine you walk into a restaurant and say: <em>"Give me food."</em> The waiter is confused. Do you want dal bhat or mo:mo? Spicy or mild? Vegetarian? Now imagine you say: <em>"I'd like a plate of buff sekuwa — medium spice, with achar on the side, and a glass of lassi."</em> You get exactly what you want.</p>
+          <p>AI prompting works the same way. The more specific and structured your instructions, the better the results. This is where most people go wrong — they use AI like a search engine, typing 3 words, and then get frustrated when the answer is mediocre.</p>
+
+          <h4>The RACE Framework — Your Prompt Formula</h4>
+          <p>Every great prompt has four parts. You do not always need all four — but the more you include, the better your results.</p>
+        </div>
+      </div>
+
+      <div class="framework-box">
+        <div class="fw-header">⚡ The RACE Framework — 4 Parts of a Perfect Prompt</div>
+        <div class="fw-body">
+          <div class="fw-row">
+            <div class="fw-letter">R</div>
+            <div class="fw-content">
+              <div class="fw-term">Role — Tell AI who to BE</div>
+              <div class="fw-example">You are an expert Nepali marketing consultant who has helped small businesses in Kathmandu grow their social media. → <em>Now AI will answer from that expertise</em></div>
+            </div>
+          </div>
+          <div class="fw-row">
+            <div class="fw-letter">A</div>
+            <div class="fw-content">
+              <div class="fw-term">Action — Tell AI exactly what to DO</div>
+              <div class="fw-example">Write 5 Facebook post ideas for Dashain season that will make people want to buy handicrafts as gifts. → <em>Specific, clear task</em></div>
+            </div>
+          </div>
+          <div class="fw-row">
+            <div class="fw-letter">C</div>
+            <div class="fw-content">
+              <div class="fw-term">Context — Give background information</div>
+              <div class="fw-example">My shop is Patan Handicrafts, we sell Thangka paintings and pashmina shawls, our customers are mostly tourists and diaspora Nepalis abroad. → <em>AI now understands YOUR situation</em></div>
+            </div>
+          </div>
+          <div class="fw-row">
+            <div class="fw-letter">E</div>
+            <div class="fw-content">
+              <div class="fw-term">Expectation — Describe the FORMAT you want</div>
+              <div class="fw-example">Each post should be under 100 words, include 3 relevant emojis, and end with a call to action. Write in a warm, friendly tone — not too formal. → <em>Removes all guesswork</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="script-box">
+          <h4>Weak Prompt vs. RACE Prompt — See the Difference</h4>
+        </div>
+        <div class="old-new">
+          <div class="on-old">
+            <div class="on-label">❌ Weak Prompt</div>
+            <p style="font-size:14px; color:rgba(240,244,255,0.5); font-family:'JetBrains Mono',monospace; line-height:1.7; margin:0;">
+              "Write a Facebook post for my shop"
+            </p>
+            <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05);">
+              <div style="font-family:'Syne',sans-serif; font-size:11px; color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Result</div>
+              <p style="font-size:13px; color:var(--text-muted); line-height:1.7; margin:0;">Generic, bland post that could be for any shop anywhere in the world. You will have to rewrite it completely.</p>
+            </div>
+          </div>
+          <div class="on-new">
+            <div class="on-label">✓ RACE Prompt</div>
+            <p style="font-size:13px; color:rgba(196,181,253,0.75); font-family:'JetBrains Mono',monospace; line-height:1.75; margin:0;">
+              "You are an expert social media manager for Nepali businesses. Write a Dashain Facebook post for my pashmina shawl shop in Patan. My customers are Nepali diaspora abroad who miss home. Make them feel nostalgic and excited to buy a gift for their family. Under 120 words, warm tone, end with a clear link invitation."
+            </p>
+            <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05);">
+              <div style="font-family:'Syne',sans-serif; font-size:11px; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Result</div>
+              <p style="font-size:13px; color:var(--text-muted); line-height:1.7; margin:0;">Emotionally compelling post that speaks directly to your audience's homesickness — ready to post with minimal editing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-violet">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text">
+          <strong>The Golden Rule of Prompting</strong>
+          You would not hire a new assistant and give them zero information. You would explain who you are, what you need, who your customers are, and how you want it done. Treat AI the same way — it performs best when it knows your full situation.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🇳🇵</div>
+          <div class="block-header-text">Nepal Story</div>
+        </div>
+        <div class="nepal-example">
+          <div class="ne-header">
+            <div class="ne-flag">🏔️</div>
+            <div>
+              <div class="ne-title">Sushila's Tea Shop, Bhaktapur</div>
+              <div class="ne-subtitle">How one RACE prompt changed her entire marketing</div>
+            </div>
+          </div>
+          <div class="ne-body">
+            <p>Sushila runs a traditional tea and chiya shop near Bhaktapur Durbar Square. She had tried using ChatGPT to write posts but felt the results were too generic — nothing felt like her shop.</p>
+            <p>She learned the RACE framework and wrote her first structured prompt:</p>
+            <div class="ne-quote">
+              "You are a storytelling expert who helps traditional Nepali businesses connect with tourists. Write an Instagram caption for my 40-year-old tea shop in Bhaktapur. We serve authentic masala chiya in clay cups (mato ko kaacho). Our customers are travelers looking for an authentic cultural experience. Write in English, warm and poetic, under 100 words, include 4 relevant hashtags."
+            </div>
+            <p>The result was a caption so beautiful that a travel blogger shared it — bringing 200 new followers in a single day. Sushila said she spent 10 minutes on the prompt and 2 minutes editing. Her old way? She would spend 45 minutes writing something she was never happy with.</p>
+            <div class="ne-result">
+              <div class="ne-result-icon">✅</div>
+              <div class="ne-result-text">Time saved: 43 minutes per post · New followers in 1 day: 200 · Effort: one structured prompt</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">✏️</div>
+          <div class="block-header-text">Your Exercise</div>
+        </div>
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">🎯</div>
+            <div class="task-header-title">Task 1: Write Your First RACE Prompt</div>
+          </div>
+          <div class="task-body">
+            <p>Think of a real task you need to do this week — writing a post, drafting a message, creating a product description. Now write it using the RACE format:</p>
+            <ol>
+              <li><strong>Role:</strong> "You are a [type of expert]..."</li>
+              <li><strong>Action:</strong> "Write / Create / Draft [specific thing]..."</li>
+              <li><strong>Context:</strong> "My business is [name], my customers are [who], we sell [what]..."</li>
+              <li><strong>Expectation:</strong> "Make it [length], [tone], [format], ending with [call to action]..."</li>
+            </ol>
+            <p>Run this prompt in ChatGPT. Compare it to a simple version of the same request. Notice the difference in quality.</p>
+          </div>
+          <div class="task-cta">🏆 Students who master RACE prompting save an average of 3–5 hours per week on writing tasks.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Lesson 2</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--pink),var(--violet))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--pink)">
+          <div class="tag-dot" style="background:var(--pink)"></div>
+          Lesson 2 · Persona Power
+        </div>
+        <div class="lesson-title-big">Role Prompting: Make AI Be Any Expert You Need</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 22 minutes</span>
+          <span class="badge badge-pink">Advanced Technique</span>
+          <span class="badge badge-gold">Money Saver</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">02</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--pink-dim)">🎭</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          What if you could hire a lawyer, a marketing expert, a financial advisor, and a writing coach — all for free, available 24 hours a day? With role prompting, you can. You tell AI to step into a specific expert's shoes, and it responds with that expertise. This one technique alone is worth thousands of rupees in saved consulting fees.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--pink-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>Think about the difference between asking a random passerby on the street "How do I grow my business?" versus asking a successful entrepreneur who has built 10 companies the same question. The answer is completely different — not because the question changed, but because the person answering changed.</p>
+          <p>Role prompting works on the same principle. When you tell AI "You are an expert in X," it shifts its entire approach to answer from that expert's perspective — using that expert's vocabulary, frameworks, and priorities.</p>
+          <h4>Powerful Roles to Use in Your Business</h4>
+        </div>
+      </div>
+
+      <div class="power-grid" style="grid-template-columns:repeat(2,1fr);">
+        <div class="power-card">
+          <span class="pc-emoji">⚖️</span>
+          <div class="pc-title">Business Lawyer</div>
+          <div class="pc-desc">Use for: contract language, terms & conditions, understanding your rights, drafting agreements.</div>
+          <div class="pc-example" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(196,181,253,0.6);">"You are an experienced business lawyer in Nepal who knows Nepali business law. Help me understand..."</div>
+        </div>
+        <div class="power-card">
+          <span class="pc-emoji">📊</span>
+          <div class="pc-title">Marketing Strategist</div>
+          <div class="pc-desc">Use for: campaign ideas, pricing psychology, customer messages, festival promotions.</div>
+          <div class="pc-example" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(196,181,253,0.6);">"You are a marketing expert specializing in small businesses in South Asia. My problem is..."</div>
+        </div>
+        <div class="power-card">
+          <span class="pc-emoji">💰</span>
+          <div class="pc-title">Financial Advisor</div>
+          <div class="pc-desc">Use for: pricing your products, understanding costs, planning for lean seasons, saving strategies.</div>
+          <div class="pc-example" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(196,181,253,0.6);">"You are a financial advisor who helps small business owners understand their numbers..."</div>
+        </div>
+        <div class="power-card">
+          <span class="pc-emoji">✍️</span>
+          <div class="pc-title">Copywriter</div>
+          <div class="pc-desc">Use for: product descriptions, social media captions, sales messages, website text.</div>
+          <div class="pc-example" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(196,181,253,0.6);">"You are a world-class copywriter who writes emotional, persuasive product descriptions..."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="script-box">
+          <h4>The Advanced Role Prompt Formula</h4>
+          <p>A basic role: "You are a marketing expert." → Fine, but generic.</p>
+          <p>An <strong>advanced role</strong> adds three things: the specific type of expert, their experience level, and their specialization relevant to you. Like this:</p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="t-dot" style="background:#FF5F56"></div>
+            <div class="t-dot" style="background:#FFBD2E"></div>
+            <div class="t-dot" style="background:#27C93F"></div>
+            <div class="t-label">ADVANCED ROLE PROMPT EXAMPLE</div>
+          </div>
+          <div class="terminal-body">
+            <div class="t-comment"># Basic role (weak)</div>
+            <div class="t-prompt">"You are a marketing expert. Write me a tagline."</div>
+            <div class="t-divider"></div>
+            <div class="t-comment"># Advanced role (powerful)</div>
+            <div class="t-prompt">"You are a senior marketing strategist with 15 years of experience building brands for tourism and hospitality businesses in South Asia. You understand Nepali culture deeply — the importance of festivals, family values, and trust in business relationships.
+
+My business is a family-run trekking agency in Pokhara called 'Himalayan Roots Treks'. We specialize in authentic cultural treks, not just mountain views. Our ideal customer is an international traveler aged 30-55 who wants a meaningful experience, not just a selfie.
+
+Please write 5 possible taglines for our agency. Make each one emotionally compelling and different in approach."</div>
+            <div class="t-divider"></div>
+            <div class="t-result-label">Why This Works</div>
+            <div class="t-output">The AI now has a complete picture of who it is, who you are, and what success looks like. The output will be dramatically more relevant and professional.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-gold">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-text">
+          <strong>Important Reminder</strong>
+          AI is not a real lawyer, doctor, or certified financial advisor. For truly important decisions — legal contracts, medical issues, major financial investments — always verify with a qualified professional. Think of AI as a knowledgeable friend who helps you prepare better questions and understand your situation — not the final authority.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🇳🇵</div>
+          <div class="block-header-text">Nepal Story</div>
+        </div>
+        <div class="nepal-example">
+          <div class="ne-header">
+            <div class="ne-flag">🏕️</div>
+            <div>
+              <div class="ne-title">Roshan's Trekking Agency, Namche Bazaar</div>
+              <div class="ne-subtitle">Getting expert marketing advice without paying consultant fees</div>
+            </div>
+          </div>
+          <div class="ne-body">
+            <p>Roshan was spending NPR 15,000 per month on a Kathmandu-based marketing consultant who would send him generic advice that did not understand the realities of running a business at 3,440 meters altitude.</p>
+            <p>He started using role prompting — asking AI to be a "trekking industry marketing expert who understands the seasonal patterns of Himalayan tourism." Within one conversation, he had 30 days of content ideas, 3 email campaign drafts, and a clear strategy for attracting Japanese and German trekkers (his highest-spending customers).</p>
+            <div class="ne-quote">
+              "I was paying NPR 15,000 for generic advice. Now I spend 2 hours with AI and get more specific, useful strategy than I ever got from the consultant. I reinvested that money into better trekking gear for clients."
+            </div>
+            <div class="ne-result">
+              <div class="ne-result-icon">💰</div>
+              <div class="ne-result-text">Saved NPR 15,000/month · Better, more specific strategy · 2 hours of AI work vs. monthly consultant retainer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">🎭</div>
+            <div class="task-header-title">Task 2: Create Your Expert Panel</div>
+          </div>
+          <div class="task-body">
+            <p>Identify 3 types of experts you wish you could ask questions to right now. For each one:</p>
+            <ol>
+              <li>Write the role prompt (advanced version with their specialization)</li>
+              <li>Ask them one real question you have about your business</li>
+              <li>Read the answer and follow up with one more question</li>
+            </ol>
+            <p>Suggested experts for Nepal businesses: pricing strategist, social media expert for regional markets, customer experience consultant.</p>
+          </div>
+          <div class="task-cta">💡 Save your best role prompts. Build a personal library of "expert prompts" you can reuse anytime.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Lesson 3</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--gold),var(--orange))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--gold)">
+          <div class="tag-dot" style="background:var(--gold)"></div>
+          Lesson 3 · Chain Prompting
+        </div>
+        <div class="lesson-title-big">Chain Prompting: Build Big Results Step by Step</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 24 minutes</span>
+          <span class="badge badge-gold">Advanced Technique</span>
+          <span class="badge badge-violet">Creative Power</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">03</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🔗</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          Most people try to get everything from AI in one giant prompt. This is like asking your carpenter to design, build, paint, and deliver furniture all at the same time with one instruction. Better approach: work in steps. Each AI response becomes the foundation for the next request. This is called chain prompting — and it is how professionals use AI to create truly impressive work.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>Think about how you cook a complex Nepali meal. You do not throw all the ingredients into the pot at once. You make the masala first, then fry it, then add the vegetables in the right order, then adjust the seasoning at the end. Each step builds on the last.</p>
+          <p>Chain prompting works exactly like this. You give AI one focused task. Review the output. Then give the <em>next</em> task that builds on what AI just created. The final result is far superior to anything you could get from one prompt.</p>
+          <h4>A Real Example: Creating a Full Festival Campaign in 5 Steps</h4>
+        </div>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-left">
+            <div class="pipe-circle" style="background:linear-gradient(135deg,var(--violet),var(--pink))">1</div>
+            <div class="pipe-line"></div>
+          </div>
+          <div class="pipe-content">
+            <div class="pipe-title">Step 1: Generate Ideas</div>
+            <div class="pipe-desc">Ask AI: "Give me 10 Tihar festival marketing campaign ideas for a clothing shop targeting young Nepali women aged 18-30 in Kathmandu."</div>
+            <div class="pipe-tool">→ AI generates 10 ideas. You pick your favourite 2.</div>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-left">
+            <div class="pipe-circle" style="background:linear-gradient(135deg,var(--pink),var(--gold))">2</div>
+            <div class="pipe-line"></div>
+          </div>
+          <div class="pipe-content">
+            <div class="pipe-title">Step 2: Develop One Idea</div>
+            <div class="pipe-desc">Ask AI: "I like idea #3. Let's develop it. Write a full 30-day content calendar around the 'Gift of Light' concept for October-November. Include one post per day — theme and caption outline."</div>
+            <div class="pipe-tool">→ AI creates the calendar. You review and adjust dates/themes.</div>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-left">
+            <div class="pipe-circle" style="background:linear-gradient(135deg,var(--gold),var(--green))">3</div>
+            <div class="pipe-line"></div>
+          </div>
+          <div class="pipe-content">
+            <div class="pipe-title">Step 3: Write the Key Posts</div>
+            <div class="pipe-desc">Ask AI: "Now write the full caption for the 5 most important days in this calendar — including the launch day, mid-campaign, and the final offer day. Each caption should be under 150 words and end with a WhatsApp call to action."</div>
+            <div class="pipe-tool">→ AI writes 5 polished captions. You personalise with your shop name and offers.</div>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-left">
+            <div class="pipe-circle" style="background:linear-gradient(135deg,var(--green),var(--sky))">4</div>
+            <div class="pipe-line"></div>
+          </div>
+          <div class="pipe-content">
+            <div class="pipe-title">Step 4: Create Matching Messages</div>
+            <div class="pipe-desc">Ask AI: "Based on this campaign, write 3 WhatsApp broadcast messages to send to my existing customers — one teaser, one launch day, one last-chance reminder. Keep each under 80 words."</div>
+            <div class="pipe-tool">→ AI writes your customer messages. Ready to send with one copy-paste.</div>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-left">
+            <div class="pipe-circle" style="background:linear-gradient(135deg,var(--sky),var(--violet))">5</div>
+            <div class="pipe-line"></div>
+          </div>
+          <div class="pipe-content">
+            <div class="pipe-title">Step 5: Refine & Polish</div>
+            <div class="pipe-desc">Ask AI: "Review everything we created together. Are there any inconsistencies in tone or message? What would make this campaign stronger? Suggest 3 improvements."</div>
+            <div class="pipe-tool">→ AI does a quality check on its own work. You have a campaign a professional agency would charge NPR 50,000 to create.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-green">
+        <div class="callout-icon">🧠</div>
+        <div class="callout-text">
+          <strong>The Key to Chain Prompting</strong>
+          AI remembers everything in your current conversation. Use this. Refer back to what it already created. Say "Based on what you wrote above..." or "Now take the campaign you just created and..." This is what makes chain prompting so powerful — each step gets smarter and more tailored.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">🔗</div>
+            <div class="task-header-title">Task 3: Your 3-Step Chain</div>
+          </div>
+          <div class="task-body">
+            <p>Choose one of these chain prompting projects for your business:</p>
+            <ol>
+              <li><strong>Option A:</strong> Generate product ideas → Write descriptions → Create Instagram captions for each</li>
+              <li><strong>Option B:</strong> Brainstorm service packages → Price and describe each → Write a menu/list to share with customers</li>
+              <li><strong>Option C:</strong> Create a festival campaign → Write 3 posts → Draft a WhatsApp broadcast message</li>
+            </ol>
+            <p>Work through all 3 steps in a single ChatGPT conversation. Notice how each step builds on the last — the final output will be much more sophisticated than anything you could have asked for in one go.</p>
+          </div>
+          <div class="task-cta">🎯 Chain prompting is what separates AI beginners from AI professionals. You just became a professional.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 4 -->
+  <div class="lesson-divider"><div class="ld-line"></div><div class="ld-label">Lesson 4</div><div class="ld-line"></div></div>
+
+  <div class="lesson-block">
+    <div class="lesson-topbar">
+      <div class="lesson-accent" style="background:linear-gradient(90deg,var(--green),var(--sky))"></div>
+      <div class="ltb-left">
+        <div class="lesson-tag" style="color:var(--green)">
+          <div class="tag-dot" style="background:var(--green)"></div>
+          Lesson 4 · Automation
+        </div>
+        <div class="lesson-title-big">Simple AI Automation: Let AI Work While You Sleep</div>
+        <div class="lesson-meta-row">
+          <span>⏱ 24 minutes</span>
+          <span class="badge badge-green">Time Saver</span>
+          <span class="badge badge-violet">Future Skill</span>
+        </div>
+      </div>
+      <div class="lesson-num-badge">04</div>
+    </div>
+    <div class="lesson-body">
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--green-dim)">⚡</div>
+          <div class="block-header-text">The Big Idea</div>
+        </div>
+        <div class="objective-box">
+          Automation sounds complicated. It is not. In this lesson you will learn three simple ways to make AI do repetitive work automatically — without any coding, without any technical degree, and without spending money. These techniques work on your phone or computer, starting today.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--green-dim)">📖</div>
+          <div class="block-header-text">The Lesson</div>
+        </div>
+        <div class="script-box">
+          <p>Automation is not about robots taking over. It is about setting up systems so that repetitive tasks happen quickly — either automatically or with very little effort from you.</p>
+          <p>Think about the tasks you do over and over: replying to common customer questions, posting on social media, updating your product listings, translating messages. What if each of these took 30 seconds instead of 10 minutes?</p>
+          <h4>3 Simple Automation Techniques — No Coding Needed</h4>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:linear-gradient(135deg,var(--violet),var(--pink))">1</div>
+          <div class="step-content">
+            <div class="step-title">📋 Saved Prompt Templates (The "Instant Answer" System)</div>
+            <div class="step-desc">Create a document (Notes app, Google Docs, or even a notebook) with your 10 most-used prompts ready to copy-paste. Customer inquiry reply? Copy, paste, run. Weekly social post? Copy, paste, update the product name, run. This turns a 15-minute task into a 90-second task.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:linear-gradient(135deg,var(--gold),var(--orange))">2</div>
+          <div class="step-content">
+            <div class="step-title">🗂️ ChatGPT Custom Instructions (Your Personal Setup)</div>
+            <div class="step-desc">In ChatGPT settings, you can save information about yourself so you never have to repeat it. Add your business name, your customers, your preferred language and tone. Every new conversation automatically knows who you are. Setup time: 10 minutes. Time saved forever: every single conversation.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:linear-gradient(135deg,var(--green),var(--sky))">3</div>
+          <div class="step-content">
+            <div class="step-title">⏰ The Weekly AI Planning Session (Batch Your Work)</div>
+            <div class="step-desc">Reserve 1–2 hours every Monday morning. In one AI session: create all your week's social posts, draft the week's customer follow-up messages, plan any new content, answer business questions. "Batching" your AI work means you are in focus mode — more creative, faster, and the results are more consistent because AI remembers your context across the whole session.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block" style="margin-top:28px;">
+        <div class="script-box">
+          <h4>Setting Up ChatGPT Custom Instructions (Step by Step)</h4>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="t-dot" style="background:#FF5F56"></div>
+            <div class="t-dot" style="background:#FFBD2E"></div>
+            <div class="t-dot" style="background:#27C93F"></div>
+            <div class="t-label">HOW TO SET UP CUSTOM INSTRUCTIONS</div>
+          </div>
+          <div class="terminal-body">
+            <div class="t-comment"># Step 1: Open ChatGPT → Click your profile picture (top right) → Settings</div>
+            <div class="t-comment"># Step 2: Find "Personalization" → "Custom Instructions"</div>
+            <div class="t-comment"># Step 3: Fill in the first box — "What should ChatGPT know about you?"</div>
+            <div class="t-prompt">Example to paste:
+My name is [Your Name]. I run [Business Name], a [type of business] in [city], Nepal. My customers are [description]. I primarily communicate in [language]. My business tone is warm, friendly, and trustworthy. Dashain, Tihar, and trekking season are my most important business periods. I sell [your products/services].</div>
+            <div class="t-divider"></div>
+            <div class="t-comment"># Step 4: Fill in the second box — "How should ChatGPT respond to you?"</div>
+            <div class="t-prompt">Example to paste:
+Always give practical, actionable advice. Keep language simple and clear — avoid overly technical terms. When writing content, match the warm and friendly tone of my business. Always consider the Nepali cultural context — festivals, family values, community trust. Format responses with clear headings when the answer is long.</div>
+            <div class="t-divider"></div>
+            <div class="t-result-label">✅ Result After Setup</div>
+            <div class="t-output">Every new ChatGPT conversation now starts with full knowledge of who you are. You never have to re-explain your business. AI becomes a true personal assistant that knows your context.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-violet">
+        <div class="callout-icon">🚀</div>
+        <div class="callout-text">
+          <strong>Bonus: Free Tools for More Automation</strong>
+          When you are ready for the next level — Zapier (free plan) lets you connect apps so, for example, a new WhatsApp message triggers an AI response. Make.com is another free tool for creating simple automated workflows. These are optional, but worth exploring once you are comfortable with basic prompting.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--gold-dim)">🇳🇵</div>
+          <div class="block-header-text">Nepal Story</div>
+        </div>
+        <div class="nepal-example">
+          <div class="ne-header">
+            <div class="ne-flag">🛒</div>
+            <div>
+              <div class="ne-title">Maya's Grocery Supplier, Birgunj</div>
+              <div class="ne-subtitle">How a Monday morning AI session changed her week</div>
+            </div>
+          </div>
+          <div class="ne-body">
+            <p>Maya supplies dry goods and spices to small restaurants in Birgunj. She used to spend every morning responding to WhatsApp inquiries, updating her price lists, and writing social posts — consuming nearly 2 hours of her most productive morning time.</p>
+            <p>She set up ChatGPT with her custom instructions (her business details, regular customers, product list) and created a Monday morning routine. Every Monday at 7am, she opens ChatGPT and runs through her prompt template library: 15 social posts, 5 customer follow-up messages, weekly price update announcement, and answers to the 3 most common questions she gets.</p>
+            <div class="ne-quote">
+              "By 9am on Monday, my whole week's communication is ready. I copy-paste as I need them. I feel so organized. My husband thought I hired someone — he saw how professional my messages looked."
+            </div>
+            <div class="ne-result">
+              <div class="ne-result-icon">⏱️</div>
+              <div class="ne-result-text">2 hours daily → 90 minutes weekly · Reclaimed 8+ hours per week · Zero extra cost</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="task-box">
+          <div class="task-header">
+            <div class="task-header-icon">⚡</div>
+            <div class="task-header-title">Task 4: Your Automation Setup</div>
+          </div>
+          <div class="task-body">
+            <p>This week, set up three things:</p>
+            <ol>
+              <li><strong>Custom Instructions:</strong> Set up your ChatGPT custom instructions with your business details (follow the template above)</li>
+              <li><strong>Prompt Library:</strong> Create a Notes document with your 5 most-used prompts (customer reply, weekly post, product description, inquiry response, follow-up message)</li>
+              <li><strong>Monday Routine:</strong> Block 90 minutes next Monday morning for your first "AI planning session" — create one full week of content in one sitting</li>
+            </ol>
+          </div>
+          <div class="task-cta">🎉 After this module, you have all the advanced prompting skills you need. Module 8 will bring everything together into your personal AI action plan.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header">
+          <div class="block-icon" style="background:var(--orange-dim)">⚠️</div>
+          <div class="block-header-text">Common Mistakes to Avoid</div>
+        </div>
+        <div class="mistakes">
+          <div class="mistake">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-content">
+              <div class="mistake-title">Trying to automate everything at once</div>
+              <div class="mistake-desc">Start with the one task that wastes the most time. Master that. Then add more. Trying to change everything at once leads to confusion and giving up.</div>
+            </div>
+          </div>
+          <div class="mistake">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-content">
+              <div class="mistake-title">Using AI outputs without personalizing</div>
+              <div class="mistake-desc">Even with perfect prompts, AI creates a first draft. Your job is to add the 10% that makes it truly yours — your local reference, your personal touch, your specific offer. Never post AI content without reading it first.</div>
+            </div>
+          </div>
+          <div class="mistake">
+            <div class="mistake-x">✗</div>
+            <div class="mistake-content">
+              <div class="mistake-title">Giving up after one bad response</div>
+              <div class="mistake-desc">If the response is not good, improve the prompt — do not abandon AI. Ask AI itself: "That answer was not quite right. What additional information do you need from me to give a better answer?" This is a powerful way to improve your prompts.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- COMPLETE SECTION -->
+<div class="complete-section">
+  <h2>🎓 Module 7 Complete!</h2>
+  <p>You have just leveled up from AI user to AI power user. The RACE framework, role prompting, chain prompting, and simple automation — these are the techniques that professionals use. You now have all of them.</p>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="next-card-label">Final Module</div>
+      <div class="next-card-title">Module 8: Your AI Future</div>
+      <div class="next-card-desc">Build your personal AI-powered life and business plan. The graduation module — bringing everything together.</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-label">What You Mastered</div>
+      <div class="next-card-title">4 Advanced Techniques</div>
+      <div class="next-card-desc">RACE framework, role prompting, chain prompting, and automation — the full professional toolkit.</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-label">Your Reward</div>
+      <div class="next-card-title">Hours Back Every Week</div>
+      <div class="next-card-desc">Students who apply Module 7 techniques report saving 5–10 hours per week on communication and content tasks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <div class="section-label">Student Stories</div>
+    <h2 class="section-title">What changed after Module 7</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The RACE framework was the biggest 'aha moment' of the whole course. I went back and rewrote all my old prompts using this formula. The difference in quality was shocking. My team thought I hired a professional writer."</div>
+        <div class="testi-name">Dipak Shrestha</div>
+        <div class="testi-role">Electronics retailer, Lalitpur</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"Role prompting changed everything for me. I asked AI to be a tourism marketing expert and in 20 minutes I had a full strategy for attracting Korean tourists. I had been trying to figure this out for 6 months on my own."</div>
+        <div class="testi-name">Anita Gurung</div>
+        <div class="testi-role">Guesthouse owner, Pokhara</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The Monday morning AI session idea was brilliant. I now spend 90 minutes on Monday and my entire week's social media, customer messages, and product updates are ready. My stress levels dropped immediately."</div>
+        <div class="testi-name">Kamala Thapa</div>
+        <div class="testi-role">Garment seller, Butwal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-label">Questions</div>
+  <h2 class="section-title">Module 7 — Your questions answered</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Do I need to use ALL four parts of RACE every time?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">Not always. For simple tasks, even two parts (Action + Context) are enough. But for important work — marketing campaigns, business communications, complex writing — use all four. Think of RACE as the complete version and use as many parts as the task needs. The more complex the task, the more parts you should include.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      How long should my prompts be?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">There is no perfect length, but a good rule of thumb is: the more important the output, the more detail in the prompt. For a quick social post, 3-4 sentences is enough. For a full marketing campaign, a paragraph or two of context pays off enormously. If you find yourself writing very long prompts repeatedly, save them as templates — that is your automation system right there.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What if AI gives a wrong or bad answer even with a good prompt?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">This happens, and it is normal. The most effective response is to tell AI exactly what was wrong: "The tone was too formal — can you rewrite it more casually?" or "You missed including our festival discount — please add that." You can also ask AI: "What additional information would help you give a better answer?" AI will often tell you exactly what context it needs. Every iteration makes the output better.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Is chain prompting only for big projects?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">No — even a simple 2-step chain can dramatically improve results. For example: first ask AI to brainstorm 10 product names, then ask it to write a description for your favourite one. That is a chain. Any time you build on a previous AI response rather than starting fresh, you are chain prompting. Start small and you will naturally get into the habit.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Does ChatGPT save my custom instructions permanently?
+      <span class="faq-icon">+</span>
+    </div>
+    <div class="faq-a">Yes — custom instructions are saved to your account and apply to all new conversations automatically. They do not affect conversations you already had. You can update them anytime if your business changes. This is one of the most powerful free features that most people never discover — use it.</div>
+  </div>
+</section>
+
+<footer>
+  <strong>AI Saathi</strong> — Advanced Prompting & Automation<br>
+  <span style="font-size:12px; color:var(--text-dim);">Module 7 of 8 · One more to go — your graduation awaits in Module 8</span>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('.faq-icon');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-icon').forEach(i => i.textContent = '+');
+  if (!isOpen) {
+    answer.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+</script>
+</body>
+</html>

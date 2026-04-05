@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 6: Research, Data &amp; Smarter Decisions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #07080C;
+  --surface: #0C0E14;
+  --surface2: #12151E;
+  --surface3: #181C28;
+  --sky: #38BDF8;
+  --sky-dim: rgba(56,189,248,0.1);
+  --sky-border: rgba(56,189,248,0.25);
+  --teal: #2DD4BF;
+  --teal-dim: rgba(45,212,191,0.1);
+  --teal-border: rgba(45,212,191,0.25);
+  --gold: #F5C842;
+  --gold-dim: rgba(245,200,66,0.1);
+  --gold-border: rgba(245,200,66,0.26);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.1);
+  --green-border: rgba(34,197,94,0.25);
+  --orange: #FB923C;
+  --orange-dim: rgba(251,146,60,0.1);
+  --orange-border: rgba(251,146,60,0.25);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.1);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --red-border: rgba(248,113,113,0.25);
+  --text: #EDF0FA;
+  --text-muted: #65708A;
+  --text-dim: #2E3450;
+  --border: rgba(255,255,255,0.052);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Source Serif 4',Georgia,serif;
+  background:var(--bg); color:var(--text);
+  font-size:17px; line-height:1.84; overflow-x:hidden;
+}
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--sky-dim); border-radius:2px; }
+
+/* ── GRAIN ── */
+.grain {
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* ── NAV ── */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(7,8,12,0.9); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border); padding:0 32px;
+}
+.nav-inner {
+  max-width:1060px; margin:0 auto;
+  height:58px; display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--sky); letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:10px;
+}
+.nav-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--sky);
+  animation:pulse-sky 2s infinite;
+}
+@keyframes pulse-sky {
+  0%,100%{ box-shadow:0 0 0 0 rgba(56,189,248,0.6); }
+  50%{ box-shadow:0 0 0 8px rgba(56,189,248,0); }
+}
+.nav-pill {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  background:var(--sky-dim); border:1px solid var(--sky-border);
+  color:var(--sky); padding:5px 14px; border-radius:20px;
+}
+.nav-right {
+  display:flex; align-items:center; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted);
+}
+.progress-dots { display:flex; gap:5px; }
+.pd { width:8px; height:8px; border-radius:50%; background:var(--surface3); border:1px solid var(--border); }
+.pd.done { background:var(--green); border-color:var(--green); }
+.pd.active { background:var(--sky); border-color:var(--sky); transform:scale(1.3); }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; padding:120px 40px 100px;
+  position:relative; overflow:hidden;
+}
+.hero-orb1 {
+  position:absolute; top:-120px; right:-100px;
+  width:760px; height:760px; border-radius:50%;
+  background:radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(45,212,191,0.05) 40%, transparent 68%);
+  pointer-events:none;
+}
+.hero-orb2 {
+  position:absolute; bottom:-100px; left:-60px;
+  width:480px; height:480px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.035) 1px, transparent 1px);
+  background-size:68px 68px;
+  mask-image:radial-gradient(ellipse at 70% 35%, black 15%, transparent 68%);
+}
+.hero-inner { max-width:1060px; margin:0 auto; width:100%; position:relative; z-index:1; }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--sky-dim); border:1px solid var(--sky-border);
+  padding:7px 18px; border-radius:30px; margin-bottom:32px;
+}
+.hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--sky); animation:pulse-sky 2s infinite; }
+.hero-eyebrow-text {
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--sky);
+}
+
+.hero h1 {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(42px,7.5vw,90px);
+  line-height:1.0; letter-spacing:-3px; margin-bottom:20px;
+}
+.line1 { display:block; color:var(--text); }
+.line2 {
+  display:block; color:transparent;
+  background:linear-gradient(100deg, var(--sky) 0%, var(--teal) 55%, var(--green) 100%);
+  -webkit-background-clip:text; background-clip:text;
+}
+.line3 { display:block; color:var(--text-muted); font-size:0.43em; font-weight:600; letter-spacing:-0.5px; margin-top:10px; }
+
+.hero-sub {
+  font-size:19px; color:var(--text-muted); max-width:610px;
+  margin-bottom:48px; font-style:italic; line-height:1.72; font-weight:300;
+}
+
+.hero-stats { display:flex; gap:40px; flex-wrap:wrap; margin-bottom:48px; }
+.stat-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:38px;
+  color:var(--sky); line-height:1; letter-spacing:-1px; margin-bottom:4px;
+}
+.stat-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+}
+
+.hero-cta-row { display:flex; gap:14px; flex-wrap:wrap; }
+.cta-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(100deg, var(--sky), var(--teal));
+  color:var(--bg);
+  font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+  letter-spacing:0.3px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+  box-shadow:0 0 40px rgba(56,189,248,0.28);
+}
+.cta-primary:hover { transform:translateY(-2px); box-shadow:0 0 56px rgba(56,189,248,0.45); }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); color:var(--text-muted);
+  font-family:'Syne',sans-serif; font-weight:600; font-size:14px;
+  letter-spacing:0.5px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+}
+.cta-secondary:hover { border-color:var(--sky); color:var(--sky); }
+
+/* ── INTRO STRIP ── */
+.intro-strip {
+  background:var(--sky-dim); border-top:1px solid var(--sky-border); border-bottom:1px solid var(--sky-border);
+  padding:22px 40px; text-align:center;
+  font-family:'Syne',sans-serif; font-weight:700; font-size:16px;
+  color:var(--sky); letter-spacing:0.4px;
+}
+
+/* ── SECTION ── */
+.section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.section-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+}
+.section-label::before { content:''; width:20px; height:1px; background:var(--text-dim); }
+.section-title {
+  font-family:'Syne',sans-serif; font-size:clamp(28px,4vw,44px);
+  font-weight:800; letter-spacing:-1.5px; color:var(--text);
+  line-height:1.1; margin-bottom:18px;
+}
+.section-desc { font-size:17px; color:var(--text-muted); max-width:650px; margin-bottom:48px; line-height:1.8; }
+.accent-sky { color:var(--sky); }
+.accent-teal { color:var(--teal); }
+.accent-gold { color:var(--gold); }
+
+/* ── POWER GRID (overview cards) ── */
+.power-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+.power-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:26px 22px; position:relative; overflow:hidden;
+  transition:all 0.25s;
+}
+.power-card:hover { transform:translateY(-3px); }
+.power-card-glow {
+  position:absolute; top:-30px; right:-30px; width:160px; height:160px; border-radius:50%;
+  pointer-events:none;
+}
+.pc-emoji { font-size:30px; margin-bottom:14px; display:block; }
+.pc-title { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; color:var(--text); margin-bottom:8px; }
+.pc-desc { font-size:14px; color:var(--text-muted); line-height:1.7; margin-bottom:12px; }
+.pc-example {
+  font-size:13px; color:var(--text-dim); font-style:italic;
+  padding-top:12px; border-top:1px solid var(--border); line-height:1.6;
+}
+
+/* ── LESSON BLOCK ── */
+.lesson-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden; margin-bottom:28px;
+}
+.lesson-topbar {
+  padding:28px 32px; display:flex; justify-content:space-between;
+  align-items:flex-start; position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.lesson-accent { position:absolute; top:0; left:0; width:100%; height:3px; }
+.ltb-left { flex:1; }
+.lesson-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.tag-dot { width:6px; height:6px; border-radius:50%; }
+.lesson-title-big {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:23px;
+  color:var(--text); letter-spacing:-0.5px; line-height:1.2; margin-bottom:14px;
+}
+.lesson-meta-row {
+  display:flex; flex-wrap:wrap; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted); font-weight:600;
+}
+.lesson-num-badge {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:64px;
+  color:var(--surface3); letter-spacing:-3px; line-height:1;
+  flex-shrink:0; margin-left:24px; user-select:none;
+}
+.lesson-body { padding:32px 32px; }
+
+/* ── BLOCKS ── */
+.block { margin-bottom:34px; }
+.block:last-child { margin-bottom:0; }
+.block-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.block-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.block-header-text {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+}
+
+/* ── CONTENT ── */
+.objective-box {
+  background:var(--surface2); border-left:3px solid var(--sky);
+  padding:20px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:16px; color:var(--text); line-height:1.78;
+}
+
+.script-box {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 30px;
+}
+.script-box p { margin-bottom:18px; color:var(--text); line-height:1.84; }
+.script-box p:last-child { margin-bottom:0; }
+.script-box strong { color:var(--text); font-weight:600; }
+.script-box em { color:var(--text-muted); font-style:italic; }
+.script-box h4 {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
+  color:var(--sky); margin:24px 0 10px; letter-spacing:-0.3px;
+}
+
+/* ── TERMINAL ── */
+.terminal {
+  background:#050609; border:1px solid rgba(56,189,248,0.18);
+  border-radius:12px; overflow:hidden; margin:20px 0;
+  font-family:'JetBrains Mono',monospace;
+}
+.terminal-bar {
+  background:#0A0C12; padding:10px 16px;
+  display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid rgba(56,189,248,0.1);
+}
+.t-dot { width:12px; height:12px; border-radius:50%; }
+.t-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; margin-left:auto;
+}
+.terminal-body { padding:24px 26px; }
+.t-comment { color:var(--text-dim); font-size:13px; margin-bottom:6px; }
+.t-prompt { color:#A8C4F0; font-size:14px; line-height:1.78; white-space:pre-wrap; }
+.t-cursor { color:var(--sky); font-weight:700; }
+.t-divider { height:1px; background:rgba(255,255,255,0.04); margin:18px 0; }
+.t-result { color:var(--green); font-size:13px; line-height:1.7; }
+.t-result-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px;
+}
+.t-output { color:rgba(240,244,255,0.6); font-size:13px; line-height:1.75; margin-top:4px; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  display:flex; gap:16px; padding:20px 24px;
+  border-radius:var(--radius-sm); margin:20px 0;
+}
+.callout-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+.callout-text { font-size:15px; line-height:1.75; }
+.callout-text strong { font-weight:700; display:block; margin-bottom:5px; }
+.c-sky { background:var(--sky-dim); border:1px solid var(--sky-border); }
+.c-sky .callout-text { color:rgba(56,189,248,0.88); }
+.c-gold { background:var(--gold-dim); border:1px solid var(--gold-border); }
+.c-gold .callout-text { color:rgba(245,200,66,0.88); }
+.c-green { background:var(--green-dim); border:1px solid var(--green-border); }
+.c-green .callout-text { color:rgba(34,197,94,0.88); }
+.c-teal { background:var(--teal-dim); border:1px solid var(--teal-border); }
+.c-teal .callout-text { color:rgba(45,212,191,0.88); }
+.c-orange { background:var(--orange-dim); border:1px solid var(--orange-border); }
+.c-orange .callout-text { color:rgba(251,146,60,0.88); }
+.c-red { background:var(--red-dim); border:1px solid var(--red-border); }
+.c-red .callout-text { color:rgba(248,113,113,0.88); }
+
+/* ── NEPAL EXAMPLE ── */
+.nepal-example {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+}
+.ne-header {
+  padding:20px 26px; display:flex; gap:16px; align-items:center;
+  background:rgba(56,189,248,0.06); border-bottom:1px solid var(--border);
+}
+.ne-flag { font-size:28px; flex-shrink:0; }
+.ne-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+.ne-subtitle { font-size:13px; color:var(--text-muted); margin-top:3px; }
+.ne-body { padding:24px 26px; }
+.ne-body p { font-size:16px; color:var(--text); line-height:1.82; margin-bottom:14px; }
+.ne-body p:last-child { margin-bottom:0; }
+.ne-quote {
+  background:rgba(56,189,248,0.06); border-left:3px solid var(--sky);
+  padding:16px 20px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:15px; color:rgba(240,244,255,0.78); font-style:italic;
+  line-height:1.78; margin:16px 0;
+}
+.ne-result {
+  display:flex; align-items:center; gap:12px;
+  background:var(--green-dim); border:1px solid var(--green-border);
+  padding:12px 18px; border-radius:var(--radius-sm); margin-top:4px;
+}
+.ne-result-icon { font-size:20px; }
+.ne-result-text { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--green); }
+
+/* ── STEPS ── */
+.steps { display:flex; flex-direction:column; gap:12px; }
+.step {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:18px 20px; border-radius:var(--radius-sm);
+  transition:border-color 0.2s;
+}
+.step:hover { border-color:rgba(56,189,248,0.2); }
+.step-num {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+  border:1px solid transparent;
+}
+.step-content { flex:1; }
+.step-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.step-desc { font-size:14px; color:var(--text-muted); line-height:1.72; }
+
+/* ── TABLE ── */
+.ctable { width:100%; border-collapse:collapse; }
+.ctable th {
+  background:var(--surface3); padding:12px 16px; text-align:left;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+  border-bottom:1px solid var(--border);
+}
+.ctable td {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  font-size:15px; color:var(--text); vertical-align:top;
+}
+.ctable tr:last-child td { border-bottom:none; }
+.ctable tr:hover td { background:rgba(255,255,255,0.015); }
+.badge {
+  display:inline-block; font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px;
+  white-space:nowrap;
+}
+.badge-sky { background:var(--sky-dim); color:var(--sky); border:1px solid var(--sky-border); }
+.badge-green { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+.badge-gold { background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border); }
+.badge-teal { background:var(--teal-dim); color:var(--teal); border:1px solid var(--teal-border); }
+.badge-orange { background:var(--orange-dim); color:var(--orange); border:1px solid var(--orange-border); }
+
+/* ── DECISION FRAMEWORK ── */
+.decision-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+.decision-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:20px 22px;
+}
+.decision-question {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:14px;
+  color:var(--sky); margin-bottom:12px;
+}
+.decision-answer { font-size:14px; color:var(--text-muted); line-height:1.72; }
+.decision-prompt {
+  margin-top:12px; padding:10px 14px;
+  background:var(--surface3); border-radius:var(--radius-sm);
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:rgba(168,196,240,0.75); line-height:1.6;
+}
+
+/* ── COMPARISON ── */
+.old-new {
+  display:grid; grid-template-columns:1fr 1fr; gap:2px;
+  border-radius:var(--radius); overflow:hidden; margin:20px 0;
+}
+.on-old {
+  background:rgba(248,113,113,0.07); border:1px solid rgba(248,113,113,0.18);
+  padding:22px 24px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+}
+.on-new {
+  background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.18);
+  padding:22px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.on-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;
+}
+.on-old .on-label { color:var(--red); }
+.on-new .on-label { color:var(--green); }
+.on-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.on-list li {
+  font-size:14px; line-height:1.6; color:var(--text);
+  padding-left:20px; position:relative;
+}
+.on-list li::before { position:absolute; left:0; font-weight:700; }
+.on-old .on-list li::before { content:'✗'; color:var(--red); }
+.on-new .on-list li::before { content:'✓'; color:var(--green); }
+
+/* ── INSIGHT BOX ── */
+.insight-box {
+  background:var(--surface2); border:1px solid var(--sky-border);
+  border-radius:var(--radius); padding:28px 30px; position:relative; overflow:hidden;
+}
+.insight-box::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:160px; height:160px; border-radius:50%;
+  background:radial-gradient(circle, var(--sky-dim) 0%, transparent 70%);
+  pointer-events:none;
+}
+.insight-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--sky); margin-bottom:16px; position:relative;
+}
+.insight-list { display:flex; flex-direction:column; gap:14px; position:relative; }
+.insight-item { display:flex; gap:14px; align-items:flex-start; }
+.insight-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:13px;
+  color:var(--sky); background:var(--sky-dim); border:1px solid var(--sky-border);
+  width:28px; height:28px; border-radius:7px; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.insight-text { font-size:15px; color:var(--text); line-height:1.75; }
+.insight-text strong { color:var(--sky); font-weight:600; }
+
+/* ── TABS ── */
+.tabs-nav {
+  display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:24px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.tab-btn {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:12px;
+  letter-spacing:1px; text-transform:uppercase; padding:12px 20px;
+  color:var(--text-dim); background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap;
+}
+.tab-btn.active { color:var(--sky); border-bottom-color:var(--sky); }
+.tab-btn:hover { color:var(--text-muted); }
+.tab-pane { display:none; }
+.tab-pane.active { display:block; }
+
+/* ── TASK BOX ── */
+.task-box {
+  background:rgba(245,200,66,0.05); border:1px solid var(--gold-border);
+  border-radius:var(--radius); padding:26px 30px;
+}
+.task-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.task-header-icon { font-size:28px; }
+.task-header-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:17px;
+  color:var(--gold); letter-spacing:-0.3px;
+}
+.task-body p, .task-body li { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:10px; }
+.task-body ol { padding-left:20px; }
+.task-body li { padding-left:4px; }
+.task-body strong { color:var(--text); }
+.task-cta {
+  margin-top:16px; padding:14px 18px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  border-radius:var(--radius-sm); font-size:14px; color:var(--gold);
+  font-family:'Syne',sans-serif; font-weight:700; line-height:1.6;
+}
+
+/* ── MISTAKES ── */
+.mistakes {
+  background:rgba(251,146,60,0.06); border:1px solid var(--orange-border);
+  border-radius:var(--radius); padding:24px 28px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.mistake { display:flex; gap:14px; align-items:flex-start; }
+.mistake-x {
+  width:28px; height:28px; border-radius:8px;
+  background:rgba(251,146,60,0.15); color:var(--orange);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; flex-shrink:0;
+}
+.mistake-content { flex:1; }
+.mistake-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.mistake-desc { font-size:14px; color:var(--text-muted); line-height:1.72; }
+
+/* ── DATA STORY (visual stat blocks) ── */
+.data-story {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0;
+}
+.ds-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:20px 18px; text-align:center;
+}
+.ds-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:36px;
+  letter-spacing:-1.5px; line-height:1; margin-bottom:8px;
+}
+.ds-label { font-size:13px; color:var(--text-muted); line-height:1.6; }
+.ds-context { font-size:12px; color:var(--text-dim); margin-top:6px; font-style:italic; }
+
+/* ── DIVIDER ── */
+.lesson-divider {
+  max-width:1060px; margin:0 auto 28px; padding:0 40px;
+  display:flex; align-items:center; gap:20px;
+}
+.ld-line { flex:1; height:1px; background:var(--border); }
+.ld-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* ── COMPLETE SECTION ── */
+.complete-section {
+  max-width:1060px; margin:60px auto; padding:60px;
+  background:var(--surface); border:1px solid var(--sky-border);
+  border-radius:24px; text-align:center; position:relative; overflow:hidden;
+}
+.complete-section::before {
+  content:''; position:absolute; top:-80px; left:50%; transform:translateX(-50%);
+  width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 65%);
+  pointer-events:none;
+}
+.complete-section h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(24px,4vw,38px);
+  color:var(--sky); letter-spacing:-1px; margin-bottom:14px; position:relative;
+}
+.complete-section > p {
+  color:var(--text-muted); font-size:17px; line-height:1.8; margin-bottom:32px;
+  max-width:600px; margin-left:auto; margin-right:auto; position:relative;
+}
+.next-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; position:relative; }
+.next-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:18px 20px; text-align:left;
+  transition:border-color 0.2s;
+}
+.next-card:hover { border-color:var(--sky-border); }
+.next-card-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--sky); margin-bottom:6px; }
+.next-card-desc { font-size:13px; color:var(--text-muted); line-height:1.6; }
+
+/* ── TESTIMONIALS ── */
+.testi-section {
+  background:var(--surface); border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border); padding:80px 40px;
+}
+.testi-inner { max-width:1060px; margin:0 auto; }
+.testi-eyebrow {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--sky); margin-bottom:14px;
+}
+.testi-inner h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:32px;
+  color:var(--text); letter-spacing:-1px; margin-bottom:40px;
+}
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.testi-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:26px;
+  transition:border-color 0.2s;
+}
+.testi-card:hover { border-color:var(--sky-border); }
+.testi-stars { color:var(--gold); font-size:13px; letter-spacing:2px; margin-bottom:12px; }
+.testi-quote {
+  font-size:15px; color:rgba(237,240,250,0.78);
+  line-height:1.78; margin-bottom:18px; font-style:italic;
+}
+.testi-person { font-size:14px; color:var(--sky); font-weight:700; font-family:'Syne',sans-serif; }
+.testi-role { font-size:12px; color:var(--text-dim); margin-top:3px; font-family:'Syne',sans-serif; }
+
+/* ── FAQ ── */
+.faq-section { max-width:1060px; margin:0 auto; padding:60px 40px 80px; }
+.faq-section h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:30px;
+  color:var(--text); letter-spacing:-1px; margin-bottom:8px;
+}
+.faq-sub { color:var(--text-muted); margin-bottom:32px; font-size:16px; }
+.faq-item { border:1px solid var(--border); border-radius:10px; margin-bottom:12px; overflow:hidden; }
+.faq-q {
+  padding:18px 22px; font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
+  color:var(--text); display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer; background:var(--surface); user-select:none; transition:background 0.2s;
+}
+.faq-q:hover { background:var(--surface2); }
+.faq-q span { color:var(--sky); font-size:20px; }
+.faq-a {
+  padding:0 22px; max-height:0; overflow:hidden;
+  transition:max-height 0.35s ease, padding 0.25s;
+  font-size:15px; color:var(--text-muted); line-height:1.8; background:var(--surface2);
+}
+.faq-a.open { max-height:500px; padding:16px 22px 22px; }
+
+/* ── FOOTER ── */
+.footer {
+  background:var(--surface); padding:40px; text-align:center;
+  color:var(--text-dim); font-family:'Syne',sans-serif; font-size:13px;
+  border-top:1px solid var(--border);
+}
+.footer strong { color:var(--sky); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);} }
+.fade-in { animation:fadeUp 0.65s ease forwards; }
+.d1{animation-delay:0.1s;opacity:0;} .d2{animation-delay:0.22s;opacity:0;}
+.d3{animation-delay:0.34s;opacity:0;} .d4{animation-delay:0.46s;opacity:0;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:740px){
+  .hero{padding:100px 24px 80px;}
+  .section{padding:60px 24px;}
+  .power-grid{grid-template-columns:1fr 1fr;}
+  .data-story{grid-template-columns:1fr 1fr;}
+  .decision-grid{grid-template-columns:1fr;}
+  .old-new{grid-template-columns:1fr;}
+  .on-old{border-radius:var(--radius-sm) var(--radius-sm) 0 0;}
+  .on-new{border-radius:0 0 var(--radius-sm) var(--radius-sm);}
+  .lesson-body{padding:20px 20px;}
+  .lesson-topbar{padding:22px 20px;flex-direction:column;}
+  .lesson-num-badge{display:none;}
+  .testi-grid{grid-template-columns:1fr;}
+  .next-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:40px;letter-spacing:-2px;}
+  .complete-section{padding:40px 24px;margin:40px 24px;}
+  .lesson-divider{padding:0 24px;}
+  .nav-right{display:none;}
+  .nav-pill{display:none;}
+  .faq-section{padding:40px 24px 60px;}
+  .testi-section{padding:60px 24px;}
+  .insight-box{padding:22px 20px;}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><div class="nav-dot"></div>AI Saathi</div>
+    <div class="nav-pill">Module 6 of 8</div>
+    <div class="nav-right">
+      <span>Progress</span>
+      <div class="progress-dots">
+        <div class="pd done"></div><div class="pd done"></div>
+        <div class="pd done"></div><div class="pd done"></div>
+        <div class="pd done"></div><div class="pd active"></div>
+        <div class="pd"></div><div class="pd"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-orb1"></div><div class="hero-orb2"></div><div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow fade-in">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">Module 6 of 8 · AI Saathi · The Intelligence Module</span>
+    </div>
+    <h1 class="fade-in d1">
+      <span class="line1">Think Smarter,</span>
+      <span class="line2">Decide Better</span>
+      <span class="line1" style="font-size:0.8em">with AI Research &amp; Data</span>
+      <span class="line3">Research anything in minutes · Understand your customers · Make decisions you can trust</span>
+    </h1>
+    <p class="hero-sub fade-in d2">
+      You have learned to create with AI. Now you will learn to <em>think</em> with it. This module teaches you to research competitors, understand your market, read your own business data, and make smarter decisions — faster than ever before.
+    </p>
+    <div class="hero-stats fade-in d3">
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Full Lessons</div></div>
+      <div class="stat"><div class="stat-num">25+</div><div class="stat-label">Research Prompts</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Decision Frameworks</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">Tech Skills Needed</div></div>
+    </div>
+    <div class="hero-cta-row fade-in d4">
+      <a href="#lesson1" class="cta-primary">Start Lesson 1 →</a>
+      <a href="#what-you-learn" class="cta-secondary">What You'll Learn ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── INTRO STRIP ── -->
+<div class="intro-strip">
+  ✦ The business owners who WIN are not just the hardest workers — they are the BEST-INFORMED. This module gives you that edge. ✦
+</div>
+
+<!-- ── WHAT YOU LEARN ── -->
+<div id="what-you-learn">
+<section class="section" style="padding-top:60px; padding-bottom:50px;">
+  <span class="section-label">The Intelligence Advantage</span>
+  <h2 class="section-title">Stop guessing. Start <span class="accent-sky">knowing</span>.</h2>
+  <p class="section-desc">
+    Most small business owners make decisions based on gut feeling, gossip, and guesswork. After this module, you will make decisions based on real research, real competitor data, and real customer understanding — in minutes, using only AI.
+  </p>
+  <div class="power-grid">
+    <div class="power-card" style="border-color:rgba(56,189,248,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(56,189,248,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">🔍</span>
+      <div class="pc-title">Research Any Topic Instantly</div>
+      <div class="pc-desc">Get deep, accurate information on any subject — market trends, pricing, regulations, competitors — without spending hours searching the internet.</div>
+      <div class="pc-example">Example: "What are the most profitable food businesses to start in Nepal in 2025?"</div>
+    </div>
+    <div class="power-card" style="border-color:rgba(45,212,191,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(45,212,191,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">👥</span>
+      <div class="pc-title">Understand Your Customers</div>
+      <div class="pc-desc">Learn what your customers really want, what problems they face, and what would make them choose you over a competitor — using AI-powered analysis.</div>
+      <div class="pc-example">Example: "What do middle-class Nepali mothers aged 30–45 care most about when buying school supplies?"</div>
+    </div>
+    <div class="power-card" style="border-color:rgba(34,197,94,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(34,197,94,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">🏆</span>
+      <div class="pc-title">Study Your Competition</div>
+      <div class="pc-desc">Discover exactly what your competitors are doing well, where they are weak, and how you can position your business to stand out in the market.</div>
+      <div class="pc-example">Example: "How can a small Kathmandu bakery compete against big chain bakeries?"</div>
+    </div>
+    <div class="power-card" style="border-color:rgba(245,200,66,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(245,200,66,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">📊</span>
+      <div class="pc-title">Read &amp; Explain Data Simply</div>
+      <div class="pc-desc">Take raw numbers — your sales figures, Facebook insights, WhatsApp enquiries — and have AI explain what they mean and what you should do next.</div>
+      <div class="pc-example">Example: "I paste in my monthly sales — AI tells me which products to push and which to drop."</div>
+    </div>
+    <div class="power-card" style="border-color:rgba(251,146,60,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(251,146,60,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">⚖️</span>
+      <div class="pc-title">Make Better Decisions</div>
+      <div class="pc-desc">When you are stuck between two choices — whether to expand, what price to set, which product to launch — AI becomes your business advisor to think it through.</div>
+      <div class="pc-example">Example: "Should I open a second shop or invest more in my first one? Help me decide."</div>
+    </div>
+    <div class="power-card" style="border-color:rgba(167,139,250,0.18);">
+      <div class="power-card-glow" style="background:radial-gradient(circle,rgba(167,139,250,0.1) 0%,transparent 70%);"></div>
+      <span class="pc-emoji">📋</span>
+      <div class="pc-title">Plan Like a Professional</div>
+      <div class="pc-desc">Create proper business plans, budgets, pricing strategies, and growth roadmaps — the kind of thinking that used to require hiring an expensive consultant.</div>
+      <div class="pc-example">Example: "Help me create a 3-month plan to grow my restaurant's catering business by 30%."</div>
+    </div>
+  </div>
+
+  <div class="callout c-sky">
+    <div class="callout-icon">💡</div>
+    <div class="callout-text">
+      <strong>A word before we begin</strong>
+      AI research is incredibly powerful, but it has one important limitation: it does not always know your local market perfectly. Use AI to get frameworks, ideas, and global knowledge — then combine it with your own local experience and observation. That combination is unbeatable.
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ LESSON 1 ══════════════ -->
+<section class="section" id="lesson1" style="padding-top:20px; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--sky),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--sky);">
+        <div class="tag-dot" style="background:var(--sky);"></div>
+        Lesson 01 · Foundation
+      </div>
+      <div class="lesson-title-big">AI as Your Personal Research Assistant — Stop Wasting Hours Searching</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 22 min</span><span>🔍 Research Skills</span><span>⚡ Saves 5+ hours per week</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">01</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will know how to use ChatGPT as a personal research assistant — getting deep, useful information on any business or life topic in minutes instead of hours.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Let me paint you a picture. It is 10 PM. You are tired after a long day at the shop. But a thought has been bothering you: your neighbour just opened a similar business and seems to be attracting more customers. You want to understand what they are doing differently — their pricing, their products, their promotions. How do you find out?</p>
+        <p>Before AI, you had two bad options: spend hours searching Google and reading through dozens of websites, hoping something useful appears — or simply not bother and keep guessing. Both options are terrible when you are running a real business with real problems to solve.</p>
+        <p><strong>With AI, you have a third option. You ask, in plain language, and you get a clear, thoughtful answer in 30 seconds.</strong> Not a list of irrelevant search results. Not a confusing article written for someone else. A direct, useful response to your exact question.</p>
+        <p>Think of ChatGPT as a consultant who has read millions of business books, studied thousands of industries, and worked with businesses all over the world — and who will answer your specific question for free, at any hour, without judgment or impatience.</p>
+        <p>The key insight of this lesson is: <em>the quality of what you get from AI research depends entirely on the quality of your question.</em> A vague question gets a vague answer. A specific, well-framed question gets a specific, actionable answer that you can use immediately.</p>
+
+        <h4>The Research Question Formula</h4>
+        <p>Before asking AI any research question, frame it using this three-part formula:</p>
+        <p><strong>Part 1 — Context:</strong> Who you are and what your situation is.<br>
+        <strong>Part 2 — The specific question:</strong> Exactly what you want to know.<br>
+        <strong>Part 3 — What you want from the answer:</strong> A list? A comparison? A recommendation? A step-by-step plan?</p>
+        <p>Most people only do Part 2 and wonder why the answer is not useful. Parts 1 and 3 are what make the answer specific to YOUR situation.</p>
+
+        <h4>Research vs. Google: What is the difference?</h4>
+        <p>Google gives you a list of websites. You then have to open 10 of them, read through them, filter out the bad ones, and try to piece together an answer yourself. This takes 30–60 minutes for a complex question.</p>
+        <p>ChatGPT reads those websites for you (metaphorically), synthesises the key information, and tells you what you need to know in plain language in 30 seconds. <strong>It is not a replacement for your own judgment — but it is an extraordinary starting point that saves you enormous time.</strong></p>
+        <p>One important note: for very recent news or local price data (today's vegetable prices in Kalimati, the current exchange rate), ChatGPT may not be fully up-to-date. For those specifics, combine AI research with a quick local check. But for strategic questions, business frameworks, market understanding, and planning — AI is exceptionally reliable and useful.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--teal-dim);color:var(--teal);">🔍</div>
+        <span class="block-header-text">Research Prompts That Work — Copy &amp; Customize</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">ChatGPT Research Prompts</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-comment">// Market Research</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"I run a small grocery shop in a mid-size Nepali city. Research the 5 biggest reasons why small grocery shops lose customers to bigger stores, and give me practical ways to counter each one."
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Pricing Research</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"I am planning to start a home-cooked tiffin delivery service in Kathmandu for office workers. Help me research: what should I charge per meal, what do competitors typically charge, and what is the minimum number of customers I need to cover my costs?"
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Trend Research</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"What types of small businesses are growing fastest in Nepal right now? Focus on businesses that someone with Rs 50,000 or less can start. Give me the top 5 with reasons why each is growing."
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Problem Research</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"My clothing shop in Nepal used to be busy but in the past year sales have dropped 30%. List 10 possible reasons why this might be happening — from local competition to changing customer habits — so I can identify which one applies to me."</div>
+          <div class="t-result" style="margin-top:16px;">
+            <div class="t-result-label">What you get back</div>
+            <div class="t-output">A clear, structured response that directly answers your question — no irrelevant information, no need to search through multiple websites. Ready to act on immediately.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(45,212,191,0.12);color:var(--teal);">💬</div>
+        <span class="block-header-text">Nepal Example — Hema Acharya's Grocery Question</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Hema Acharya, 48 — Grocery Shop Owner, Kirtipur</div>
+            <div class="ne-subtitle">How one research question changed her whole product strategy</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Hema had been running her small grocery shop in Kirtipur for nine years. For the past two years, she had noticed that her sales of rice and daily staples were declining — customers seemed to be buying these from a larger shop nearby. But she did not know how to think about the problem or what to do about it.</p>
+          <p>In this lesson, she asked ChatGPT: <em>"I run a small neighbourhood grocery shop in Nepal. A larger store opened 300 metres away last year and I am losing staple-goods customers to them. What should I do? Give me specific things small shops do to survive and thrive despite competition from larger stores."</em></p>
+          <p>ChatGPT gave her a detailed response that covered: focusing on personalised service and knowing customers by name (which large stores can't do), carrying unique local products that the big store doesn't stock, offering WhatsApp ordering and home delivery to regular customers, creating a loyalty system for frequent buyers, and focusing on high-margin specialty items rather than competing on commodity prices.</p>
+          <p>Hema did not know all of this before. She had been trying to compete on price — which she could never win against a bigger shop. The research response made her realize she was playing the wrong game entirely.</p>
+          <div class="ne-quote">"Within two weeks I had added 3 unique products the big store does not carry. I started WhatsApp delivery for my regular 30 customers. I made a simple loyalty card. My weekly income went up noticeably in the first month. I spent Rs 0 to get this advice."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">📈</div>
+            <div class="ne-result-text">Strategy shift in 30 minutes · Rs 0 consulting cost · Revenue growth in first month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🔍</div>
+          <div class="task-header-title">Your First Real Research Session</div>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li><strong>Think of the ONE biggest question</strong> you have about your business or work right now — something you have been unsure about or have been meaning to research.</li>
+            <li><strong>Write your question using the 3-part formula:</strong> Start with "I am [who you are and your situation]." Then ask your specific question. Then add "Give me [list/plan/comparison/recommendation]."</li>
+            <li><strong>Ask ChatGPT.</strong> Read the full answer. Then ask at least one follow-up question to go deeper — "Tell me more about option 3" or "How would this work specifically in Nepal?"</li>
+            <li><strong>Write down 2 things you learned</strong> that you did not know before and 1 action you will take because of this research.</li>
+          </ol>
+          <div class="task-cta">📌 Keep that 3-part formula nearby. You will use it constantly throughout this module — and for the rest of your business life.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Accepting AI research results without any verification</div>
+            <div class="mistake-desc">AI is a brilliant starting point — not the final word. For important business decisions involving significant money, always verify key facts with local sources, actual competitors, or real customers. Ask AI: "How can I verify this information locally?" It will give you good suggestions.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Asking vague questions and being disappointed by general answers</div>
+            <div class="mistake-desc">"How can I grow my business?" is too vague. "I sell handmade pottery in Bhaktapur, mostly to tourists, and I want to grow my online sales to Nepali diaspora abroad — what are the best 3 platforms and how do I start?" is specific. The more you tell AI about your exact situation, the more useful its answers become.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Researching everything but acting on nothing</div>
+            <div class="mistake-desc">Some students become research addicts — they ask AI question after question, learn many things, but implement nothing. Knowledge without action has zero value. Every research session should end with you writing down 1 to 3 specific things you will do differently. Research that does not change your actions is just entertainment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider" style="margin-top:28px;"><div class="ld-line"></div><span class="ld-label">Lesson 2</span><div class="ld-line"></div></div>
+
+<!-- ══════════════ LESSON 2 ══════════════ -->
+<section class="section" id="lesson2" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--teal),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--teal);">
+        <div class="tag-dot" style="background:var(--teal);"></div>
+        Lesson 02 · Customer Intelligence
+      </div>
+      <div class="lesson-title-big">Know Your Customer Better Than They Know Themselves</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 28 min</span><span>👥 Customer Understanding</span><span>💰 Directly increases sales</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">02</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have a complete AI-generated profile of your ideal customer — including their deepest desires, real fears, decision-making habits, and the exact words they use — so you can speak to them in a way that feels personal and compelling.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Here is a hard truth about most small businesses: they talk about themselves instead of talking about their customers.</p>
+        <p>Their Facebook posts say: "Best quality! Lowest price! Come visit us!" But their customers are thinking: "Will this fit me? Is it genuine? Will they replace it if something goes wrong? Will I feel embarrassed if I buy a cheap thing in front of my friends?"</p>
+        <p>The business is talking about features. The customer is thinking about feelings, fears, and social status. <strong>There is a complete mismatch — and that mismatch costs you sales every single day.</strong></p>
+        <p>The businesses that sell more are not necessarily selling better products. They are speaking more directly to what their customers actually feel and want. This is called customer understanding — and until recently, it took expensive research, focus groups, and marketing consultants to get it right.</p>
+        <p>With AI, you can now build a deep, accurate picture of your customer in 20 minutes, completely free. <em>AI has read millions of studies, articles, social media posts, and business books about what different types of people want and how they make decisions. You can access all of that knowledge simply by asking the right questions.</em></p>
+        <p>What you are creating is called a <strong>Customer Profile</strong> — also known as a "buyer persona." It is a detailed description of one specific type of person who buys from you. Not all customers at once — just the one typical person you are trying to reach most. When you know that person deeply, everything becomes easier: your Facebook posts, your WhatsApp messages, your pricing, your promotions, your shop layout, even the way you greet people.</p>
+
+        <h4>What a Customer Profile includes</h4>
+        <p><strong>Demographics:</strong> Age, gender, occupation, income level, family situation, location.<br>
+        <strong>Desires:</strong> What are they really hoping for when they walk into your shop or see your post? What dream are they trying to reach?<br>
+        <strong>Fears and frustrations:</strong> What worries them? What bad experiences have they had before? What makes them hesitate?<br>
+        <strong>How they decide:</strong> Do they decide quickly on price, or slowly on trust? Do they ask friends first? Do they compare options online?<br>
+        <strong>Their own language:</strong> What exact words and phrases do they use when talking about this product or service? Using their language in your posts makes your content feel like you are speaking directly to them.</p>
+        <p><em>Once you have this profile, you have a compass. Every piece of content you create, every offer you make, every message you send can be aimed precisely at this person — and it will resonate far more powerfully than generic communication that tries to speak to everyone.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--teal-dim);color:var(--teal);">👤</div>
+        <span class="block-header-text">The Customer Profile Master Prompt</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">Customer Intelligence Prompt</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-prompt"><span class="t-cursor">→ </span>I sell [your product/service] in [your city/area], Nepal. My typical customer is a [age range] [man/woman/person] who [brief description of their life — job, family, income level].
+
+Please create a detailed customer profile for me that includes:
+1. Their deepest desires and dreams related to [your product category]
+2. Their biggest fears, frustrations, and hesitations when buying [your product]
+3. How they make their buying decision — what factors matter most to them
+4. What they have been disappointed by in the past with similar products/services
+5. The exact words and phrases they would use to describe what they want
+6. What would make them choose ME over a competitor
+7. What would make them become a loyal, repeat customer
+8. A realistic example of what they say to a friend when recommending a business like mine
+
+Be very specific. Think about the reality of daily life in Nepal for this person.</div>
+          <div class="t-result" style="margin-top:16px;">
+            <div class="t-result-label">What you get back</div>
+            <div class="t-output">A complete psychological and behavioural profile of your ideal customer — richer than most businesses in Nepal have ever created. Use it to guide every piece of communication you produce.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">💡</div>
+        <span class="block-header-text">The Difference It Makes — Before and After</span>
+      </div>
+      <div class="old-new">
+        <div class="on-old">
+          <div class="on-label">❌ Without Customer Profile</div>
+          <ul class="on-list">
+            <li>Facebook posts that feel generic and get ignored</li>
+            <li>Promotions that attract bargain hunters, not loyal customers</li>
+            <li>Products stocked based on guess or habit, not what customers want</li>
+            <li>WhatsApp messages that feel like spam to the reader</li>
+            <li>Prices set without understanding what the customer values</li>
+            <li>Competing only on price because you don't know what else matters</li>
+          </ul>
+        </div>
+        <div class="on-new">
+          <div class="on-label">✓ With Customer Profile</div>
+          <ul class="on-list">
+            <li>Posts that make your customer think "this person understands me"</li>
+            <li>Offers that appeal to what your customer actually wants — not just discounts</li>
+            <li>Stock decisions based on real customer desires and language</li>
+            <li>WhatsApp messages that feel personal and relevant, not pushy</li>
+            <li>Prices that reflect the value your specific customer cares about</li>
+            <li>Competing on trust, relationships, and understanding — which no price war can beat</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(45,212,191,0.12);color:var(--teal);">💬</div>
+        <span class="block-header-text">Nepal Example — Roshan's Coaching Centre, Lalitpur</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Roshan Karki, 39 — Tutoring &amp; Coaching Centre Owner, Lalitpur</div>
+            <div class="ne-subtitle">Used customer profiling to double his class enquiries in three weeks</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Roshan runs a small tutoring centre in Lalitpur for Class 9 and 10 students. His Facebook page had about 400 followers but very few enquiries came from it. He was posting things like "Best coaching centre in Lalitpur! Expert teachers! Join today!" — and getting almost no response.</p>
+          <p>After this lesson, he ran the customer profile prompt for his real customers: not the students, but the <em>parents</em> — specifically mothers aged 35–50 from middle-class families in Lalitpur. The AI profile revealed something he had not fully realised: these mothers are not primarily motivated by "expert teachers" or "best coaching." Their deepest fear is that their child will fail the SLC and embarrass the family. Their real desire is confidence — to feel certain their child is being properly prepared and cared for. They want regular communication, proof of progress, and reassurance.</p>
+          <p>Roshan changed his entire communication style. Instead of "Join our coaching centre," his new posts said: "Still worried your child is not ready for the SLC? Here is what our parents tell us every month: 'For the first time, I actually know what my child is learning.' We send a weekly progress message to every parent. That peace of mind is why 94 families chose us last year."</p>
+          <div class="ne-quote">"My old posts were about ME — my teachers, my centre, my experience. My new posts are about the PARENT — their worry, their hope, their peace of mind. In three weeks, enquiries more than doubled. Same centre, same teachers, same price. Just completely different communication."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">📞</div>
+            <div class="ne-result-text">2× more enquiries in 3 weeks · No price change · No new staff · Only a communication shift</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">👤</div>
+          <div class="task-header-title">Build Your Customer Profile Today</div>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li><strong>Identify your most important customer.</strong> Not all of them at once — just the one person who, if you had 50 more like them, would make your business thrive. Give them a name in your head: "Kamala Ma'am" or "Ramesh Dai." Make them real.</li>
+            <li><strong>Describe them briefly in writing first:</strong> Age, gender, job, family, what they buy from you, how often, why they come to you versus a competitor.</li>
+            <li><strong>Run the Customer Profile Master Prompt.</strong> Fill in your specific details. Read the AI's full response carefully. Highlight the 3 things that surprise you most.</li>
+            <li><strong>Rewrite one existing Facebook post</strong> using the customer's language and addressing their real desire or fear from the profile. Compare the old version and the new one side by side.</li>
+            <li><strong>Post the new version.</strong> Compare the engagement after 48 hours to a similar old-style post.</li>
+          </ol>
+          <div class="task-cta">🎯 Share your "before" and "after" post in the WhatsApp group. Other students can tell you honestly which one speaks to them more. Real feedback, real learning.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Creating a profile and then never using it</div>
+            <div class="mistake-desc">A customer profile is not a one-time exercise. It is a reference document. Every time you write a post, send a WhatsApp message, or plan a promotion, open your profile and ask: "Would this specific person care about this? Does this speak to what they want and fear?" If not, change it until it does.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Making your customer profile too broad — "everyone"</div>
+            <div class="mistake-desc">A common response is: "My customers are everyone — men, women, old, young, rich, poor." This is almost never true. Your BEST customers are a specific kind of person. When you try to speak to everyone, you end up speaking to no one. Make your profile specific, even if it feels uncomfortable to narrow it down.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider" style="margin-top:28px;"><div class="ld-line"></div><span class="ld-label">Lesson 3</span><div class="ld-line"></div></div>
+
+<!-- ══════════════ LESSON 3 ══════════════ -->
+<section class="section" id="lesson3" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--green),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--green);">
+        <div class="tag-dot" style="background:var(--green);"></div>
+        Lesson 03 · Competitor Intelligence
+      </div>
+      <div class="lesson-title-big">Study Your Competition &amp; Find Your Winning Edge</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 26 min</span><span>🏆 Competitive Strategy</span><span>📍 Work in any market</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">03</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will know exactly how to analyse your competition using AI — identifying their strengths, their weaknesses, and the specific gap in the market that only your business can fill.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Sun Tzu — a famous general who wrote the most studied strategy book in history 2,500 years ago — said: "Know your enemy as you know yourself, and you need not fear the outcome of a hundred battles." This principle is just as true for a clothing shop in Birgunj as it was for armies in ancient China.</p>
+        <p>The businesses that thrive are not necessarily better than their competitors in every way. They are simply better at understanding where their competitors are weak — and positioning themselves to fill that gap. <strong>Competitive intelligence is not spying. It is smart observation and analysis.</strong></p>
+        <p>In Nepal's small business market, most competitors are remarkably similar to each other. They sell the same products, at similar prices, with similar marketing, making the same claims ("best quality, lowest price, reliable service"). The ones who stand out are those who find one or two specific ways to be genuinely different — and then communicate those differences clearly.</p>
+        <p>AI helps you with this in a powerful way. While AI cannot browse your specific local competitor's Facebook page in real time, it has extensive knowledge of competitive strategies, common business weaknesses, market positioning frameworks, and differentiation tactics across every type of business. <em>You bring the local context. AI brings the strategic framework. Together, you get insights that would cost thousands of rupees from a business consultant.</em></p>
+
+        <h4>The 3 Questions of Competitor Analysis</h4>
+        <p><strong>Question 1 — What are they doing well?</strong> What is making customers go to them instead of you? Be honest. This is information you need, not a reason to feel bad. Understanding their strengths helps you decide whether to match them or differentiate around them.</p>
+        <p><strong>Question 2 — Where are they weak?</strong> What complaints do their customers have? What type of customer are they NOT serving well? What do they ignore, do poorly, or not offer at all? Every gap in their service is an opportunity for you.</p>
+        <p><strong>Question 3 — What could YOU do that they genuinely cannot?</strong> Because of your location, your personality, your specific skills, your relationships, your history in the community, or your unique products — what is possible for you that would be hard for them to copy?</p>
+        <p>When you can answer Question 3 clearly, you have found your <strong>winning edge</strong>. Everything in your marketing should then communicate that edge loudly and consistently.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">🏆</div>
+        <span class="block-header-text">Competitor Analysis Prompts That Deliver Real Strategy</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">Competitor Intelligence Prompts</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-comment">// Understanding the competitive landscape</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"I run a small pharmacy in a mid-size Nepali city. There is a large, well-stocked pharmacy 500 metres away and a cheaper pharmacy 200 metres away. I am caught in the middle. What are the typical weaknesses of large pharmacy chains compared to small ones, and how can a small pharmacy compete effectively? Give me 6 specific, practical strategies."
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Finding your differentiation</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"I sell handmade lokta paper notebooks and stationery in Kathmandu. My main competitors are: (1) mass-produced cheap Chinese stationery in Asan market, (2) imported premium stationery in big malls. I am in the middle — handmade, local, but not as cheap as Chinese imports. How do I position my brand to stand clearly apart from both? What story should I tell and what customers should I target?"
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Turning a competitor's weakness into your strength</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"In Nepal's restaurant market, what are the most common complaints customers have about mid-range restaurants? List the top 7 pain points. Then tell me how a small restaurant can turn each one into a specific competitive advantage through service, communication, or product quality."</div>
+          <div class="t-result" style="margin-top:16px;">
+            <div class="t-result-label">Pro tip</div>
+            <div class="t-output">After getting AI analysis, always ask: "Now tell me which of these strategies would be most relevant and effective for a business in Nepal specifically, given the local culture and market." This localises the strategic advice.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🗺️</div>
+        <span class="block-header-text">Your Own Observation + AI Analysis: The Winning Combination</span>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">How to do a proper local competitor analysis in 2 hours</div>
+        <div class="insight-list">
+          <div class="insight-item">
+            <div class="insight-num">1</div>
+            <div class="insight-text"><strong>Observe physically (45 min):</strong> Visit 2–3 competitor businesses as a customer. Notice: How does the shop look? How are you greeted? How long do customers wait? What products are prominently displayed? What are the prices? Take notes on your phone — not as a spy, just as a curious observer. Every detail matters.</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">2</div>
+            <div class="insight-text"><strong>Observe digitally (20 min):</strong> Look at their Facebook page. How often do they post? What types of posts get the most reactions? What do customers comment or complain about? What do they seem to be offering that attracts customers? Screenshot the most successful content you see.</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">3</div>
+            <div class="insight-text"><strong>Ask AI to analyse your observations (15 min):</strong> Describe what you found to ChatGPT: "I visited my competitor and observed [your specific findings]. Based on this, what are their likely strengths and weaknesses? What gaps are they leaving open that I could fill? What 3 things could I do differently to attract customers they are not fully serving?"</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">4</div>
+            <div class="insight-text"><strong>Define your one clear difference (30 min):</strong> Based on your observations and AI analysis, write one sentence that clearly states how your business is different. It should be specific, believable, and something your competitor genuinely cannot easily copy. <em>This becomes the core message in all your marketing.</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🏆</div>
+          <div class="task-header-title">Find Your Winning Edge This Week</div>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>Identify your top 1–2 competitors. These are the businesses your customers mention when they compare you, or the ones you think about when you worry about your business.</li>
+            <li>Visit or observe them using the 4-step process above. Be thorough — the more specific your observations, the more useful AI's analysis will be.</li>
+            <li>Ask ChatGPT to analyse your observations and identify opportunities.</li>
+            <li>Write your one-sentence competitive advantage statement: <strong>"Unlike [competitor type], we [specific difference] for [specific type of customer] who [specific desire or frustration]."</strong></li>
+            <li>Post this statement somewhere visible in your work area. It is your new north star. Every week, ask yourself: am I actually delivering on this promise?</li>
+          </ol>
+          <div class="task-cta">✍️ Example: "Unlike big chain pharmacies, we know every regular customer's health history and call them personally when their medications need refilling — for customers who want care, not just transactions."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider" style="margin-top:28px;"><div class="ld-line"></div><span class="ld-label">Lesson 4</span><div class="ld-line"></div></div>
+
+<!-- ══════════════ LESSON 4 ══════════════ -->
+<section class="section" id="lesson4" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--gold),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--gold);">
+        <div class="tag-dot" style="background:var(--gold);"></div>
+        Lesson 04 · Data Made Simple
+      </div>
+      <div class="lesson-title-big">Your Numbers Are Telling You Something — Let AI Translate Them</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 30 min</span><span>📊 Data Analysis</span><span>💡 No spreadsheet skills needed</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">04</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will be able to take any business numbers — sales figures, customer counts, Facebook engagement stats — paste them into ChatGPT, and get a plain-language explanation of what they mean and exactly what you should do about them.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Many business owners have a relationship with their numbers that goes something like this: they avoid looking at them. The monthly revenue is noted somewhere, but what it means, why it is up or down, which products are making money and which are not — this is usually a mystery. And because it feels complicated, it stays unexamined.</p>
+        <p>This is one of the most expensive habits in small business. <strong>Numbers are not there to confuse you. They are there to tell you where the problems are and where the opportunities are — before they become obvious and too late.</strong></p>
+        <p>The good news is: you do not need to be good at maths to understand your business data. You never did. What you need is someone to translate the numbers into plain language — to tell you the story the numbers are trying to tell. That is exactly what AI does for data.</p>
+        <p>In this lesson, you will learn to use ChatGPT as your personal data analyst. You will paste in raw numbers — your actual business data — and ask AI to tell you what it sees. You do not need spreadsheet skills. You do not need to understand formulas. You just need to be able to collect your numbers and type them in.</p>
+
+        <h4>What data can you analyse with AI?</h4>
+        <p><strong>Monthly sales by product or category:</strong> Which products are growing? Which are declining? Which should you stock more of, and which should you quietly stop selling?<br>
+        <strong>Customer visit patterns:</strong> Which days are busiest? Which times of day? When do people stop coming? This tells you when to have more staff, more stock, and when to run promotions.<br>
+        <strong>Facebook page insights:</strong> Which posts got the most reach, likes, comments, and shares? What content is working? What is being ignored? What time of day should you post?<br>
+        <strong>WhatsApp enquiries:</strong> What are people asking about most? What questions come up repeatedly? What objections do people raise? This is pure gold for improving your communication and product range.<br>
+        <strong>Expense tracking:</strong> Where is your money going? Which costs are growing? Which could be reduced? Where is most of your revenue actually being spent?</p>
+        <p><em>You do not need all of these. Start with just one type of data. Even one month of sales figures, given to AI for analysis, will reveal patterns you had never consciously noticed — patterns that are worth real money.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📊</div>
+        <span class="block-header-text">Data Analysis Prompts — Real Examples</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">Data Analysis Prompts for Business Owners</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-comment">// Monthly sales analysis</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"Here are my monthly sales for 6 months at my clothing shop in Nepal:
+January: Rs 45,000 | February: Rs 38,000 | March: Rs 52,000 | April: Rs 41,000 | May: Rs 67,000 | June: Rs 44,000
+
+Analyse these numbers for me. What trends do you see? Why might May be highest? What concerns should I have? What should I do to improve the low months? Give me 5 specific action recommendations."
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Product performance analysis</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"These are my sales by product category this month at my grocery shop:
+Rice: Rs 8,500 | Dal: Rs 4,200 | Oil: Rs 6,100 | Spices: Rs 3,800 | Snacks/Biscuits: Rs 7,400 | Soap/Shampoo: Rs 2,100 | Vegetables: Rs 1,800
+
+Which categories should I prioritize stocking? Which are underperforming for their space in my shop? Are there any surprising patterns here? What should I do differently?"
+
+</div>
+          <div class="t-divider"></div>
+          <div class="t-comment">// Facebook insights analysis</div>
+          <div class="t-prompt"><span class="t-cursor">→ </span>"These are my last 10 Facebook posts and their engagement for my restaurant page:
+Post 1 (food photo, Friday): 142 likes, 23 comments, 8 shares
+Post 2 (text-only offer, Monday): 12 likes, 2 comments, 0 shares
+Post 3 (behind-the-scenes video, Wednesday): 289 likes, 47 comments, 31 shares
+Post 4 (menu update, Tuesday): 34 likes, 5 comments, 1 share
+Post 5 (customer photo, Saturday): 198 likes, 38 comments, 14 shares
+
+What patterns do you see? What type of content should I focus on? What days and types of posts are working? Give me a clear posting strategy based on this data."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(45,212,191,0.12);color:var(--teal);">💬</div>
+        <span class="block-header-text">Nepal Example — Bijay's Restaurant Data Revelation, Pokhara</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Bijay Rana, 44 — Restaurant Owner, Lakeside Pokhara</div>
+            <div class="ne-subtitle">Data analysis revealed he was losing Rs 40,000 per month — and he had no idea</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Bijay has run a mid-range restaurant at Pokhara's Lakeside for seven years, serving both tourists and locals. He tracked his monthly revenue roughly, but had never analysed it carefully. He felt the business was "doing okay but not growing."</p>
+          <p>In this lesson, he collected 6 months of sales data and broke it down by day of the week and by dish category. When he pasted this data into ChatGPT and asked for analysis, three things emerged that shocked him.</p>
+          <p>First: Tuesday and Wednesday evenings were consistently his lowest sales days — but he was paying full staff wages regardless. He was losing money on those two evenings every week. Second: his most ordered dish (dal bhat set at Rs 350) was actually his lowest-margin item — he barely made profit on it after accounting for ingredients, cooking time, and serving. Third: his tourist customers who ordered Western food (pasta, pizza, sandwiches) spent an average of 2.3x more per visit than his local customers ordering Nepali food.</p>
+          <div class="ne-quote">"I had been working seven days a week for seven years and never noticed these patterns — they were right there in my numbers. In two months, I reduced Tuesday and Wednesday staff, repriced my dal bhat slightly, and started promoting my tourist menu more actively. My monthly profit increased by roughly Rs 40,000. I was not working harder. I was working smarter."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">💰</div>
+            <div class="ne-result-text">+Rs 40,000/month in profit · No new customers needed · No new products · Just smarter decisions from data</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">📊</div>
+          <div class="task-header-title">Your First Data Analysis — Right Now</div>
+        </div>
+        <div class="task-body">
+          <p>You have data right now — even if you do not think of it that way. Use any of the following:</p>
+          <ol>
+            <li><strong>Option A:</strong> Open your Facebook page Insights (tap "Insights" on your page). Screenshot the reach and engagement numbers for your last 10 posts. Type them into ChatGPT and ask for analysis and recommendations.</li>
+            <li><strong>Option B:</strong> Look at your last month of sales — even rough estimates by week. Type these numbers into ChatGPT along with what you know about what happened (any sales, any slow weeks). Ask: "What do these numbers suggest and what should I focus on next month?"</li>
+            <li><strong>Option C:</strong> List your top 10 products/services and your rough estimate of what percentage of your sales each one represents. Ask ChatGPT: "Which products should I focus on and which should I reconsider, based on these proportions?"</li>
+          </ol>
+          <p>After your AI analysis: write down your single biggest insight — the one thing the numbers revealed that you had not clearly seen before.</p>
+          <div class="task-cta">📌 A great follow-up question to always ask: "What additional data should I start collecting right now that would help me make better decisions in the future?" This builds your data habit over time.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Waiting until you have "perfect" data before analysing</div>
+            <div class="mistake-desc">Many business owners say "I'll start tracking properly from next month" — and next month never comes. Start with whatever data you have, even if it is rough estimates. Rough data analysed is infinitely more useful than perfect data never collected. Start now, improve your data tracking as you go.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Only looking at total revenue and ignoring everything else</div>
+            <div class="mistake-desc">Total revenue tells you very little. Which product? Which day? Which type of customer? Which marketing channel brought them? Revenue broken down into these dimensions reveals the entire story of your business. The goal is to track at least 2–3 dimensions of your sales, not just the total number.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider" style="margin-top:28px;"><div class="ld-line"></div><span class="ld-label">Lesson 5</span><div class="ld-line"></div></div>
+
+<!-- ══════════════ LESSON 5 ══════════════ -->
+<section class="section" id="lesson5" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--purple),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--purple);">
+        <div class="tag-dot" style="background:var(--purple);"></div>
+        Lesson 05 · Decision Making
+      </div>
+      <div class="lesson-title-big">Never Get Stuck Again — AI as Your Business Advisor</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 28 min</span><span>⚖️ Decision Frameworks</span><span>🧠 Think Clearly Under Pressure</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">05</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have four powerful AI decision frameworks that you can use whenever you face a difficult business choice — turning confusion and anxiety into clear, confident action.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Every business owner, at some point, lies awake at night thinking about a decision they cannot make. Should I hire someone? Should I move my shop to a better location? Should I raise my prices? Should I start selling online? Should I close on Tuesdays to save costs? Should I take a loan to expand?</p>
+        <p>These decisions are hard because they involve uncertainty, risk, and consequences that affect your livelihood and your family. And in Nepal's business culture, there are often additional pressures: family expectations, fear of failure being judged by the community, limited access to professional advice, and financial constraints that make a wrong decision very costly.</p>
+        <p>Most people resolve difficult decisions in one of three poor ways: they avoid the decision for months (paralysis), they make a snap decision based on emotion or a random conversation (impulsiveness), or they just copy what a competitor is doing without analysis (imitation). <strong>None of these approaches systematically lead to good outcomes.</strong></p>
+        <p>AI does not make decisions for you — and it should not. Your life, your context, your risk tolerance, and your judgment are irreplaceable. But AI is extraordinarily good at one thing: <em>helping you think through a decision completely, from all angles, before you commit.</em> It surfaces factors you had not considered. It stress-tests your assumptions. It presents the downside scenarios you would prefer not to think about. And it helps you find information that reduces the uncertainty.</p>
+        <p>In this lesson, you will learn four specific frameworks for using AI to make better business decisions. Each one is appropriate for different situations — and all of them will make you a noticeably clearer thinker.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(167,139,250,0.12);color:var(--purple);">⚖️</div>
+        <span class="block-header-text">Four AI Decision Frameworks</span>
+      </div>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-question">🔄 Framework 1: The Full Scenario Analysis</div>
+          <div class="decision-answer">Use when: You are considering a significant change — new location, new product line, pricing change, staff hire.<br><br>Ask AI to walk through what happens if you do it AND what happens if you don't. What are the best-case, realistic-case, and worst-case outcomes for each?</div>
+          <div class="decision-prompt">"I am considering [decision]. Walk me through realistic best, moderate, and worst-case scenarios for both choosing to do it and choosing not to. Be honest about risks."</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-question">🔍 Framework 2: The Assumption Challenger</div>
+          <div class="decision-answer">Use when: You are excited about an idea and want to make sure you are not missing something important. Use this when you feel strongly positive about a choice — it is a reality check.<br><br>Ask AI to challenge every assumption behind your reasoning.</div>
+          <div class="decision-prompt">"I want to [decision]. I am assuming [your reasons]. Please challenge each of my assumptions. What might I be wrong about? What am I not considering?"</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-question">📋 Framework 3: The Decision Checklist</div>
+          <div class="decision-answer">Use when: You are overwhelmed by a decision and don't know where to start. Ask AI to create a structured list of everything you need to know, check, or do before making the decision confidently.<br><br>Turns chaos into a clear process.</div>
+          <div class="decision-prompt">"I need to decide whether to [decision]. Create a complete checklist of everything I should investigate, verify, and consider before making this decision responsibly."</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-question">👁️ Framework 4: The Outside Perspective</div>
+          <div class="decision-answer">Use when: You are too emotionally involved in a decision and need to see it more objectively. Ask AI to analyse your situation as if it were advising someone else — removing the emotion.<br><br>Gives you the view of a calm, experienced advisor.</div>
+          <div class="decision-prompt">"A business owner in Nepal in exactly my situation [describe it] is considering [decision]. As an experienced business advisor, what would you tell them? What are they probably not seeing clearly?"</div>
+        </div>
+      </div>
+
+      <div class="callout c-teal">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text">
+          <strong>The most important rule of AI-assisted decision making</strong>
+          Use AI to prepare yourself — not to replace your judgment. After running one or more of these frameworks, step away from the screen for 24 hours. Let the information settle. Sleep on it. Then decide. Decisions made after reflection are almost always better than decisions made in the moment, even with perfect information.
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(45,212,191,0.12);color:var(--teal);">💬</div>
+        <span class="block-header-text">Nepal Example — Sushila's Loan Decision, Butwal</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Sushila Thapa, 46 — Clothing &amp; Tailoring Shop Owner, Butwal</div>
+            <div class="ne-subtitle">How AI helped her avoid a Rs 3 lakh loan decision that would have hurt her</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Sushila has been running her tailoring and clothing shop in Butwal for eleven years. Her nephew had been excitedly telling her for months that she should take a bank loan of Rs 3,00,000 to expand her shop, hire two additional tailors, and stock more high-end fabric to capture the wedding market.</p>
+          <p>She was tempted — the idea sounded exciting — but something felt wrong. She could not quite articulate what. On the advice of a fellow student in this course, she ran the Assumption Challenger framework with ChatGPT, listing all her nephew's reasons and her own assumptions about the expansion.</p>
+          <p>The AI response identified several things she had not fully thought through: the wedding market in mid-size Nepali cities is highly seasonal (concentrated around specific auspicious months), meaning 8 months of the year she would have high-end fabric sitting unsold. Hiring two additional tailors before establishing new clients for them creates a fixed cost that must be paid whether or not work comes in. And a bank loan interest of 12–15% per year on Rs 3 lakh adds roughly Rs 36,000–45,000 per year in costs before she earns an extra rupee of profit.</p>
+          <div class="ne-quote">"I did not say no to the idea — I said not yet, not this way. Instead, I accepted one or two high-end wedding clients on commission from a wedding hall I know, to test whether I actually enjoy and can handle that market before investing heavily in it. If the test works, I will expand carefully. ChatGPT helped me see what my excitement was covering up."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">🛡️</div>
+            <div class="ne-result-text">Avoided a potentially damaging financial commitment · Found a risk-free way to test the idea first</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">⚖️</div>
+          <div class="task-header-title">Tackle Your Pending Decision Today</div>
+        </div>
+        <div class="task-body">
+          <p>Every person reading this has at least one business decision they have been postponing. Today, you will use AI to make real progress on it.</p>
+          <ol>
+            <li>Name the decision. Write it down in one clear sentence: "I need to decide whether to ____."</li>
+            <li>Choose the most relevant framework from the four above. If you are excited about an idea, use Framework 2 (Assumption Challenger). If you feel overwhelmed, use Framework 3 (Decision Checklist). If you feel too emotionally involved, use Framework 4 (Outside Perspective).</li>
+            <li>Run the framework with ChatGPT. Give it maximum context about your specific situation, your financial reality, and what outcome you are hoping for.</li>
+            <li>After reading the response, write down: <strong>What did I learn that I did not know before? What assumption was I making that might be wrong? What is one thing I can do in the next week to gather more information before deciding?</strong></li>
+            <li>Set a specific deadline for making the final decision — not today, but within 7–14 days. Research without a deadline is just procrastination with good intentions.</li>
+          </ol>
+          <div class="task-cta">🏆 The goal of this exercise is not to make the decision right now. It is to stop being afraid of it. Knowledge reduces fear. By the end of this exercise, you will feel clearer and calmer about the decision you have been avoiding.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider" style="margin-top:28px;"><div class="ld-line"></div><span class="ld-label">Lesson 6</span><div class="ld-line"></div></div>
+
+<!-- ══════════════ LESSON 6 ══════════════ -->
+<section class="section" id="lesson6" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--sky),var(--teal),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--sky);">
+        <div class="tag-dot" style="background:var(--sky);"></div>
+        Lesson 06 · Planning &amp; Growth
+      </div>
+      <div class="lesson-title-big">Build Your 90-Day AI-Powered Business Growth Plan</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 35 min</span><span>📋 Business Planning</span><span>🚀 Your roadmap for the next 3 months</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">06</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have a complete, personalised 90-day growth plan for your business — built with AI, rooted in your data, informed by your customer research, and as practical as any plan created by a professional business consultant.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Here is the uncomfortable truth about business goals. Most small business owners in Nepal — and everywhere in the world — set goals like this: "I want to earn more this year." "I want to grow my business." "I want to finally start selling online." And then... nothing changes. The year passes, the goals remain unmet, and the cycle repeats.</p>
+        <p>Why? Not because of lack of desire. Not because of lack of effort. But because <strong>a goal without a concrete plan is just a wish.</strong> Wishes are not a business strategy.</p>
+        <p>A real plan has three things that wishes don't: specific, measurable targets ("increase monthly revenue by Rs 15,000 by September"), a clear set of actions you will take to reach them (not vague ideas but concrete weekly steps), and accountability — a way to track whether you are on course and what to adjust when you are not.</p>
+        <p>Building this kind of plan used to require a consultant, a business education, or years of experience. Today, with everything you have learned in this module — your research skills, your customer profile, your competitor analysis, your data understanding, and your decision frameworks — you can build a professional 90-day plan entirely on your own, using AI as your thinking partner.</p>
+        <p>And 90 days is the perfect time frame. Long enough to make real progress. Short enough to stay motivated and adapt. Three months from today, you will look at this plan and see exactly what you did, what you avoided, and what you want to do differently in the next 90 days. <em>This is how businesses improve — not in dramatic sudden leaps, but in three-month cycles of intentional, planned improvement.</em></p>
+
+        <h4>The Five Components of a 90-Day Plan</h4>
+        <p><strong>Component 1 — Your Starting Point:</strong> Where are you right now? Revenue, customers, main products/services, biggest strength, biggest weakness. Be honest — this is your baseline, not a judgement.<br>
+        <strong>Component 2 — Your Single Goal:</strong> What ONE metric do you most want to change in 90 days? One goal, not five. One focused goal achieved is worth ten scattered goals that go nowhere.<br>
+        <strong>Component 3 — Your Strategies:</strong> What 2–3 approaches will drive that change? These are your big moves for the quarter.<br>
+        <strong>Component 4 — Your Weekly Actions:</strong> What specific things will you do each week? These are the small, daily habits and tasks that add up to big results.<br>
+        <strong>Component 5 — Your Review System:</strong> How will you check progress? Weekly? Monthly? What will you do if you are behind at the halfway mark?</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--teal-dim);color:var(--teal);">📋</div>
+        <span class="block-header-text">The 90-Day Business Plan Master Prompt</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">90-Day Plan Generator</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-prompt"><span class="t-cursor">→ </span>Help me create a practical 90-day business growth plan. Here is my situation:
+
+Business: [describe your business in 2–3 sentences]
+Location: [your city/area, Nepal]
+Current monthly revenue: approximately [Rs amount]
+My biggest strength: [one thing you do really well]
+My biggest weakness: [one honest challenge you face]
+My main goal for 90 days: [the ONE most important thing you want to achieve]
+Resources I have: [time per week you can invest, any budget, any team]
+Resources I don't have: [your main constraints]
+
+Based on this, please create a complete 90-day growth plan that includes:
+1. A clear, specific 90-day goal with a measurable target
+2. Three main strategies to achieve it (practical for Nepal's market)
+3. Month 1 focus: what to build or set up
+4. Month 2 focus: what to execute and test
+5. Month 3 focus: what to scale and refine
+6. The top 3 mistakes to avoid in this specific situation
+7. A simple weekly checklist of the 4–5 most important actions
+8. How I will know at 45 days if I am on track</div>
+          <div class="t-result" style="margin-top:16px;">
+            <div class="t-result-label">What you receive</div>
+            <div class="t-output">A complete, structured growth plan tailored to your exact situation — more personalised and practical than a generic business course, because it is based on YOUR specific numbers, YOUR market, and YOUR constraints.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">📊</div>
+        <span class="block-header-text">What a Real 90-Day Plan Looks Like — Nepali Example</span>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">Sample plan structure for a Kathmandu home bakery owner</div>
+        <div class="insight-list">
+          <div class="insight-item">
+            <div class="insight-num">G</div>
+            <div class="insight-text"><strong>90-Day Goal:</strong> Grow monthly revenue from Rs 22,000 to Rs 35,000 by adding online orders via WhatsApp and growing Facebook page followers from 180 to 600.</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">M1</div>
+            <div class="insight-text"><strong>Month 1 — Build:</strong> Create Canva menu card. Set up WhatsApp ordering system with a simple order confirmation message template. Start posting 3× per week on Facebook using AI-written captions and Canva images. Build order tracking habit (simple notebook).</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">M2</div>
+            <div class="insight-text"><strong>Month 2 — Execute:</strong> Launch one "weekly special" each Monday to create repeat interest. Contact 5 offices nearby about bulk tiffin/birthday cake orders. Ask 3 happy customers for a video or written testimonial. Test posting at different times to see what gets most reach.</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">M3</div>
+            <div class="insight-text"><strong>Month 3 — Scale:</strong> Double down on what worked in Month 2. Add one new high-margin product (custom cakes for occasions). Set up a simple referral system: "refer a friend, get 10% off your next order." Review all 3 months' data with AI and plan the next 90 days.</div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-num">✓</div>
+            <div class="insight-text"><strong>Weekly non-negotiables:</strong> 3 Facebook posts (Mon/Wed/Fri). Reply to all messages within 2 hours. Record all orders and revenue. Review the plan every Sunday for 10 minutes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise — The Most Important One in This Module</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🚀</div>
+          <div class="task-header-title">Write Your 90-Day Plan — Today</div>
+        </div>
+        <div class="task-body">
+          <p>Everything you have learned in Module 6 leads to this moment. You now have the research skills, the customer intelligence, the competitor analysis, the data understanding, and the decision frameworks. Now you put it all together.</p>
+          <ol>
+            <li><strong>Spend 10 minutes writing your situation summary</strong> using the five components outlined in this lesson. Do not overthink it — first drafts are supposed to be rough.</li>
+            <li><strong>Use the 90-Day Plan Master Prompt.</strong> Fill in all the brackets with your real information. Give ChatGPT as much specific detail as possible.</li>
+            <li><strong>Read the plan carefully.</strong> Highlight everything that feels right and realistic. Circle anything that feels impossible or unclear.</li>
+            <li><strong>Refine with follow-up questions:</strong> "That strategy feels too difficult for my situation — give me a simpler version." "How would someone with very limited time (only 5 hours per week) adapt this plan?" Ask until the plan feels like something you would actually do.</li>
+            <li><strong>Print it or write it out.</strong> A plan that stays inside ChatGPT does not exist. Put it somewhere you will see it — on the wall near your desk, in a notebook you open daily, on your phone screen. Review it every Sunday. You are now a business owner with a plan.</li>
+          </ol>
+          <div class="task-cta">🌟 Share your 90-day goal — just the goal, nothing else — in the course WhatsApp group. Public commitment is one of the most powerful tools for follow-through. The community will celebrate you at the 90-day mark.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Making the plan perfect instead of making it real</div>
+            <div class="mistake-desc">Students sometimes spend 3 hours refining their 90-day plan, making it beautifully detailed and comprehensive — and then never start executing it because the execution feels messy compared to the perfect plan. A good plan executed imperfectly beats a perfect plan that stays on paper. Start on Day 1 of your plan, even if things are not perfectly set up yet.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Setting a goal you cannot measure</div>
+            <div class="mistake-desc">"I want to grow my business" is not a 90-day goal. "I want to increase my monthly revenue by Rs 8,000 by December 31st" is. "I want more customers on Facebook" is vague. "I want 500 followers on Facebook by December 31st, with an average post reaching 300 people" is specific and measurable. Always attach a number and a date to your goal.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Quitting the plan at Week 3 when it gets hard</div>
+            <div class="mistake-desc">Almost every 90-day plan hits a difficult patch around weeks 3 and 4. The initial excitement has worn off, results are not yet visible, and old habits are pulling you back. This is not a sign the plan is wrong. This is completely normal. Push through weeks 3 and 4 and you will almost certainly see real results by week 6 or 7. The people who give up at week 3 never find out that success was just 2 weeks away.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ── MODULE COMPLETE ── -->
+<div class="complete-section">
+  <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--sky);margin-bottom:10px;">Module 6 Complete</p>
+  <h2>You now think like a professional business owner.</h2>
+  <p>Research. Customer intelligence. Competitor analysis. Data understanding. Decision frameworks. A 90-day plan. These are the tools that separate businesses that grow from businesses that merely survive. You now have all of them — and they cost you nothing but time and attention.</p>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="next-card-title">Coming Next: Module 7</div>
+      <div class="next-card-desc">Automating Your Work — AI Workflows &amp; Systems That Save You Hours Every Week</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-title">Module 8</div>
+      <div class="next-card-desc">Your AI Business Career — Turning Everything You Have Learned Into a Sustainable Income</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-title">Your 90-Day Plan</div>
+      <div class="next-card-desc">Review your plan from Lesson 6 at the 30-day mark. Update it based on what you have learned in Module 7.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <p class="testi-eyebrow">Students on Module 6</p>
+    <h2>What happens when small business owners learn to think with AI</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The customer profile lesson changed everything. I have been selling women's jewellery for 6 years and I thought I knew my customers. The AI profile showed me things I had never consciously understood about why they buy and what they fear. I rewrote my entire Facebook approach. My engagement tripled in two weeks."</p>
+        <div class="testi-person">Puja Maharjan</div>
+        <div class="testi-role">Jewellery shop owner, Patan</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I used to make decisions based on whatever my brother-in-law suggested over tea. Not anymore. The decision frameworks in Lesson 5 gave me a real process. I used the Assumption Challenger before buying a second vehicle for my delivery business — it revealed I was not ready. That one question saved me from a huge mistake."</p>
+        <div class="testi-person">Manoj Shrestha</div>
+        <div class="testi-role">Small delivery business owner, Bharatpur</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The 90-day plan felt overwhelming when I first saw the prompt. I thought — I am just a simple shop owner, this is for big businesses. But I filled it in, and what came out felt like someone really understood my situation. I am now in Month 2 and I have already hit my Month 1 revenue goal. Having a plan is actually completely different from not having one."</p>
+        <div class="testi-person">Laxmi Adhikari</div>
+        <div class="testi-role">Stationary &amp; gift shop owner, Pokhara</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq-section">
+  <h2>Questions About This Module</h2>
+  <p class="faq-sub">Real questions from real students about using AI for research and business decisions.</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"ChatGPT does not know about Nepal specifically — how can I trust its advice?" <span>+</span></div>
+    <div class="faq-a">This is a very fair concern, and it is why we always say: use AI for frameworks and principles, not for local specifics. ChatGPT knows business strategy, customer psychology, pricing principles, competitive positioning, and planning frameworks that are universally applicable. You provide the local context — your specific prices, your neighbourhood, your specific customers. When you combine AI's strategic knowledge with YOUR local knowledge, you get something genuinely powerful and highly relevant to Nepal.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"I don't have much business data. Can I still benefit from the data lesson?" <span>+</span></div>
+    <div class="faq-a">Absolutely — and in fact, one of the most valuable outcomes of this lesson for people with little data is that it teaches you what data to start collecting. After running even a simple analysis with rough estimates, ask ChatGPT: "What data should I start tracking weekly to make better decisions about my business?" You will get a clear, practical list. Start tracking that data today, and in 3 months you will have real numbers to analyse. Everyone starts somewhere — starting with rough estimates is a completely valid beginning.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"What if my competitor research shows my competition is much stronger than me?" <span>+</span></div>
+    <div class="faq-a">Then you have incredibly valuable information that most small business owners never get. Knowing your competitor is stronger is not a reason to give up — it is a reason to be strategic. Every strong competitor has weaknesses; size and strength often create inflexibility, impersonal service, and gaps in what they offer to certain customer types. Ask AI specifically: "My competitor is larger, better-resourced, and better-known than me. What are the typical weaknesses of larger, established businesses that smaller, newer businesses can exploit?" The answers will surprise you.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"The 90-day plan feels too ambitious for where I am right now. What should I do?" <span>+</span></div>
+    <div class="faq-a">This is actually something to tell ChatGPT directly. Add this to your plan prompt: "My situation is that I am very early-stage and my resources are very limited. Please make this plan as simple and low-risk as possible. Focus on the 3 most important actions and nothing else." A good 90-day plan for someone just starting should be simple and achievable — not impressive-looking. Three well-executed small actions beat ten ambitious actions that overwhelm you. ChatGPT will adapt the plan to your reality if you give it that context.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"Can I use AI to help plan for a business I want to start — not one I already have?" <span>+</span></div>
+    <div class="faq-a">Absolutely — and this module is arguably even more valuable for people planning to start than for those already running a business. Research your market before investing. Understand your target customer before spending on stock or marketing. Analyse potential competitors before choosing a location or product range. Make key decisions using the frameworks before committing any money. All four frameworks and both research approaches work equally well for planning a new business. You are essentially stress-testing your business idea before it costs you anything.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"Should I share my business plans and data with ChatGPT? Is it safe?" <span>+</span></div>
+    <div class="faq-a">For day-to-day planning and analysis, sharing general business information with ChatGPT is very similar to discussing your business with a trusted advisor or family member — reasonable and practical. However, there are specific things to avoid: do not paste complete customer databases with personal information, do not share highly sensitive financial records, and do not paste information that you would not want in a public conversation. Describing your business type, rough revenue figures, and strategic situation is completely fine and common practice for business owners worldwide.</div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <p><strong>AI Saathi Course</strong> — Designed for the everyday people of Nepal and South Asia</p>
+  <p style="margin-top:8px; color:var(--text-dim);">Module 6 of 8 · Full course: What is AI · Writing · Daily Business · Earning Money · Creative AI · Research &amp; Decisions · Automation · Your AI Career</p>
+  <p style="margin-top:12px; color:var(--text-dim); font-size:12px;">This course material is protected. For educational and commercial use by license only.</p>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('span');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-q span').forEach(s => s.textContent = '+');
+  if (!isOpen) { answer.classList.add('open'); icon.textContent = '−'; }
+}
+
+function showTab(tabId, groupId) {
+  document.querySelectorAll(`[id^="${groupId}-"]`).forEach(p => p.classList.remove('active'));
+  document.getElementById(`${groupId}-${tabId}`)?.classList.add('active');
+  event.target.closest('.tabs-nav').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Course Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+:root{
+  --saffron:#E8611A;--saffron-pale:#FFF3EC;
+  --gold:#F5A623;
+  --forest:#1B5E3B;--forest-pale:#EAF5EE;
+  --ink:#1A1A2E;--ink-mid:#3D3D5C;--muted:#7A7A99;
+  --white:#fff;--off:#FDFCF9;--border:#E8E0D0;
+  --shadow:0 2px 16px rgba(26,26,46,0.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Lato',sans-serif;background:var(--ink);color:white;display:flex;flex-direction:column;}
+
+/* ── TOP NAV ── */
+.player-nav{
+  background:var(--ink);border-bottom:2px solid rgba(255,255,255,0.07);
+  padding:0 16px;flex-shrink:0;z-index:200;
+  height:52px;display:flex;align-items:center;gap:10px;
+}
+.nav-back{
+  background:transparent;border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.7);font-size:13px;padding:6px 12px;
+  border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;
+  white-space:nowrap;flex-shrink:0;text-decoration:none;
+  transition:all .2s;
+}
+.nav-back:hover{border-color:rgba(255,255,255,0.4);color:white;}
+.nav-title{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  color:white;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.nav-module-tag{
+  font-size:12px;color:var(--gold);background:rgba(245,166,35,0.12);
+  border:1px solid rgba(245,166,35,0.2);
+  padding:4px 10px;border-radius:12px;flex-shrink:0;white-space:nowrap;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-strip{
+  height:3px;background:rgba(255,255,255,0.08);flex-shrink:0;
+}
+.progress-strip-fill{
+  height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold));
+  transition:width .5s ease;
+}
+
+/* ── MODULE TABS (horizontal scroll) ── */
+.module-tabs{
+  background:#111320;border-bottom:1px solid rgba(255,255,255,0.06);
+  flex-shrink:0;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  display:flex;align-items:stretch;
+}
+.module-tabs::-webkit-scrollbar{display:none;}
+.mod-tab{
+  padding:10px 14px;font-size:12px;font-weight:700;letter-spacing:0.3px;
+  color:rgba(255,255,255,0.35);cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;
+}
+.mod-tab:hover{color:rgba(255,255,255,0.7);}
+.mod-tab.active{color:white;border-bottom-color:var(--saffron);}
+.mod-tab.done{color:var(--forest-pale) !important;}
+.mod-tab .tab-dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);
+  flex-shrink:0;
+}
+.mod-tab.done .tab-dot{background:var(--forest);}
+.mod-tab.active .tab-dot{background:var(--saffron);}
+
+/* ── CONTENT FRAME ── */
+.content-area{
+  flex:1;position:relative;overflow:hidden;
+}
+.module-frame{
+  width:100%;height:100%;border:none;
+  background:white;
+}
+
+/* ── LOADING STATE ── */
+.frame-loading{
+  position:absolute;inset:0;background:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  z-index:10;transition:opacity .3s;
+}
+.frame-loading.hidden{opacity:0;pointer-events:none;}
+.loading-spinner{
+  width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);
+  border-top-color:var(--saffron);border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:rgba(255,255,255,0.5);}
+
+/* ── LOCKED OVERLAY ── */
+.locked-overlay{
+  position:absolute;inset:0;
+  background:rgba(10,10,20,0.96);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px;z-index:50;
+}
+.locked-overlay.show{display:flex;}
+.lock-icon{font-size:64px;margin-bottom:20px;}
+.lock-title{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;margin-bottom:10px;}
+.lock-sub{color:rgba(255,255,255,0.6);font-size:15px;max-width:320px;margin-bottom:28px;line-height:1.6;}
+.lock-btn{
+  background:var(--saffron);color:white;font-weight:800;font-size:16px;
+  padding:16px 36px;border-radius:10px;text-decoration:none;
+  box-shadow:0 6px 24px rgba(232,97,26,0.4);
+}
+
+/* ── BOTTOM CONTROLS ── */
+.player-controls{
+  background:#111320;border-top:1px solid rgba(255,255,255,0.07);
+  padding:10px 16px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.ctrl-btn{
+  display:flex;align-items:center;gap:6px;padding:10px 16px;
+  border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;
+  border:none;transition:all .2s;text-decoration:none;
+}
+.ctrl-prev{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);}
+.ctrl-prev:hover:not(:disabled){background:rgba(255,255,255,0.12);color:white;}
+.ctrl-prev:disabled{opacity:0.3;cursor:not-allowed;}
+.ctrl-complete{
+  background:var(--forest);color:white;flex:1;justify-content:center;max-width:200px;
+}
+.ctrl-complete:hover{background:var(--forest-mid);}
+.ctrl-complete.already-done{background:rgba(27,94,59,0.3);color:rgba(255,255,255,0.5);cursor:default;}
+.ctrl-next{background:var(--saffron);color:white;}
+.ctrl-next:hover:not(:disabled){background:#C0470D;}
+.ctrl-next:disabled{opacity:0.3;cursor:not-allowed;}
+
+/* ── COMPLETE TOAST ── */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--forest);color:white;
+  padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;
+  opacity:0;transition:all .3s;z-index:500;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .nav-title{display:none;}
+  .ctrl-complete span{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="player-nav">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a href="index.html" style="font-size:18px;text-decoration:none;opacity:0.6;transition:opacity .2s;" title="Home">🏠</a>
+    <a href="dashboard.html" class="nav-back">← Dashboard</a>
+  </div>
+  <div class="nav-title" id="navTitle">Loading...</div>
+  <div class="nav-module-tag" id="navTag">M1 / 8</div>
+</nav>
+
+<!-- PROGRESS STRIP -->
+<div class="progress-strip">
+  <div class="progress-strip-fill" id="progressStrip" style="width:0%"></div>
+</div>
+
+<!-- MODULE TABS -->
+<div class="module-tabs" id="moduleTabs"></div>
+
+<!-- CONTENT AREA -->
+<div class="content-area">
+  <!-- LOADING -->
+  <div class="frame-loading" id="loadingScreen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Module load हुँदैछ...</div>
+  </div>
+
+  <!-- LOCKED OVERLAY (shown for unpaid users) -->
+  <div class="locked-overlay" id="lockedOverlay">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">यो module locked छ</div>
+    <div class="lock-sub">Course किन्नुहोस् र सबै ८ modules को lifetime access पाउनुहोस्।</div>
+    <a href="payment.html" class="lock-btn">रू. ९९९ मा Unlock गर्नुहोस् →</a>
+  </div>
+
+  <!-- THE IFRAME — loads your module HTML files -->
+  <iframe id="moduleFrame" class="module-frame" title="Course Module"></iframe>
+</div>
+
+<!-- BOTTOM CONTROLS -->
+<div class="player-controls">
+  <button class="ctrl-btn ctrl-prev" id="btnPrev" onclick="navigate(-1)">← पहिले</button>
+  <button class="ctrl-btn ctrl-complete" id="btnComplete" onclick="markComplete()">
+    ✅ <span>Complete गरियो</span>
+  </button>
+  <button class="ctrl-btn ctrl-next" id="btnNext" onclick="navigate(1)">अर्को →</button>
+</div>
+
+<!-- COMPLETE TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// MODULE REGISTRY
+// ─────────────────────────────────────────────
+const MODULES = [
+  {id:1, title:"AI Saathi: Your Smart Life, Simplified",     short:"Foundations",    file:"AI_Saathi_Module1_Complete.html"},
+  {id:2, title:"The Writing Superpower",                     short:"Writing",        file:"AI_Course_Module2_Nepal.html"},
+  {id:3, title:"ChatGPT for Daily Life & Business",          short:"Daily Life",     file:"AI_Course_Module3_Nepal.html"},
+  {id:4, title:"Making Money with AI",                       short:"Earn Money",     file:"AI_Course_Module4_Nepal.html"},
+  {id:5, title:"AI Images, Video & Voice",                   short:"Creative",       file:"AI_Course_Module5_Nepal.html"},
+  {id:6, title:"Research, Data & Smarter Decisions",         short:"Research",       file:"AI_Course_Module6_Nepal.html"},
+  {id:7, title:"Advanced Prompting & Automation",            short:"Prompting",      file:"AI_Course_Module7_Nepal__1_.html"},
+  {id:8, title:"Your AI Future",                             short:"Future",         file:"AI_Course_Module8_Nepal__1_.html"},
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+function getProgress(){
+  try{ return JSON.parse(localStorage.getItem('ai_saathi_progress')) || {completed:[],started:[]}; }
+  catch(e){ return {completed:[],started:[]}; }
+}
+function saveProgress(p){ localStorage.setItem('ai_saathi_progress',JSON.stringify(p)); }
+
+function getUser(){
+  try{ return JSON.parse(localStorage.getItem('ai_saathi_user')) || {name:'Student',hasPaid:false}; }
+  catch(e){ return {name:'Student',hasPaid:false}; }
+}
+
+// Read ?module=N from URL, default to 1
+function getModuleIdFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('module'));
+  return (id >= 1 && id <= 8) ? id : 1;
+}
+
+let currentModuleId = getModuleIdFromURL();
+
+// ── Firebase Auth + Payment Guard ──
+window.auth.onAuthStateChanged(async (user) => {
+  if(!user){ window.location.href = 'login.html'; return; }
+  try {
+    const doc = await window.db.collection('users').doc(user.uid).get();
+    const data = doc.exists ? doc.data() : {};
+    if(!data.hasPaid){ window.location.href = 'payment.html'; return; }
+    // Store for UI use
+    localStorage.setItem('ai_saathi_user', JSON.stringify({...data, name: data.name || user.email}));
+  } catch(e){ console.error(e); }
+  initPlayer();
+});
+
+function checkAccess(){ return true; } // kept for legacy calls, gate is above
+
+// ─────────────────────────────────────────────
+// BUILD TABS
+// ─────────────────────────────────────────────
+function buildTabs(){
+  const prog = getProgress();
+  const user = getUser();
+  const tabs = document.getElementById('moduleTabs');
+  tabs.innerHTML = '';
+
+  MODULES.forEach(mod => {
+    const isDone = prog.completed.includes(mod.id);
+    const isActive = mod.id === currentModuleId;
+    const isUnlocked = user.hasPaid;
+
+    const tab = document.createElement('div');
+    tab.className = `mod-tab${isActive?' active':''}${isDone?' done':''}`;
+    tab.innerHTML = `<span class="tab-dot"></span>M${mod.id}: ${mod.short}${isDone?' ✓':''}`;
+
+    if(isUnlocked){
+      tab.onclick = () => loadModule(mod.id);
+    } else {
+      tab.style.opacity = mod.id === 1 ? '1' : '0.35';
+      tab.style.cursor = mod.id === 1 ? 'pointer' : 'not-allowed';
+      if(mod.id === 1) tab.onclick = () => loadModule(1);
+    }
+    tabs.appendChild(tab);
+  });
+
+  // Scroll active tab into view
+  const activeTab = tabs.querySelector('.active');
+  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+
+// ─────────────────────────────────────────────
+// LOAD MODULE INTO IFRAME
+// ─────────────────────────────────────────────
+function loadModule(moduleId){
+  const user = getUser();
+  const mod = MODULES.find(m => m.id === moduleId);
+  if(!mod) return;
+
+  currentModuleId = moduleId;
+
+  // Update URL without reload
+  const url = new URL(window.location);
+  url.searchParams.set('module', moduleId);
+  window.history.replaceState({}, '', url);
+
+  // Update nav
+  document.getElementById('navTitle').textContent = mod.title;
+  document.getElementById('navTag').textContent = `M${moduleId} / 8`;
+
+  // Check payment (Module 1 is free preview; rest require payment)
+  const isFreePreview = moduleId === 1;
+  const hasAccess = user.hasPaid || isFreePreview;
+
+  if(!hasAccess){
+    document.getElementById('lockedOverlay').classList.add('show');
+    document.getElementById('moduleFrame').src = '';
+    updateControls();
+    buildTabs();
+    return;
+  }
+
+  // Hide locked overlay
+  document.getElementById('lockedOverlay').classList.remove('show');
+
+  // Show loading
+  document.getElementById('loadingScreen').classList.remove('hidden');
+
+  // Load iframe
+  const frame = document.getElementById('moduleFrame');
+  frame.onload = () => {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    // Mark as started
+    const prog = getProgress();
+    if(!prog.started.includes(moduleId) && !prog.completed.includes(moduleId)){
+      prog.started.push(moduleId);
+      saveProgress(prog);
+    }
+    updateProgressStrip();
+  };
+  frame.src = mod.file;
+
+  updateControls();
+  buildTabs();
+  updateProgressStrip();
+}
+
+// ─────────────────────────────────────────────
+// CONTROLS
+// ─────────────────────────────────────────────
+function updateControls(){
+  const prog = getProgress();
+  const user = getUser();
+  const isDone = prog.completed.includes(currentModuleId);
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const btnComplete = document.getElementById('btnComplete');
+
+  btnPrev.disabled = currentModuleId === 1;
+  btnNext.disabled = currentModuleId === 8;
+
+  if(isDone){
+    btnComplete.textContent = '✅ Completed!';
+    btnComplete.classList.add('already-done');
+    btnComplete.disabled = true;
+  } else {
+    btnComplete.innerHTML = '✅ <span>Complete गरियो</span>';
+    btnComplete.classList.remove('already-done');
+    btnComplete.disabled = false;
+  }
+
+  // Disable next if not paid and trying to go beyond module 1
+  if(!user.hasPaid && currentModuleId >= 1){
+    btnNext.disabled = true;
+  }
+}
+
+function updateProgressStrip(){
+  const prog = getProgress();
+  const pct = Math.round((prog.completed.length / 8) * 100);
+  document.getElementById('progressStrip').style.width = pct + '%';
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function navigate(direction){
+  const newId = currentModuleId + direction;
+  if(newId < 1 || newId > 8) return;
+  loadModule(newId);
+  window.scrollTo(0,0);
+}
+
+// ─────────────────────────────────────────────
+// MARK COMPLETE
+// ─────────────────────────────────────────────
+function markComplete(){
+  const prog = getProgress();
+  if(prog.completed.includes(currentModuleId)) return;
+
+  // Add to completed
+  prog.completed.push(currentModuleId);
+  // Remove from started
+  prog.started = prog.started.filter(id => id !== currentModuleId);
+  saveProgress(prog);
+
+  // Toast
+  const isLast = currentModuleId === 8;
+  showToast(isLast
+    ? '🎓 Course complete! Certificate तयार छ!'
+    : `✅ Module ${currentModuleId} complete! अर्को module सुरु गर्नुस्।`
+  );
+
+  updateControls();
+  buildTabs();
+  updateProgressStrip();
+
+  // Auto-advance after 2 seconds (unless last module)
+  if(!isLast){
+    setTimeout(() => navigate(1), 2200);
+  }
+
+  // Also save to Firebase:
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+    .update({ completed: firebase.firestore.FieldValue.arrayUnion(currentModuleId) });
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─────────────────────────────────────────────
+// INIT — called after Firebase auth confirms payment
+// ─────────────────────────────────────────────
+function initPlayer(){
+  buildTabs();
+  loadModule(currentModuleId);
+}
+</script>
+</body>
+</html>

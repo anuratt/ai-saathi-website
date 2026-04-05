@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 5: AI Images, Video & Voice</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #07080D;
+  --surface: #0D0F17;
+  --surface2: #141721;
+  --surface3: #1B1F2E;
+  --gold: #F5C842;
+  --gold-dim: rgba(245,200,66,0.11);
+  --gold-glow: rgba(245,200,66,0.05);
+  --gold-border: rgba(245,200,66,0.26);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.11);
+  --green-border: rgba(34,197,94,0.26);
+  --orange: #FF7043;
+  --orange-dim: rgba(255,112,67,0.11);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.11);
+  --pink: #F472B6;
+  --pink-dim: rgba(244,114,182,0.11);
+  --sky: #38BDF8;
+  --sky-dim: rgba(56,189,248,0.11);
+  --teal: #2DD4BF;
+  --teal-dim: rgba(45,212,191,0.11);
+  --text: #EFF1F8;
+  --text-muted: #6B7394;
+  --text-dim: #343852;
+  --border: rgba(255,255,255,0.055);
+  --radius: 16px;
+  --radius-sm: 9px;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin:0; padding:0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.82;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ── GRAIN ── */
+.bg-grain {
+  position: fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.45;
+}
+
+/* ── NAV ── */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(7,8,13,0.88); backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border); padding:0 32px;
+}
+.nav-inner {
+  max-width:1060px; margin:0 auto;
+  height:58px; display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--gold); letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:10px;
+}
+.nav-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--gold);
+  animation:pulse-gold 2s infinite;
+}
+@keyframes pulse-gold {
+  0%,100%{ box-shadow:0 0 0 0 rgba(245,200,66,0.5); }
+  50%{ box-shadow:0 0 0 8px rgba(245,200,66,0); }
+}
+.nav-pill {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  color:var(--gold); padding:5px 14px; border-radius:20px;
+}
+.nav-right {
+  display:flex; align-items:center; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted);
+}
+.progress-dots { display:flex; gap:5px; }
+.pd { width:8px; height:8px; border-radius:50%; background:var(--surface3); border:1px solid var(--border); }
+.pd.done { background:var(--green); border-color:var(--green); }
+.pd.active { background:var(--gold); border-color:var(--gold); transform:scale(1.3); }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; padding:120px 40px 100px;
+  position:relative; overflow:hidden;
+}
+.hero-orb1 {
+  position:absolute; top:-100px; right:-80px;
+  width:720px; height:720px; border-radius:50%;
+  background:radial-gradient(circle, rgba(167,139,250,0.1) 0%, rgba(244,114,182,0.05) 40%, transparent 68%);
+  pointer-events:none;
+}
+.hero-orb2 {
+  position:absolute; bottom:-100px; left:-60px;
+  width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(245,200,66,0.07) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(167,139,250,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167,139,250,0.04) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse at 65% 35%, black 20%, transparent 70%);
+}
+.hero-inner { max-width:1060px; margin:0 auto; width:100%; position:relative; z-index:1; }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--purple-dim); border:1px solid rgba(167,139,250,0.28);
+  padding:7px 18px; border-radius:30px; margin-bottom:32px;
+}
+.hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--purple); animation:pulse-purple 2s infinite; }
+@keyframes pulse-purple {
+  0%,100%{ box-shadow:0 0 0 0 rgba(167,139,250,0.6); }
+  50%{ box-shadow:0 0 0 8px rgba(167,139,250,0); }
+}
+.hero-eyebrow-text {
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--purple);
+}
+
+.hero h1 {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(44px,7.5vw,90px);
+  line-height:1.0; letter-spacing:-3px; margin-bottom:20px;
+}
+.line1 { display:block; color:var(--text); }
+.line2 {
+  display:block; color:transparent;
+  background:linear-gradient(100deg, var(--purple) 0%, var(--pink) 50%, var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text;
+}
+.line3 { display:block; color:var(--text-muted); font-size:0.44em; font-weight:600; letter-spacing:-0.5px; margin-top:10px; }
+
+.hero-sub {
+  font-size:19px; color:var(--text-muted); max-width:600px;
+  margin-bottom:48px; font-style:italic; line-height:1.7; font-weight:300;
+}
+
+.hero-tools {
+  display:flex; flex-wrap:wrap; gap:12px; margin-bottom:44px;
+}
+.tool-pill {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:8px 16px; border-radius:30px;
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:600;
+  color:var(--text-muted); letter-spacing:0.5px;
+  transition:all 0.2s;
+}
+.tool-pill:hover { border-color:var(--purple); color:var(--purple); }
+.tool-pill-emoji { font-size:16px; }
+
+.hero-stats {
+  display:flex; gap:40px; flex-wrap:wrap; margin-bottom:48px;
+}
+.stat-num {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:38px;
+  color:var(--gold); line-height:1; letter-spacing:-1px; margin-bottom:4px;
+}
+.stat-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted);
+}
+
+.hero-cta-row { display:flex; gap:14px; flex-wrap:wrap; }
+.cta-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(100deg, var(--purple), var(--pink));
+  color:white;
+  font-family:'Syne',sans-serif; font-weight:700; font-size:14px;
+  letter-spacing:0.5px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+  box-shadow:0 0 40px rgba(167,139,250,0.3);
+}
+.cta-primary:hover { transform:translateY(-2px); box-shadow:0 0 56px rgba(167,139,250,0.45); }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); color:var(--text-muted);
+  font-family:'Syne',sans-serif; font-weight:600; font-size:14px;
+  letter-spacing:0.5px; padding:14px 28px; border-radius:40px;
+  text-decoration:none; transition:all 0.2s;
+}
+.cta-secondary:hover { border-color:var(--purple); color:var(--purple); }
+
+/* ── TOOLS OVERVIEW ── */
+.section { max-width:1060px; margin:0 auto; padding:80px 40px; }
+.section-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+}
+.section-label::before { content:''; width:20px; height:1px; background:var(--text-dim); }
+.section-title {
+  font-family:'Syne',sans-serif; font-size:clamp(28px,4vw,44px);
+  font-weight:800; letter-spacing:-1.5px; color:var(--text);
+  line-height:1.1; margin-bottom:18px;
+}
+.section-desc {
+  font-size:17px; color:var(--text-muted); max-width:640px;
+  margin-bottom:48px; line-height:1.8;
+}
+.accent { color:var(--purple); }
+
+.tools-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+  margin-bottom:40px;
+}
+.tool-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 24px; position:relative; overflow:hidden;
+  transition:all 0.25s;
+}
+.tool-card:hover { transform:translateY(-3px); border-color:rgba(167,139,250,0.25); }
+.tool-card-glow {
+  position:absolute; top:-40px; right:-40px; width:180px; height:180px; border-radius:50%;
+  pointer-events:none;
+}
+.tc-emoji { font-size:32px; margin-bottom:16px; display:block; }
+.tc-title { font-family:'Syne',sans-serif; font-weight:700; font-size:17px; color:var(--text); margin-bottom:8px; }
+.tc-desc { font-size:14px; color:var(--text-muted); line-height:1.7; margin-bottom:14px; }
+.tc-tag {
+  display:inline-block; font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; padding:4px 10px; border-radius:20px;
+}
+.tc-free { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+.tc-paid { background:var(--orange-dim); color:var(--orange); border:1px solid rgba(255,112,67,0.28); }
+.tc-both { background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border); }
+
+/* ── LESSON BLOCK ── */
+.lesson-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden; margin-bottom:28px;
+}
+.lesson-topbar {
+  padding:28px 32px; display:flex; justify-content:space-between;
+  align-items:flex-start; position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.lesson-accent {
+  position:absolute; top:0; left:0; width:100%; height:3px;
+}
+.ltb-left { flex:1; }
+.lesson-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.tag-dot { width:6px; height:6px; border-radius:50%; }
+.lesson-title-big {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:24px;
+  color:var(--text); letter-spacing:-0.6px; line-height:1.2; margin-bottom:14px;
+}
+.lesson-meta-row {
+  display:flex; flex-wrap:wrap; gap:16px;
+  font-family:'Syne',sans-serif; font-size:12px; color:var(--text-muted); font-weight:600;
+}
+.lesson-num-badge {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:64px;
+  color:var(--surface3); letter-spacing:-3px; line-height:1;
+  flex-shrink:0; margin-left:24px; user-select:none;
+}
+.lesson-body { padding:32px 32px; }
+
+/* ── BLOCKS ── */
+.block { margin-bottom:32px; }
+.block:last-child { margin-bottom:0; }
+.block-header {
+  display:flex; align-items:center; gap:12px; margin-bottom:16px;
+}
+.block-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.block-header-text {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+}
+
+.objective-box {
+  background:var(--surface2); border-left:3px solid var(--purple);
+  padding:20px 24px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:16px; color:var(--text); line-height:1.75;
+}
+
+.script-box {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px 30px;
+}
+.script-box p { margin-bottom:18px; color:var(--text); line-height:1.82; }
+.script-box p:last-child { margin-bottom:0; }
+.script-box strong { color:var(--text); font-weight:600; }
+.script-box em { color:var(--text-muted); font-style:italic; }
+
+/* ── TERMINAL / PROMPT BOX ── */
+.terminal {
+  background:#060810; border:1px solid rgba(167,139,250,0.2);
+  border-radius:12px; overflow:hidden; margin:20px 0;
+  font-family:'JetBrains Mono', monospace;
+}
+.terminal-bar {
+  background:#0D0F1A; padding:10px 16px;
+  display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid rgba(167,139,250,0.12);
+}
+.t-dot { width:12px; height:12px; border-radius:50%; }
+.t-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase;
+  margin-left:auto;
+}
+.terminal-body { padding:22px 24px; }
+.t-prompt {
+  color:#B8C4F5; font-size:14px; line-height:1.75; white-space:pre-wrap;
+}
+.t-cursor { color:var(--purple); font-weight:700; }
+.t-result {
+  margin-top:18px; padding-top:18px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  color:var(--green); font-size:13px; line-height:1.7;
+}
+.t-result-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);
+  margin-bottom:8px;
+}
+
+/* ── NEPAL EXAMPLE ── */
+.nepal-example {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+}
+.ne-header {
+  padding:20px 24px; display:flex; gap:16px; align-items:center;
+  background:rgba(167,139,250,0.06); border-bottom:1px solid var(--border);
+}
+.ne-flag { font-size:28px; flex-shrink:0; }
+.ne-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+.ne-subtitle { font-size:13px; color:var(--text-muted); margin-top:3px; }
+.ne-body { padding:24px; }
+.ne-body p { font-size:16px; color:var(--text); line-height:1.8; margin-bottom:14px; }
+.ne-body p:last-child { margin-bottom:0; }
+
+/* ── TOOL COMPARISON TABLE ── */
+.ctable { width:100%; border-collapse:collapse; margin:0; }
+.ctable th {
+  background:var(--surface3); padding:12px 16px; text-align:left;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+  border-bottom:1px solid var(--border);
+}
+.ctable td {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  font-size:15px; color:var(--text); vertical-align:top;
+}
+.ctable tr:last-child td { border-bottom:none; }
+.ctable tr:hover td { background:rgba(255,255,255,0.02); }
+.tag-yes {
+  background:var(--green-dim); color:var(--green); border:1px solid var(--green-border);
+  padding:3px 10px; border-radius:20px; font-size:12px;
+  font-family:'Syne',sans-serif; font-weight:600; white-space:nowrap;
+}
+.tag-free {
+  background:var(--teal-dim); color:var(--teal); border:1px solid rgba(45,212,191,0.28);
+  padding:3px 10px; border-radius:20px; font-size:12px;
+  font-family:'Syne',sans-serif; font-weight:600; white-space:nowrap;
+}
+.tag-paid-tag {
+  background:var(--orange-dim); color:var(--orange); border:1px solid rgba(255,112,67,0.28);
+  padding:3px 10px; border-radius:20px; font-size:12px;
+  font-family:'Syne',sans-serif; font-weight:600; white-space:nowrap;
+}
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  display:flex; gap:16px; padding:20px 24px;
+  border-radius:var(--radius-sm); margin:20px 0;
+}
+.callout-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+.callout-text { font-size:15px; line-height:1.75; }
+.callout-text strong { font-weight:700; display:block; margin-bottom:4px; }
+.c-gold { background:var(--gold-dim); border:1px solid var(--gold-border); }
+.c-gold .callout-text { color:rgba(245,200,66,0.85); }
+.c-purple { background:var(--purple-dim); border:1px solid rgba(167,139,250,0.28); }
+.c-purple .callout-text { color:rgba(167,139,250,0.85); }
+.c-green { background:var(--green-dim); border:1px solid var(--green-border); }
+.c-green .callout-text { color:rgba(34,197,94,0.85); }
+.c-pink { background:var(--pink-dim); border:1px solid rgba(244,114,182,0.28); }
+.c-pink .callout-text { color:rgba(244,114,182,0.85); }
+.c-sky { background:var(--sky-dim); border:1px solid rgba(56,189,248,0.28); }
+.c-sky .callout-text { color:rgba(56,189,248,0.85); }
+
+/* ── BEFORE/AFTER ── */
+.before-after {
+  display:grid; grid-template-columns:1fr 1fr; gap:2px;
+  border-radius:var(--radius); overflow:hidden; margin:20px 0;
+}
+.ba-before {
+  background:rgba(255,112,67,0.08); border:1px solid rgba(255,112,67,0.2);
+  padding:20px 22px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+}
+.ba-after {
+  background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2);
+  padding:20px 22px; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.ba-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+}
+.ba-before .ba-label { color:var(--orange); }
+.ba-after .ba-label { color:var(--green); }
+.ba-text { font-size:15px; line-height:1.7; color:var(--text); }
+
+/* ── STEP CARDS ── */
+.steps-list { display:flex; flex-direction:column; gap:12px; }
+.step-item {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:18px 20px; border-radius:var(--radius-sm);
+}
+.step-num {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:14px;
+}
+.step-content { flex:1; }
+.step-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--text); margin-bottom:5px; }
+.step-desc { font-size:14px; color:var(--text-muted); line-height:1.7; }
+
+/* ── IMAGE PROMPT EXAMPLES ── */
+.prompt-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+.prompt-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); overflow:hidden;
+}
+.prompt-image-mock {
+  height:100px; display:flex; align-items:center; justify-content:center;
+  font-size:36px; font-style:normal;
+}
+.prompt-card-body { padding:16px 18px; }
+.prompt-card-label {
+  font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px;
+}
+.prompt-card-text { font-family:'JetBrains Mono',monospace; font-size:13px; color:#B8C4F5; line-height:1.6; }
+
+/* ── TABS ── */
+.tabs-wrap { margin:0; }
+.tabs-nav {
+  display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:24px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.tab-btn {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:12px;
+  letter-spacing:1px; text-transform:uppercase; padding:12px 20px;
+  color:var(--text-dim); background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap;
+}
+.tab-btn.active { color:var(--purple); border-bottom-color:var(--purple); }
+.tab-btn:hover { color:var(--text-muted); }
+.tab-pane { display:none; }
+.tab-pane.active { display:block; }
+
+/* ── TASK BOX ── */
+.task-box {
+  background:rgba(245,200,66,0.05); border:1px solid var(--gold-border);
+  border-radius:var(--radius); padding:24px 28px;
+}
+.task-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:16px;
+  color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.task-title::before { content:'📌'; }
+.task-box p, .task-box ol, .task-box li { font-size:15px; color:var(--text-muted); line-height:1.8; margin-bottom:10px; }
+.task-box ol { padding-left:20px; }
+.task-box li { padding-left:4px; }
+.task-box strong { color:var(--text); }
+
+/* ── MISTAKES ── */
+.mistakes-box {
+  background:rgba(255,112,67,0.06); border:1px solid rgba(255,112,67,0.2);
+  border-radius:var(--radius); padding:24px 28px;
+}
+.mistakes-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:15px;
+  color:var(--orange); margin-bottom:18px;
+}
+.mistake-item { display:flex; gap:14px; margin-bottom:16px; }
+.mistake-item:last-child { margin-bottom:0; }
+.mistake-x {
+  width:28px; height:28px; border-radius:8px;
+  background:rgba(255,112,67,0.15); color:var(--orange);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; flex-shrink:0;
+}
+.mistake-text { font-size:15px; color:var(--text-muted); line-height:1.75; }
+.mistake-text strong { color:var(--text); display:block; margin-bottom:3px; }
+
+/* ── LESSON DIVIDER ── */
+.lesson-divider {
+  max-width:1060px; margin:0 auto; padding:0 40px;
+  display:flex; align-items:center; gap:20px; margin-bottom:28px; margin-top:12px;
+}
+.ld-line { flex:1; height:1px; background:var(--border); }
+.ld-label {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);
+}
+
+/* ── COMPLETE SECTION ── */
+.complete-section {
+  max-width:1060px; margin:60px auto; padding:60px 60px;
+  background:var(--surface); border:1px solid var(--gold-border);
+  border-radius:24px; text-align:center; position:relative; overflow:hidden;
+}
+.complete-section::before {
+  content:''; position:absolute; top:-80px; left:50%; transform:translateX(-50%);
+  width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 65%);
+  pointer-events:none;
+}
+.complete-section h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(24px,4vw,38px);
+  color:var(--gold); letter-spacing:-1px; margin-bottom:14px; position:relative;
+}
+.complete-section p { color:var(--text-muted); font-size:17px; line-height:1.8; margin-bottom:28px; max-width:600px; margin-left:auto; margin-right:auto; }
+.next-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.next-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:18px 20px; text-align:left;
+}
+.next-card-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--gold); margin-bottom:6px; }
+.next-card-desc { font-size:13px; color:var(--text-muted); line-height:1.6; }
+
+/* ── TESTIMONIALS ── */
+.testi-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:80px 40px; }
+.testi-inner { max-width:1060px; margin:0 auto; }
+.testi-eyebrow {
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--purple); margin-bottom:14px;
+}
+.testi-inner h2 {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:32px;
+  color:var(--text); letter-spacing:-1px; margin-bottom:40px;
+}
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.testi-card {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+}
+.testi-stars { color:var(--gold); font-size:13px; letter-spacing:2px; margin-bottom:12px; }
+.testi-quote { font-size:15px; color:rgba(240,241,248,0.78); line-height:1.75; margin-bottom:16px; font-style:italic; }
+.testi-person { font-size:14px; color:var(--purple); font-weight:700; font-family:'Syne',sans-serif; }
+.testi-role { font-size:12px; color:var(--text-dim); margin-top:3px; font-family:'Syne',sans-serif; }
+
+/* ── FAQ ── */
+.faq-section { max-width:1060px; margin:0 auto; padding:60px 40px 80px; }
+.faq-section h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:30px; color:var(--text); letter-spacing:-1px; margin-bottom:8px; }
+.faq-sub { color:var(--text-muted); margin-bottom:32px; font-size:16px; }
+.faq-item { border:1px solid var(--border); border-radius:10px; margin-bottom:12px; overflow:hidden; }
+.faq-q {
+  padding:18px 22px; font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
+  color:var(--text); display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer; background:var(--surface); user-select:none; transition:background 0.2s;
+}
+.faq-q:hover { background:var(--surface2); }
+.faq-q span { color:var(--purple); font-size:20px; transition:transform 0.25s; }
+.faq-a {
+  padding:0 22px; max-height:0; overflow:hidden;
+  transition:max-height 0.35s ease, padding 0.25s;
+  font-size:15px; color:var(--text-muted); line-height:1.8; background:var(--surface2);
+}
+.faq-a.open { max-height:500px; padding:16px 22px 20px; }
+
+/* ── FOOTER ── */
+.footer {
+  background:var(--surface); padding:40px;
+  text-align:center; color:var(--text-dim);
+  font-family:'Syne',sans-serif; font-size:13px;
+  border-top:1px solid var(--border);
+}
+.footer strong { color:var(--gold); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{ opacity:0; transform:translateY(22px); } to{ opacity:1; transform:translateY(0); } }
+.fade-in { animation:fadeUp 0.65s ease forwards; }
+.delay-1 { animation-delay:0.1s; opacity:0; }
+.delay-2 { animation-delay:0.22s; opacity:0; }
+.delay-3 { animation-delay:0.34s; opacity:0; }
+.delay-4 { animation-delay:0.46s; opacity:0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 740px) {
+  .hero { padding:100px 24px 80px; }
+  .section { padding:60px 24px; }
+  .tools-grid { grid-template-columns:1fr 1fr; }
+  .lesson-body { padding:20px 20px; }
+  .lesson-topbar { padding:22px 20px; flex-direction:column; }
+  .lesson-num-badge { display:none; }
+  .testi-grid { grid-template-columns:1fr; }
+  .next-grid { grid-template-columns:1fr; }
+  .prompt-cards { grid-template-columns:1fr; }
+  .before-after { grid-template-columns:1fr; }
+  .ba-before { border-radius:var(--radius-sm) var(--radius-sm) 0 0; }
+  .ba-after { border-radius:0 0 var(--radius-sm) var(--radius-sm); }
+  .hero h1 { font-size:42px; letter-spacing:-2px; }
+  .complete-section { padding:40px 24px; margin:40px 24px; }
+  .lesson-divider { padding:0 24px; }
+  .nav-right { display:none; }
+  .nav-pill { display:none; }
+  .faq-section { padding:40px 24px 60px; }
+  .testi-section { padding:60px 24px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grain"></div>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-dot"></div>
+      AI Saathi
+    </div>
+    <div class="nav-pill">Module 5 of 8</div>
+    <div class="nav-right">
+      <span>Progress</span>
+      <div class="progress-dots">
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd active"></div>
+        <div class="pd"></div>
+        <div class="pd"></div>
+        <div class="pd"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow fade-in">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">Module 5 of 8 · AI Saathi · The Creative Power Module</span>
+    </div>
+    <h1 class="fade-in delay-1">
+      <span class="line1">AI for Images,</span>
+      <span class="line2">Video & Voice</span>
+      <span class="line1" style="font-size:0.82em">See It. Hear It. Create It.</span>
+      <span class="line3">Make stunning visuals, videos &amp; audio — from your phone, with zero design skills</span>
+    </h1>
+    <p class="hero-sub fade-in delay-2">
+      You have learned to write with AI. Now you will learn to <em>see</em> with it. This module teaches you to create professional images, videos, and voice content that would normally cost thousands of rupees — in minutes, for free.
+    </p>
+    <div class="hero-tools fade-in delay-3">
+      <span class="tool-pill"><span class="tool-pill-emoji">🎨</span> Canva AI</span>
+      <span class="tool-pill"><span class="tool-pill-emoji">🖼️</span> Adobe Firefly</span>
+      <span class="tool-pill"><span class="tool-pill-emoji">🎬</span> CapCut AI</span>
+      <span class="tool-pill"><span class="tool-pill-emoji">🔊</span> ElevenLabs</span>
+      <span class="tool-pill"><span class="tool-pill-emoji">🎭</span> HeyGen</span>
+      <span class="tool-pill"><span class="tool-pill-emoji">✨</span> ChatGPT Images</span>
+    </div>
+    <div class="hero-stats fade-in delay-3">
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Full Lessons</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Ready Prompts</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Rs 0</div>
+        <div class="stat-label">Starting Cost</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Phone Needed</div>
+      </div>
+    </div>
+    <div class="hero-cta-row fade-in delay-4">
+      <a href="#lesson1" class="cta-primary">Start Lesson 1 →</a>
+      <a href="#tools-overview" class="cta-secondary">See All Tools ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TOOLS OVERVIEW ── -->
+<div id="tools-overview">
+<section class="section" style="padding-top:40px; padding-bottom:40px;">
+  <span class="section-label">The Creative Toolkit</span>
+  <h2 class="section-title">Six powerful tools —<br>all <span class="accent">work on your phone</span></h2>
+  <p class="section-desc">
+    You do not need a computer, a design degree, or years of experience. Every tool below works from a basic Android or iPhone. Most are completely free. By the end of this module, you will use all of them confidently.
+  </p>
+  <div class="tools-grid">
+    <div class="tool-card" style="border-color:rgba(167,139,250,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(167,139,250,0.12) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">🎨</span>
+      <div class="tc-title">Canva AI</div>
+      <div class="tc-desc">Design posters, logos, social media posts, and business cards in minutes. The AI suggests layouts and writes captions for you.</div>
+      <span class="tc-tag tc-free">FREE version available</span>
+    </div>
+    <div class="tool-card" style="border-color:rgba(244,114,182,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(244,114,182,0.1) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">✨</span>
+      <div class="tc-title">ChatGPT Image Creator</div>
+      <div class="tc-desc">Simply describe what you want in words and ChatGPT draws it for you. Perfect for product photos, logos, and unique visuals.</div>
+      <span class="tc-tag tc-both">Free &amp; paid tiers</span>
+    </div>
+    <div class="tool-card" style="border-color:rgba(56,189,248,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(56,189,248,0.1) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">🎬</span>
+      <div class="tc-title">CapCut AI</div>
+      <div class="tc-desc">Edit videos automatically. Add subtitles with one tap. Cut silences, add music, and make Reels-ready videos for Facebook and TikTok.</div>
+      <span class="tc-tag tc-free">FREE</span>
+    </div>
+    <div class="tool-card" style="border-color:rgba(245,200,66,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(245,200,66,0.1) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">🔊</span>
+      <div class="tc-title">ElevenLabs Voice AI</div>
+      <div class="tc-desc">Type any text and it speaks it in a natural human voice — in Nepali or English. Use for ads, explainer videos, or social content.</div>
+      <span class="tc-tag tc-both">Free &amp; paid tiers</span>
+    </div>
+    <div class="tool-card" style="border-color:rgba(34,197,94,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(34,197,94,0.1) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">🎭</span>
+      <div class="tc-title">HeyGen AI Avatar</div>
+      <div class="tc-desc">Create a talking AI avatar that presents your business. You type the script — the AI person says it on camera. No recording needed.</div>
+      <span class="tc-tag tc-both">Free &amp; paid tiers</span>
+    </div>
+    <div class="tool-card" style="border-color:rgba(255,112,67,0.2);">
+      <div class="tool-card-glow" style="background:radial-gradient(circle,rgba(255,112,67,0.1) 0%,transparent 70%);"></div>
+      <span class="tc-emoji">🖼️</span>
+      <div class="tc-title">Adobe Firefly</div>
+      <div class="tc-desc">Remove unwanted objects from photos, change backgrounds, and enhance product images. Perfect for small business product photography.</div>
+      <span class="tc-tag tc-free">FREE credits monthly</span>
+    </div>
+  </div>
+
+  <div class="callout c-gold">
+    <div class="callout-icon">⚡</div>
+    <div class="callout-text">
+      <strong>Important reminder before we start</strong>
+      These tools produce amazing results — but they are still tools. The creativity, the business ideas, and the judgment about what is right for your customers: all of that comes from YOU. AI creates. You decide. Never publish anything without reviewing it first.
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ LESSON 1 ══════════════ -->
+<section class="section" id="lesson1" style="padding-top:20px; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--purple),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--purple);">
+        <div class="tag-dot" style="background:var(--purple);"></div>
+        Lesson 01 · Foundation
+      </div>
+      <div class="lesson-title-big">Why Visuals Win — The Business Case for AI Images in Nepal</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 20 min</span>
+        <span>🧠 Understanding &amp; Strategy</span>
+        <span>📱 Works on any phone</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">01</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will understand why visual content earns more attention and money than text alone — and you will be ready to use your first AI image tool today.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Let me ask you something. When you scroll through Facebook or TikTok, what makes you stop scrolling? Is it a wall of text — or is it a beautiful photo, a colourful poster, or a short video that grabs your eye?</p>
+        <p>Of course it is the visual. <strong>Every study on social media engagement tells us the same thing: posts with images get 2 to 3 times more attention than text-only posts. Videos get up to 5 times more engagement.</strong> Your customers are no different from you — they stop for things that look good.</p>
+        <p>Now here is the problem most small businesses in Nepal face. They know they need beautiful visuals. But hiring a graphic designer costs Rs 5,000 to Rs 20,000 per month. Getting a photographer for product photos costs Rs 2,000 to Rs 5,000 per session. Shooting a promotional video costs even more. So most small shops simply give up on visuals — and their Facebook pages end up with blurry phone photos and no design at all.</p>
+        <p><em>This is exactly where you now have an extraordinary advantage.</em></p>
+        <p>AI creative tools have completely changed the game. With Canva's AI, you can design a professional poster in 5 minutes with no design skills. With ChatGPT's image creator, you can generate a product photo simply by describing it in words. With CapCut, you can make a polished promotional video in 10 minutes from raw clips on your phone. <strong>What used to cost Rs 10,000 now costs Rs 0 — and it takes minutes instead of days.</strong></p>
+        <p>Think about what this means for your business or for the clients you serve. Instead of a plain text Facebook post saying "New stock arrived," you can now post a beautiful designed banner with your products showcased professionally. Instead of a blurry photo of your food, your restaurant can have magazine-quality images. Instead of just posting, you can share a 30-second promotional video with background music and captions — all made on your phone, free.</p>
+        <p>And if you offer services to other businesses, this skill makes you dramatically more valuable. A business that could only afford text posts can now afford to pay you to create stunning visual content — because AI makes it possible for you to do in 15 minutes what used to take a professional 5 hours.</p>
+        <p><strong>This is not a small upgrade. This is a complete transformation of what is possible for small businesses in Nepal.</strong> Let us begin.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(244,114,182,0.12);color:var(--pink);">💬</div>
+        <span class="block-header-text">Nepal Example — Sunita's Sweet Shop, Pokhara</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Sunita Gurung, 44 — Mithai &amp; Bakery Shop Owner, Lakeside Pokhara</div>
+            <div class="ne-subtitle">From "no time to post" to 3x more orders in 6 weeks</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Sunita has run her family sweet shop in Pokhara's Lakeside area for twelve years. Her sweets — particularly her sel roti and barfi — are famous among locals. But her Facebook page was almost empty. She had posted maybe 10 times in two years, all blurry photos taken quickly on her phone.</p>
+          <p>"I knew I needed better photos and more posts," she says, "but I thought that was for big hotels and restaurants. Not for a small shop like mine." Her nephew had once quoted her Rs 8,000 per month for social media management. She said no. It was too much.</p>
+          <p>When Sunita joined this course, she learned Canva AI in Lesson 3. Within one afternoon, she had created 8 gorgeous food posters showing her sweets with clean backgrounds, her shop name in Nepali and English, prices, and a delivery WhatsApp number. She spent Rs 0. It took her 2 hours total.</p>
+          <p>She posted those 8 images over 2 weeks. The response surprised her completely. <strong>Her Facebook page went from almost no engagement to receiving over 200 messages in a single week</strong> — from tourists, from Nepali diaspora abroad ordering gift boxes, and from local catering enquiries. Within 6 weeks, her revenue had increased noticeably enough that she hired a helper for the first time.</p>
+          <p>"I thought AI was for young people or tech people," Sunita says. "Now I understand — it is for anyone who has a business and wants more customers. It is not complicated at all."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">📊</div>
+        <span class="block-header-text">Text vs Visual — The Attention Battle</span>
+      </div>
+      <div class="before-after">
+        <div class="ba-before">
+          <div class="ba-label">❌ Text-Only Post</div>
+          <div class="ba-text">
+            "Hamro pasal ma aaj naya stock aayo! Dal, chamal, tarkari sab available cha. Aaunus na — Ramesh General Store, New Road."<br><br>
+            <span style="color:var(--text-dim); font-size:13px;">Typical result: 2–5 likes. Almost no enquiries. Gets scrolled past in 0.3 seconds.</span>
+          </div>
+        </div>
+        <div class="ba-after">
+          <div class="ba-label">✓ Visual Post (AI-made in 5 min)</div>
+          <div class="ba-text">
+            Bright colourful poster · Product images · Price tags · Shop name · Call-to-action button · Offer badge<br><br>
+            <span style="color:var(--green); font-size:13px; font-weight:600;">Typical result: 40–120 likes. Multiple enquiries. People save it and share it. Gets attention instantly.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise for This Lesson</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 1: The Visual Audit</div>
+        <p>Before we create anything, let us understand what you are working with. Take 10 minutes to do this:</p>
+        <ol>
+          <li>Open the Facebook page of YOUR business — or choose ONE local business you know well (a restaurant, shop, or service you visit regularly).</li>
+          <li>Look at their last 20 posts. Count how many have a designed image or graphic. How many are just photos? How many are text only?</li>
+          <li>Now find one competitor — a similar business in your area or another city. Look at their page. Do they use more visuals? Do they get more engagement?</li>
+          <li>Write down your answer to this: <strong>"If I made 2 beautiful visual posts per week for this business, what products or messages would I show?"</strong> List 5 ideas.</li>
+        </ol>
+        <p style="margin-top:14px; color:var(--gold); font-weight:700; font-family:'Syne',sans-serif;">Those 5 ideas become your first 5 Canva designs in Lesson 3. Keep that list. 📝</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider">
+  <div class="ld-line"></div>
+  <span class="ld-label">Lesson 2</span>
+  <div class="ld-line"></div>
+</div>
+
+<!-- ══════════════ LESSON 2 ══════════════ -->
+<section class="section" id="lesson2" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--pink),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--pink);">
+        <div class="tag-dot" style="background:var(--pink);"></div>
+        Lesson 02 · ChatGPT Images
+      </div>
+      <div class="lesson-title-big">Make Any Image You Imagine — Using Only Words</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 25 min</span>
+        <span>🖼️ Image Creation</span>
+        <span>💬 Prompt Writing</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">02</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have created your first AI-generated image using ChatGPT and will have a formula for writing image prompts that produce professional results every time.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Until recently, if you wanted a unique image — a product photo, an illustration for a poster, a logo concept — you had two choices: hire a professional or spend weeks learning Photoshop. Both cost time and money most small businesses do not have.</p>
+        <p>ChatGPT (and tools like it) have changed this completely. Now you can type a description of any image you want and the AI will draw it for you in seconds. <strong>You are the creative director. The AI is your artist.</strong></p>
+        <p>The key skill is learning how to "talk" to the AI in a way that gets the image you actually want. This is called writing an <em>image prompt</em>. A poor prompt gives a confusing result. A great prompt gives you something you could use immediately for your business.</p>
+        <p>The secret formula for a strong image prompt is four parts:</p>
+        <p><strong>1. What you want to see</strong> — the main subject of the image.<br>
+        <strong>2. The setting or background</strong> — where it is placed, what surrounds it.<br>
+        <strong>3. The style</strong> — professional photo? Illustration? Cartoon? Flat design? Painting?<br>
+        <strong>4. The feeling or quality</strong> — bright and cheerful? Clean and minimal? Warm and inviting?</p>
+        <p>You do not need all four every time — but including more detail always gives better results. The more specific you are, the more the AI understands exactly what you need. Think of it like giving directions: "Go somewhere" gives nothing. "Turn left at the tea shop and right at the school" gets someone exactly where they need to go.</p>
+        <p><em>The examples below show you exactly what great prompts look like for real Nepali business needs.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">📸</div>
+        <span class="block-header-text">Real Image Prompt Examples — Copy &amp; Customize</span>
+      </div>
+      <div class="prompt-cards">
+        <div class="prompt-card">
+          <div class="prompt-image-mock" style="background:linear-gradient(135deg,rgba(255,112,67,0.15),rgba(245,200,66,0.15));">🍛</div>
+          <div class="prompt-card-body">
+            <div class="prompt-card-label">Dal Bhat Restaurant</div>
+            <div class="prompt-card-text">A beautiful overhead photo of a traditional Nepali dal bhat thali on a brass plate, on a clean wooden table, natural warm light, professional food photography, appetizing and fresh</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-image-mock" style="background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(56,189,248,0.15));">👗</div>
+          <div class="prompt-card-body">
+            <div class="prompt-card-label">Clothing Shop</div>
+            <div class="prompt-card-text">A flat lay of colourful kurta suruwal neatly arranged on a white background, clean minimal style, product photography, bright colours, fashion catalog look</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-image-mock" style="background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(45,212,191,0.12));">🏠</div>
+          <div class="prompt-card-body">
+            <div class="prompt-card-label">Real Estate / Rental</div>
+            <div class="prompt-card-text">A modern, clean apartment living room interior, cozy warm lighting, plants, simple furniture, inviting atmosphere, real estate listing photo style</div>
+          </div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-image-mock" style="background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(167,139,250,0.12));">💅</div>
+          <div class="prompt-card-body">
+            <div class="prompt-card-label">Beauty Salon / Spa</div>
+            <div class="prompt-card-text">Elegant beauty salon interior with soft pink and gold tones, clean mirrors, flowers on the counter, warm inviting atmosphere, high-end professional photography</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-purple">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text">
+          <strong>Pro Tip: The "Nepali Context" trick</strong>
+          Always add specific Nepali context to your prompts — brass plate instead of just "plate," "kurta suruwal" instead of just "clothing," mountains or temples as backgrounds for tourism businesses. This makes your images feel local and authentic rather than generic.
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(167,139,250,0.12);color:var(--purple);">🖥️</div>
+        <span class="block-header-text">How to Use ChatGPT Image Creator — Step by Step</span>
+      </div>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-num" style="background:var(--purple-dim);color:var(--purple);">1</div>
+          <div class="step-content">
+            <div class="step-title">Open ChatGPT on your phone or browser</div>
+            <div class="step-desc">Go to chatgpt.com or open the ChatGPT app. You need a free account. If you have never made one, go to chatgpt.com and click "Sign Up" — it takes 2 minutes with your email or Google account.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--pink-dim);color:var(--pink);">2</div>
+          <div class="step-content">
+            <div class="step-title">Start a new chat and type your image request</div>
+            <div class="step-desc">In the chat box, type: "Generate an image of..." followed by your prompt using the formula from this lesson. You can write in English or Nepali — ChatGPT understands both.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">3</div>
+          <div class="step-content">
+            <div class="step-title">Review the result and refine if needed</div>
+            <div class="step-desc">The image appears in 10–30 seconds. If you want changes, just tell ChatGPT: "Make it brighter," "Change the background to white," or "Add the text 'Special Offer' in the corner." Keep refining until you love it.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);">4</div>
+          <div class="step-content">
+            <div class="step-title">Download and use it</div>
+            <div class="step-desc">Click or tap on the image and download it to your device. It is now yours — use it for Facebook posts, WhatsApp promotions, posters, or anywhere else.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise for This Lesson</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 2: Your First AI Image</div>
+        <ol>
+          <li>Choose one of the 5 ideas you wrote in Lesson 1. Pick the most important one for your business or your first client.</li>
+          <li>Write an image prompt using the four-part formula: <strong>Subject + Setting + Style + Feeling</strong>. Write it in your notebook first before typing it.</li>
+          <li>Open ChatGPT and generate the image. If the result is not perfect, refine it with follow-up instructions — try at least 2–3 refinements before stopping.</li>
+          <li>Download your best result and save it to a folder called "AI Images – [Business Name]." You will be building this folder throughout this module.</li>
+          <li><strong>Bonus challenge:</strong> Share your image in the course WhatsApp group and ask for feedback. Real engagement from real people is the best test.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(255,112,67,0.12);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Important Cautions with AI Images</span>
+      </div>
+      <div class="mistakes-box">
+        <div class="mistakes-title">Watch Out For These</div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>AI sometimes makes strange errors — especially with hands and faces</strong>AI images can occasionally produce fingers with too many joints, or faces that look slightly odd. Always check carefully before posting. If something looks wrong, ask ChatGPT to regenerate or fix the specific part.</div>
+        </div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Do not use AI images to deceive customers</strong>If you create an AI image of a "product" for your shop, make sure the actual product looks similar. Using AI photos that misrepresent real products damages trust and can cause customer complaints. Use AI for creative content and atmosphere — not to mislead.</div>
+        </div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Always add your own branding</strong>A beautiful AI image with no shop name, no contact details, and no identity does not help your business. Always take your AI image into Canva and add your shop name, location, phone number, and a call to action before posting.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider">
+  <div class="ld-line"></div>
+  <span class="ld-label">Lesson 3</span>
+  <div class="ld-line"></div>
+</div>
+
+<!-- ══════════════ LESSON 3 ══════════════ -->
+<section class="section" id="lesson3" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--purple),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--purple);">
+        <div class="tag-dot" style="background:var(--purple);"></div>
+        Lesson 03 · Canva AI
+      </div>
+      <div class="lesson-title-big">Design Like a Professional — Canva AI for Business Visuals</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 30 min</span>
+        <span>🎨 Design Skills</span>
+        <span>📱 Mobile-Friendly</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">03</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have created a complete, professional social media post using Canva AI — including layout, text, colours, and your branding. Ready to post.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Canva is the most popular design tool in the world for non-designers — and for very good reason. It was built specifically so that anyone, regardless of design experience, could create beautiful visuals. And now, with AI features built in, it has become even more powerful.</p>
+        <p>Here is what makes Canva special for someone running a business in Nepal. <strong>It already has thousands of templates designed for every type of business</strong> — restaurants, clothing shops, hotels, schools, beauty salons, real estate, events, and much more. You do not start with a blank page. You start with a professional design and you simply change the text, colours, and photos to match your own business.</p>
+        <p>The free version of Canva gives you access to thousands of templates, millions of photos, and all the basic design tools you will ever need. The paid version (Canva Pro) adds more templates and features, but everything in this lesson can be done completely free.</p>
+        <p>The AI features we will focus on are three: <strong>Text to Image</strong> (type a description, get an image), <strong>Magic Design</strong> (describe what you need, Canva creates a full layout for you), and <strong>Background Remover</strong> (removes the background from any photo with one click — perfect for product images).</p>
+        <p>Think about that last one for a moment. A professional background removal used to cost money and take skill in Photoshop. Now you tap one button in Canva and it is done. You can then put your product on any background you want — plain white for a clean professional look, a mountain view for a tourism business, a warm kitchen for a food business. <em>In 2 minutes, your blurry mobile phone product photo becomes a magazine-quality image.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">🗺️</div>
+        <span class="block-header-text">The Canva AI Quick-Start Guide</span>
+      </div>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-num" style="background:var(--purple-dim);color:var(--purple);">1</div>
+          <div class="step-content">
+            <div class="step-title">Create your free Canva account</div>
+            <div class="step-desc">Go to canva.com or install the Canva app (Android and iOS, both free). Sign up with Google or your email. Takes 1 minute. Keep your login saved.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--pink-dim);color:var(--pink);">2</div>
+          <div class="step-content">
+            <div class="step-title">Search for a template matching your business</div>
+            <div class="step-desc">In the search bar, type something like "Restaurant Facebook Post," "Sale Poster Nepal," or "Product Launch Instagram." Browse the results and choose a template that matches your style. Click to open it.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">3</div>
+          <div class="step-content">
+            <div class="step-title">Replace the text with your own details</div>
+            <div class="step-desc">Click on any text element and type your own words — your business name, your offer, your phone number. Keep it short: one headline, one benefit, one call to action. That is the winning formula.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);">4</div>
+          <div class="step-content">
+            <div class="step-title">Add or replace the image</div>
+            <div class="step-desc">Click "Photos" on the left to find free stock photos — search "dal bhat," "Kathmandu market," "nepali wedding," etc. Or upload your own photo. Use "Background Remover" (under Edit Image) to clean up product photos.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--sky-dim);color:var(--sky);">5</div>
+          <div class="step-content">
+            <div class="step-title">Download and share</div>
+            <div class="step-desc">Click the download button at the top right. Choose PNG for best quality. Download to your phone or computer. It is now ready to post directly to Facebook, Instagram, or WhatsApp — or to send to your client.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">💡</div>
+        <span class="block-header-text">Canva AI Magic: The Prompts That Save Hours</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">Canva Magic Design — What To Type</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-prompt"><span class="t-cursor">→ </span>"Create a Facebook post for a Kathmandu clothing shop announcing 20% off on Dashain. Warm festive colours, Nepali style, professional look."
+
+<span class="t-cursor">→ </span>"Design a price menu for a tea shop in Pokhara. Simple, clean, easy to read on mobile."
+
+<span class="t-cursor">→ </span>"Make a banner for a tuition center announcing class 10 exam preparation. Motivating, blue and white, with space for contact details."
+
+<span class="t-cursor">→ </span>"Create a Tihar special offer poster for a dry fruits and mithai shop. Festive colours — red, gold, yellow. Include space for prices."</div>
+          <div class="t-result">
+            <div class="t-result-label">✓ What Canva AI does</div>
+            <div class="t-result-text">Generates 4–6 complete design options in under 10 seconds. All fully editable. You just pick the one you like best and adjust the details. No design skill required at any step.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise for This Lesson</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 3: Build Your First Design Set</div>
+        <p>Create THREE different designs in Canva today. Aim to spend no more than 15–20 minutes total:</p>
+        <ol>
+          <li><strong>A Facebook Post</strong> — Use the Magic Design prompt method. Describe your business and a current offer or announcement. Let Canva generate options.</li>
+          <li><strong>A WhatsApp Story Banner</strong> — Search for a "WhatsApp status" template. Keep it simple: one image, your shop name, one offer, one phone number.</li>
+          <li><strong>A Product Card</strong> — Upload a photo of a real product you sell (or one your client sells). Use Background Remover. Place it on a clean white or coloured background. Add price, product name, shop name.</li>
+        </ol>
+        <p style="margin-top:14px; color:var(--gold); font-weight:700; font-family:'Syne',sans-serif;">Save all three as PNG files. This is the beginning of your design portfolio. Real clients will ask to see your samples — these are yours to show. ✨</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider">
+  <div class="ld-line"></div>
+  <span class="ld-label">Lesson 4</span>
+  <div class="ld-line"></div>
+</div>
+
+<!-- ══════════════ LESSON 4 ══════════════ -->
+<section class="section" id="lesson4" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--teal),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--teal);">
+        <div class="tag-dot" style="background:var(--teal);"></div>
+        Lesson 04 · CapCut AI
+      </div>
+      <div class="lesson-title-big">Make Videos in 10 Minutes — CapCut AI for Reels &amp; Shorts</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 30 min</span>
+        <span>🎬 Video Creation</span>
+        <span>📱 Phone Only</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">04</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have made a complete, professional-looking promotional video using only your phone and CapCut AI — with subtitles, music, and a call to action.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Video is the most powerful form of content on the internet right now. Facebook Reels, TikTok, YouTube Shorts — every major platform is pushing video content to more people than photos or text. If you post a video of your shop, your product, or your service, <strong>Facebook's algorithm will show it to 3 to 5 times more people</strong> than a photo post. For free.</p>
+        <p>The problem most people face: video editing used to require expensive software, a computer, and technical skill. CapCut changes everything. CapCut is a completely free video editing app — available on both Android and iPhone — that uses AI to do most of the hard work for you.</p>
+        <p>Here is what CapCut AI can do automatically: <strong>add subtitles to any spoken video with one tap</strong> (it transcribes your voice and places the text on screen), <strong>remove background noise</strong> so your video sounds professional even if filmed near a noisy road, <strong>add background music</strong> from a free library, <strong>cut out silences and pauses</strong> from your video automatically, and <strong>suggest a complete edit</strong> from your raw clips with transitions and effects already applied.</p>
+        <p>Think about what this means in practice. You film 2 minutes of yourself talking about your shop — maybe a tour of your products, maybe explaining a new offer. You upload it to CapCut. In under 5 minutes, CapCut will have added subtitles, removed your "um" and "uh" pauses, added background music, and created a polished video ready to post. <em>What would have taken hours of editing skill now takes minutes and zero skill.</em></p>
+        <p>And for those who do not want to film themselves at all — CapCut also has a <strong>"Text to Video" feature</strong> where you write a script and CapCut creates an animated video with AI visuals and your text. Perfect for a short promotional ad for your business, even if you are camera-shy.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--teal-dim);color:var(--teal);">🎬</div>
+        <span class="block-header-text">Three Types of Videos Every Business Needs (All Free)</span>
+      </div>
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th>Video Type</th>
+            <th>What It Shows</th>
+            <th>Best For</th>
+            <th>Time to Make</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Product Showcase</strong></td>
+            <td>Your products close-up, showing quality and variety</td>
+            <td>Shops, restaurants, clothing, crafts</td>
+            <td><span class="tag-yes">10 min</span></td>
+          </tr>
+          <tr>
+            <td><strong>Shop Tour</strong></td>
+            <td>Walk through your shop or workspace on camera</td>
+            <td>All businesses — builds trust fast</td>
+            <td><span class="tag-yes">8 min</span></td>
+          </tr>
+          <tr>
+            <td><strong>Offer Announcement</strong></td>
+            <td>New deal, discount, seasonal offer</td>
+            <td>Any business running a promotion</td>
+            <td><span class="tag-yes">5 min</span></td>
+          </tr>
+          <tr>
+            <td><strong>Customer Testimonial</strong></td>
+            <td>A happy customer says 30 seconds about your service</td>
+            <td>Service businesses, coaches, salons</td>
+            <td><span class="tag-yes">10 min</span></td>
+          </tr>
+          <tr>
+            <td><strong>How-To / Behind the Scenes</strong></td>
+            <td>Show HOW you make or do something</td>
+            <td>Food, crafts, tailoring, mechanics</td>
+            <td><span class="tag-yes">15 min</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">📱</div>
+        <span class="block-header-text">CapCut AI — Your 5-Step Video in 10 Minutes</span>
+      </div>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">1</div>
+          <div class="step-content">
+            <div class="step-title">Film a 1–3 minute video on your phone</div>
+            <div class="step-desc">Keep it simple. Film your products, your shop, or yourself talking about an offer. Do not worry about perfection — CapCut will clean it up. Bright natural light (near a window) always looks best.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">2</div>
+          <div class="step-content">
+            <div class="step-title">Open CapCut → New Project → Import your video</div>
+            <div class="step-desc">CapCut is free on the App Store and Google Play. Tap "New Project," select your video clip, and tap "Add." Your video is now on the timeline ready to edit.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">3</div>
+          <div class="step-content">
+            <div class="step-title">Use "Auto Captions" — one tap adds subtitles</div>
+            <div class="step-desc">Tap "Text" at the bottom → then "Auto Captions." Choose your language (English or Nepali). CapCut transcribes your voice and places the words on screen automatically. This alone doubles video engagement.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">4</div>
+          <div class="step-content">
+            <div class="step-title">Add background music and adjust volume</div>
+            <div class="step-desc">Tap "Audio" → "Sounds." Browse free music. Pick something that matches your vibe — upbeat for promotions, calm for service businesses. Lower the music volume to about 20–30% so your voice stays clear over it.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-dim);color:var(--teal);">5</div>
+          <div class="step-content">
+            <div class="step-title">Export and share</div>
+            <div class="step-desc">Tap the Export button (top right). Choose 1080p quality. CapCut saves the finished video to your phone in about 30 seconds. Post it directly to Facebook, TikTok, or WhatsApp Status — or send to your client.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise for This Lesson</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 4: Make Your First Promotional Video</div>
+        <ol>
+          <li>Film a 60–90 second video TODAY. Walk around your shop or workspace. Show 3 products or services. Speak naturally — no script needed, just explain what you sell and why it is good.</li>
+          <li>Import to CapCut. Use Auto Captions. Add music. Adjust so the music is soft behind your voice.</li>
+          <li>Add a text card at the end (use the "Text" tool) showing: your shop name, your WhatsApp number, and a one-line call to action like "Call for orders!" or "DM for prices!"</li>
+          <li>Export at 1080p. Save it.</li>
+          <li><strong>Post it to Facebook</strong> as a Reel. In the caption, write 2–3 sentences about what the video shows. Include your contact details.</li>
+        </ol>
+        <p style="margin-top:14px; color:var(--gold); font-weight:700; font-family:'Syne',sans-serif;">Many students report their first AI-edited video gets 5–10× more views than their usual posts. See what happens with yours. 🎬</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider">
+  <div class="ld-line"></div>
+  <span class="ld-label">Lesson 5</span>
+  <div class="ld-line"></div>
+</div>
+
+<!-- ══════════════ LESSON 5 ══════════════ -->
+<section class="section" id="lesson5" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--orange),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--orange);">
+        <div class="tag-dot" style="background:var(--orange);"></div>
+        Lesson 05 · AI Voice &amp; Avatars
+      </div>
+      <div class="lesson-title-big">The Voice of Your Business — AI Audio &amp; Talking Avatars</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 25 min</span>
+        <span>🔊 Voice AI</span>
+        <span>🎭 Video Avatars</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">05</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will understand how AI voice tools and talking avatar technology work — and how to use them to create professional audio content and video presentations without ever going on camera.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>Some people are not comfortable being on camera. Some businesses — a law firm, an accounting office, a corporate training company — need a polished, professional presenter rather than a casual phone video. And some content, like explainer videos and product tutorials, needs a clear voice guiding the viewer through information.</p>
+        <p>AI voice and avatar tools solve all of these needs. <strong>You write the script. The AI creates the voice. The AI creates the face. And the result is a professional video without you ever needing to film yourself.</strong></p>
+        <p>Let us talk about ElevenLabs first. ElevenLabs is a voice AI tool that converts any text you type into natural-sounding human speech. The voices sound remarkably real — not the robotic computerized voices you may have heard before. You can choose different voice types: male, female, young, mature, calm, energetic. You can even choose language and accent. The free plan gives you enough credits each month to create several minutes of audio — more than enough for regular business use.</p>
+        <p>What can you do with AI-generated voice? <strong>Create an audio advertisement</strong> — type your ad copy and produce a professional 30-second radio-style ad for your business or your client's business. Post it as a Facebook audio story or use it in a CapCut video. <strong>Add narration to a Canva presentation</strong> — export your slides as a video and add AI voice narration talking through each point. <strong>Create product explainer audios</strong> for WhatsApp broadcasts. <em>The possibilities are wider than you might imagine.</em></p>
+        <p>Now for the most impressive tool in this module: <strong>HeyGen AI Avatars.</strong> HeyGen lets you create a realistic digital person — an AI avatar — that will speak any script you type. You choose the avatar's appearance, their speaking style, and the background. You type your message. The avatar delivers it on screen as a professional video presenter.</p>
+        <p>Imagine a tutoring center using a clean-cut AI presenter to deliver their course introduction. Imagine a real estate agency using a professional AI presenter to narrate a property tour. Imagine a non-profit organization using an AI spokesperson to present their mission to donors. All of this is possible today, for little or no cost. <strong>HeyGen's free plan allows several minutes of avatar video per month.</strong> That is enough to test it, get amazed by it, and start building content immediately.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(255,112,67,0.12);color:var(--orange);">🔊</div>
+        <span class="block-header-text">Using ElevenLabs — Turn Text Into Voice in 3 Steps</span>
+      </div>
+      <div class="tabs-wrap">
+        <div class="tabs-nav" id="voice-tabs">
+          <button class="tab-btn active" onclick="showTab('voice-howto','voice-tabs')">How to Use It</button>
+          <button class="tab-btn" onclick="showTab('voice-prompts','voice-tabs')">Script Examples</button>
+          <button class="tab-btn" onclick="showTab('voice-uses','voice-tabs')">Business Uses</button>
+        </div>
+        <div id="voice-tabs-voice-howto" class="tab-pane active">
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num" style="background:var(--orange-dim);color:var(--orange);">1</div>
+              <div class="step-content">
+                <div class="step-title">Sign up at elevenlabs.io (free)</div>
+                <div class="step-desc">Create your free account. You receive free credits each month to create audio — no credit card needed for the free plan.</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" style="background:var(--orange-dim);color:var(--orange);">2</div>
+              <div class="step-content">
+                <div class="step-title">Paste your script and choose a voice</div>
+                <div class="step-desc">Go to "Text to Speech," paste your written ad copy or narration script, and browse the voice library. There are many voice types — test a few to find one that suits your brand.</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" style="background:var(--orange-dim);color:var(--orange);">3</div>
+              <div class="step-content">
+                <div class="step-title">Generate and download the MP3</div>
+                <div class="step-desc">Click "Generate." In seconds, you have a professional audio file. Download the MP3. Import it into CapCut as the audio track for your video, or share it directly as a voice message or audio story.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="voice-tabs-voice-prompts" class="tab-pane">
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="t-dot" style="background:#FF5F57;"></div>
+              <div class="t-dot" style="background:#FFBD2E;"></div>
+              <div class="t-dot" style="background:#28CA41;"></div>
+              <div class="t-label">Sample Ad Scripts (Paste into ElevenLabs)</div>
+            </div>
+            <div class="terminal-body">
+              <div class="t-prompt"><span class="t-cursor">→ </span>Restaurant Ad (30 sec):
+"Are you craving authentic Nepali food? At Himalaya Kitchen in Thamel, we cook fresh dal bhat, momos, and thukpa daily — using only local ingredients. Open every day from 10 AM to 10 PM. Visit us at New Road, Kathmandu, or order on Facebook. Himalaya Kitchen — taste the real Nepal."
+
+<span class="t-cursor">→ </span>Clothing Shop (20 sec):
+"This Dashain, dress beautifully without spending too much. Pooja Boutique in Birgunj has the latest kurta suruwal and sarees — starting at just 800 rupees. We offer stitching the same day. Visit us near Main Chowk or call 98XXXXXXXX."
+
+<span class="t-cursor">→ </span>Tuition Center (25 sec):
+"Class 10 and 12 students — the exam season is coming. At Star Tuition Center in Dharan, our expert teachers help you score higher with practice tests, notes, and personal attention. Batch starting this Sunday. Limited seats — call now to register."</div>
+            </div>
+          </div>
+        </div>
+        <div id="voice-tabs-voice-uses" class="tab-pane">
+          <div class="script-box" style="background:var(--bg);">
+            <p><strong>🎙️ Facebook Audio Ads</strong><br>Post the MP3 as a Facebook voice story or pair it with a Canva image to create a simple video ad with professional narration.</p>
+            <p><strong>📢 WhatsApp Broadcast Messages</strong><br>Send an audio message to your WhatsApp customer list announcing a sale or new product. An AI voice sounds cleaner and more professional than a rushed recording in a noisy market.</p>
+            <p><strong>🎓 Educational Content</strong><br>If you teach or train people, use AI voice to narrate presentation slides. Turn your knowledge into a professional course or tutorial series.</p>
+            <p><strong>🏪 In-Store Announcements</strong><br>A shop or mall can play an AI-generated audio announcement about current offers. Much cheaper than hiring a voice-over artist.</p>
+            <p><strong>🌍 Translation & Multilingual Content</strong><br>ElevenLabs supports multiple languages. Record your script in English, have it translated by ChatGPT, then generate an audio version in Hindi or another language — reaching more customers across the region.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(244,114,182,0.12);color:var(--pink);">🎭</div>
+        <span class="block-header-text">Nepal Example — Rajan's Training Academy, Biratnagar</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Rajan Shrestha, 38 — Computer Training Institute Owner, Biratnagar</div>
+            <div class="ne-subtitle">How AI avatars helped fill his batches without a single paid ad</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Rajan runs a small computer training institute in Biratnagar. He teaches basic computing, typing, and accounting software to students looking for office jobs. His biggest problem: he needed professional marketing content but had almost no budget. His Facebook page had mostly text posts with very little engagement.</p>
+          <p>After completing this module, Rajan tried HeyGen's free plan. He wrote a 60-second script explaining his courses, the career outcomes, and the contact details. He chose a professional-looking AI avatar — a well-dressed presenter with a clean office background. The avatar delivered his script perfectly in about 3 minutes of setup time.</p>
+          <p>Rajan posted the video on Facebook with a simple caption: "New batch starting this month — limited seats." The video looked more professional than anything he had ever posted. In 5 days, he received 47 enquiry messages — more than he had ever received in a single month.</p>
+          <p>"People asked me how I could afford such a professional video," Rajan laughs. "I told them it was made with free AI tools and took me less than an hour. They could not believe it." His last two batches have filled up entirely from Facebook — zero paid advertising. <strong>The only investment was his time and the knowledge from this course.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise for This Lesson</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 5: Your First AI Voice or Avatar Video</div>
+        <p>Choose ONE of the following two options based on what feels more useful for your business:</p>
+        <ol>
+          <li><strong>Option A — ElevenLabs Voice Ad:</strong> Write a 20–30 second ad script for your business (or for a local business you know). Use ChatGPT to help refine the script if needed. Generate the audio on ElevenLabs. Import it into CapCut and pair it with images from Canva to make a short video ad.</li>
+          <li><strong>Option B — HeyGen Avatar Video:</strong> Go to heygen.com. Choose a free avatar. Write a 30–60 second introduction script for your business — what you do, who it is for, and how to contact you. Generate the video. Download and post to Facebook.</li>
+        </ol>
+        <p style="margin-top:14px; color:var(--gold); font-weight:700; font-family:'Syne',sans-serif;">Whichever you choose, this becomes your most powerful business marketing tool this week. The response usually surprises people. 🎤</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="lesson-divider">
+  <div class="ld-line"></div>
+  <span class="ld-label">Lesson 6</span>
+  <div class="ld-line"></div>
+</div>
+
+<!-- ══════════════ LESSON 6 ══════════════ -->
+<section class="section" id="lesson6" style="padding-top:0; padding-bottom:0;">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background:linear-gradient(90deg,var(--gold),transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--gold);">
+        <div class="tag-dot" style="background:var(--gold);"></div>
+        Lesson 06 · Putting It All Together
+      </div>
+      <div class="lesson-title-big">Your Full Creative AI Workflow — From Idea to Post in 30 Minutes</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 35 min</span>
+        <span>⚙️ System &amp; Workflow</span>
+        <span>💰 Income Applications</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">06</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have a complete, repeatable creative content workflow — using ChatGPT, Canva, and CapCut together — that produces professional content for any business in under 30 minutes.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson</span>
+      </div>
+      <div class="script-box">
+        <p>You have now learned the individual tools. ChatGPT for text and image ideas. Canva for designing. CapCut for video. ElevenLabs and HeyGen for voice and avatar presentations. Each one is powerful alone.</p>
+        <p>But the real magic — and the real income opportunity — comes when you combine them into a <strong>complete content workflow</strong>. When you have a repeatable process, you stop spending time thinking "what do I do next?" and you start producing content faster and faster, every single week.</p>
+        <p>Here is the system used by our top students who are earning Rs 20,000 to Rs 40,000 per month providing content services to local businesses. <strong>It takes about 3 to 4 hours per week per client — and every single hour of that time is spent on AI tools, not on manual work.</strong></p>
+        <p>The workflow has four stages. Stage 1: <em>Generate the ideas.</em> Use ChatGPT to plan 10–15 content ideas for the week — promotions, product features, tips, customer stories, seasonal offers. This takes 10 minutes. Stage 2: <em>Write the copy.</em> For each content piece, use ChatGPT to write the caption, the headline, and any text that goes on the design. 15 minutes for a full week's content. Stage 3: <em>Design the visuals.</em> Use Canva to create one design template per business, then duplicate and update it for each post. 30–45 minutes for 10 posts. Stage 4: <em>Create one video.</em> Use CapCut to make one short promotional or showcase video per week. 20–30 minutes with the AI features. Total time: under 2 hours for a full week of content.</p>
+        <p><em>That is a complete week of professional social media content — images, captions, and video — in under 2 hours. For Rs 3,000 per month per client, you are earning Rs 1,500 per hour or more. And once you have done it once, the second time is even faster.</em></p>
+        <p><strong>Five clients at Rs 3,000 per month = Rs 15,000 per month. Working 10 hours total per week.</strong> This is not a dream. This is the real math of what our students are doing right now — in Kathmandu, in Pokhara, in Biratnagar, and in villages across Nepal.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">⚙️</div>
+        <span class="block-header-text">The Complete 30-Minute Content Workflow</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">Weekly Content System — Step by Step</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-prompt"><span class="t-cursor">Step 1 (5 min) — </span>Open ChatGPT. Type: "I manage the Facebook page of [business name], a [type of business] in [city]. Generate 8 content ideas for this week — mix of product posts, offers, tips, and engagement posts. Today's date is [date]."
+
+<span class="t-cursor">Step 2 (10 min) — </span>For each idea, type: "Write a Facebook caption for this post: [idea]. Keep it under 100 words. Include a call to action and end with a relevant emoji. Tone: friendly and professional."
+
+<span class="t-cursor">Step 3 (15 min) — </span>Open Canva. Use your saved template for this client. Duplicate it 8 times. Update each copy with the new caption text and relevant image. Download all as PNG.
+
+<span class="t-cursor">Step 4 (optional — 15 min) — </span>Film a 60-second product or shop video on your phone. Edit in CapCut: auto-captions, music, end card with contact details. Export at 1080p.
+
+<span class="t-cursor">Result: </span>8 designed posts + 1 video. Entire week of content. Professional quality. Client is happy. You invoice at the end of the month.</div>
+          <div class="t-result">
+            <div class="t-result-label">⏱ Total Time</div>
+            <div class="t-result-text">30–45 minutes per client per week · 5 clients = 3–4 hours total · Rs 15,000/month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">💰</div>
+        <span class="block-header-text">How to Upgrade Your Module 4 Services with Creative AI</span>
+      </div>
+      <div class="script-box">
+        <p>In Module 4, you learned how to offer content writing services to local businesses. Now that you have learned image, video, and voice tools, you can upgrade those services — and charge more.</p>
+        <p><strong>Basic Package (Rs 2,000–3,000/month):</strong> 8 text posts only — what Module 4 taught you.<br>
+        <strong>Standard Package (Rs 4,000–5,500/month):</strong> 8 designed image posts — what you now know from this module.<br>
+        <strong>Premium Package (Rs 7,000–10,000/month):</strong> 8 image posts + 2 short videos + 1 audio ad per month — all the skills from Modules 4 and 5 combined.</p>
+        <p>The difference between Basic and Premium is not 4 times more work. <em>It is maybe 1.5 to 2 times more work</em> — because AI handles the heavy lifting on all three. But you can charge 3 to 4 times more because the result is dramatically more valuable to the business.</p>
+        <p><strong>This is how your AI skills compound over time.</strong> Every module you complete does not just teach you something new — it upgrades everything you already knew, making you more capable and more valuable to clients.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Final Exercise for Module 5</span>
+      </div>
+      <div class="task-box">
+        <div class="task-title">Task 6: Your Complete Creative Package</div>
+        <p>This is your biggest task of the module — and your most valuable deliverable yet:</p>
+        <ol>
+          <li>Choose one business: yours, a family member's, or a local business you know well.</li>
+          <li>Use ChatGPT to generate 8 content ideas for this week.</li>
+          <li>Write captions for all 8 with ChatGPT.</li>
+          <li>Design all 8 posts in Canva — consistent branding, professional templates.</li>
+          <li>Film and edit ONE 60-second video with CapCut.</li>
+          <li>Write one bonus AI voice ad script. Generate it in ElevenLabs if you have time.</li>
+          <li>Compile everything into a folder: 8 images + 1 video (+ 1 audio if done). <strong>This is a complete content package worth Rs 4,000–6,000 in the real market.</strong></li>
+        </ol>
+        <p style="margin-top:14px; color:var(--gold); font-weight:700; font-family:'Syne',sans-serif;">If you have a potential client in mind, this package IS your proposal. Show it to them. Ask: "Shall I do this for your business every week?" That is how students land their first paid client. 🚀</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(255,112,67,0.12);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes-box">
+        <div class="mistakes-title">Watch Out For These in Creative AI Work</div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Making everything look the same</strong>When all your designs use the same Canva template in the same colours, your content becomes boring and predictable. Every few weeks, change the template, try a different colour scheme, or experiment with a new style. Variety keeps your audience engaged.</div>
+        </div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Ignoring comments and messages after posting</strong>A beautiful AI-made post that gets 50 enquiries but receives no replies is a wasted opportunity. The creation is only 50% of the work. The other 50% is responding quickly and converting interest into customers. Set a reminder to check comments every evening.</div>
+        </div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Using the same content for every platform</strong>A Facebook post works differently from a TikTok or a WhatsApp Story. Facebook likes text + image or longer video. TikTok likes raw, real, short-form video. WhatsApp Stories like bold, text-heavy single-image designs. Adjust your format for each platform — do not just copy-paste everywhere.</div>
+        </div>
+        <div class="mistake-item">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-text"><strong>Overcomplicating your designs</strong>More elements, more text, more colours does NOT mean better design. Often the simplest designs — one strong image, one clear headline, one contact detail — outperform busy cluttered posts. When in doubt: less is more. Clean space around your content makes it breathe and feel professional.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ── MODULE COMPLETE ── -->
+<div class="complete-section" style="margin:60px 40px;">
+  <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--purple);margin-bottom:10px;">Module 5 Complete</p>
+  <h2>You just unlocked the creative superpower.</h2>
+  <p>Images. Videos. Voices. Avatars. Professional content that used to cost thousands of rupees and require specialist skills — you can now create all of it, from your phone, for free. That is not a small thing. That is a transformation of what is possible for you and your business.</p>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="next-card-title">Coming Next: Module 6</div>
+      <div class="next-card-desc">AI for Research, Data &amp; Smarter Business Decisions — Know More, Work Less</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-title">Module 7</div>
+      <div class="next-card-desc">Automating Your Work — Workflows &amp; AI Agents That Run While You Sleep</div>
+    </div>
+    <div class="next-card">
+      <div class="next-card-title">Module 8</div>
+      <div class="next-card-desc">Your AI Business Plan — Turning Everything You Have Learned Into a Career</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <p class="testi-eyebrow">Students on Module 5</p>
+    <h2>What happens when people discover creative AI</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I am a tailor in Butwal. I never thought I could create beautiful photos of my clothes — I had no money for a photographer. After Lesson 2, I made 12 product images with ChatGPT in one afternoon. I posted them on Facebook and received orders from three new customers the same week. I am still shocked."</p>
+        <div class="testi-person">Mina Rai</div>
+        <div class="testi-role">Tailor &amp; clothing designer, Butwal</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The CapCut lesson was the one that changed everything for me. I made my first shop tour video and posted it on Facebook. It got 3,200 views in two days — more views than all my previous posts combined. A customer who came after seeing the video said 'your shop looks much bigger in the video!' I laughed."</p>
+        <div class="testi-person">Dinesh Adhikari</div>
+        <div class="testi-role">Electronics shop owner, Nepalgunj</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I used HeyGen to make a professional introduction video for my accounting services. I am shy on camera, so the avatar was perfect for me. I sent the video to 15 small businesses on WhatsApp. Five replied. Two became paying clients. That video has earned me more than Rs 12,000 so far and I made it in under an hour."</p>
+        <div class="testi-person">Anita Pokhrel</div>
+        <div class="testi-role">Freelance accountant, Kathmandu</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq-section">
+  <h2>Questions About This Module</h2>
+  <p class="faq-sub">These are the most common questions students ask about AI creative tools.</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"My phone is old and basic. Will Canva and CapCut still work?" <span>+</span></div>
+    <div class="faq-a">Yes — both apps are designed to work on low-end Android phones as well as iPhones. Canva especially is very light and runs well even on phones with limited RAM. CapCut requires slightly more processing power for video editing, but it will still work — it may just take a bit longer to export the final video. If your phone struggles, the web browser versions of these tools (canva.com and capcut.com on Chrome) often work more smoothly than the apps.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"Do I need a fast internet connection to use these tools?" <span>+</span></div>
+    <div class="faq-a">Canva and ElevenLabs work fine on regular mobile data. CapCut is mostly offline once the app is downloaded — you only need internet to access the music library and export. ChatGPT image generation does require a decent connection. If you have limited data, you can do most of your ChatGPT image work on WiFi (at home, a café, or your workplace) and then work offline in CapCut during the day. Plan your workflow around when you have good connectivity.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"Can I use AI-generated images commercially — to sell things?" <span>+</span></div>
+    <div class="faq-a">For the tools taught in this module: Yes. Images generated by ChatGPT (DALL-E), Canva AI, and Adobe Firefly can be used for commercial purposes. You own the images you generate and can use them for your business, for client work, and for selling products. The main rule is: do not use AI to copy someone else's style so closely that it constitutes imitation of a specific copyrighted work. Creating original business content — product images, posters, ads — is completely fine and legal.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"My Nepali designs look different from international templates. Is that okay?" <span>+</span></div>
+    <div class="faq-a">Not only is it okay — it is an advantage. Design that looks Nepali, uses local colours (like those associated with Dashain, Tihar, or Nepal's flag), Devanagari script, or imagery that local customers recognise will always outperform generic international templates for a Nepali audience. A poster that feels familiar and local creates trust and connection. Customize your Canva templates with local colours, Nepali text where appropriate, and images of real Nepali contexts. Your "local" design is your competitive edge.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"How do I charge clients more once I can offer image and video?" <span>+</span></div>
+    <div class="faq-a">Simple and honest: show them the difference. Create two versions of their Facebook page — one week of text-only posts (what they had before) vs one week of designed image posts and a video (what you now offer). Let them see the difference in quality with their own eyes. Then present your upgraded pricing. Most business owners will immediately see the value. If they hesitate, offer one month of the premium package at the basic price — they will see the results and be happy to pay more from month two onward.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">"I tried HeyGen but the free plan only gives a short video. Is it worth it?" <span>+</span></div>
+    <div class="faq-a">The free plan gives you enough to learn and to create a few minutes of avatar video per month — which is enough to test the idea and impress potential clients with a sample. If you find that clients are interested in this service and are willing to pay for it, the HeyGen paid plan becomes a justified business expense that you cover with your client fees. Start free, prove the concept, then invest in the paid plan only once you have income from it. That is the smart way to manage AI tool costs.</div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <p><strong>AI Saathi Course</strong> — Designed for the everyday people of Nepal and South Asia</p>
+  <p style="margin-top:8px; color:var(--text-dim);">Module 5 of 8 · Full course: What is AI · Writing · Daily Business · Earning Money · Creative AI · Research · Automation · Your AI Career</p>
+  <p style="margin-top:12px; color:var(--text-dim); font-size:12px;">This course material is protected. For educational and commercial use by license only.</p>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('span');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-q span').forEach(s => { s.textContent = '+'; });
+  if (!isOpen) {
+    answer.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+
+function showTab(tabId, groupId) {
+  const allPanes = document.querySelectorAll(`[id^="${groupId}-"]`);
+  allPanes.forEach(p => p.classList.remove('active'));
+  const allBtns = document.querySelectorAll(`#${groupId} ~ * .tab-btn, #${groupId} + .tabs-nav .tab-btn`);
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const targetPane = document.getElementById(`${groupId}-${tabId}`);
+  if (targetPane) {
+    targetPane.classList.add('active');
+    // activate corresponding button
+    event.target.classList.add('active');
+  }
+}
+</script>
+</body>
+</html>

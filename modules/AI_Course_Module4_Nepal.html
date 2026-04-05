@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Saathi — Module 4: Making Money with AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #08090E;
+  --surface: #0F1118;
+  --surface2: #161A24;
+  --surface3: #1E2333;
+  --gold: #F5C842;
+  --gold-dim: rgba(245,200,66,0.12);
+  --gold-glow: rgba(245,200,66,0.06);
+  --gold-border: rgba(245,200,66,0.28);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.12);
+  --green-border: rgba(34,197,94,0.28);
+  --orange: #FF7043;
+  --orange-dim: rgba(255,112,67,0.12);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.12);
+  --sky: #38BDF8;
+  --sky-dim: rgba(56,189,248,0.12);
+  --text: #F0F2F8;
+  --text-muted: #717894;
+  --text-dim: #3D4260;
+  --border: rgba(255,255,255,0.06);
+  --border-gold: rgba(245,200,66,0.25);
+  --radius: 16px;
+  --radius-sm: 9px;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin:0; padding:0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-noise {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(8,9,14,0.9); backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border); padding: 0 32px;
+}
+.nav-inner {
+  max-width: 1040px; margin: 0 auto;
+  height: 58px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+  color: var(--gold); letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-brand-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+  animation: pulse-gold 2s infinite;
+}
+@keyframes pulse-gold {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(245,200,66,0.5); }
+  50%{ box-shadow: 0 0 0 8px rgba(245,200,66,0); }
+}
+.nav-pill {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  color: var(--gold); padding: 5px 14px; border-radius: 20px;
+}
+.nav-right {
+  display: flex; align-items: center; gap: 16px;
+  font-family: 'Syne', sans-serif; font-size: 12px; color: var(--text-muted);
+}
+.progress-dots { display: flex; gap: 5px; }
+.pd { width: 8px; height: 8px; border-radius: 50%; background: var(--surface3); border: 1px solid var(--border); }
+.pd.done { background: var(--green); border-color: var(--green); }
+.pd.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 120px 40px 100px;
+  position: relative; overflow: hidden;
+}
+.hero-bg-orb1 {
+  position: absolute; top: -120px; right: -120px;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,200,66,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-bg-orb2 {
+  position: absolute; bottom: -100px; left: -80px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-bg-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(245,200,66,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 70%);
+}
+.hero-inner { max-width: 1040px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  padding: 7px 18px; border-radius: 30px; margin-bottom: 32px;
+}
+.hero-eyebrow-text {
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+}
+.hero-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse-gold 2s infinite; }
+
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(44px, 7.5vw, 88px);
+  line-height: 1.0; letter-spacing: -3px; margin-bottom: 20px;
+}
+.hero-line1 { display: block; color: var(--text); }
+.hero-line2 {
+  display: block; color: transparent;
+  background: linear-gradient(90deg, var(--gold) 0%, #FFA500 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+.hero-line3 { display: block; color: var(--text-muted); font-size: 0.42em; font-weight: 600; letter-spacing: -0.5px; margin-top: 10px; }
+
+.hero-sub {
+  font-size: 19px; color: var(--text-muted); max-width: 600px;
+  margin-bottom: 48px; font-style: italic; line-height: 1.7; font-weight: 300;
+}
+
+.hero-stats {
+  display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 48px;
+}
+.stat { }
+.stat-num {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 38px;
+  color: var(--gold); line-height: 1; letter-spacing: -1px; margin-bottom: 4px;
+}
+.stat-label {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted);
+}
+
+.hero-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.cta-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold); color: var(--bg);
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+  letter-spacing: 0.5px; padding: 14px 28px; border-radius: 40px;
+  text-decoration: none; transition: all 0.2s;
+  box-shadow: 0 0 32px rgba(245,200,66,0.25);
+}
+.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 0 48px rgba(245,200,66,0.4); }
+.cta-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--border); color: var(--text-muted);
+  font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px;
+  letter-spacing: 0.5px; padding: 14px 28px; border-radius: 40px;
+  text-decoration: none; transition: all 0.2s;
+}
+.cta-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── INCOME REALITY SECTION ── */
+.section { max-width: 1040px; margin: 0 auto; padding: 80px 40px; }
+
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 14px;
+}
+.section-label::before { content: ''; width: 20px; height: 1px; background: var(--text-dim); }
+
+.section-title {
+  font-family: 'Syne', sans-serif; font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800; letter-spacing: -1.5px; color: var(--text);
+  line-height: 1.1; margin-bottom: 18px;
+}
+.section-title .accent { color: var(--gold); }
+
+.section-desc {
+  font-size: 17px; color: var(--text-muted); max-width: 640px;
+  line-height: 1.8; margin-bottom: 48px;
+}
+
+/* ── INCOME CARDS ── */
+.income-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-bottom: 48px;
+}
+.income-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 24px;
+  position: relative; overflow: hidden;
+  transition: transform 0.25s, border-color 0.25s;
+  cursor: default;
+}
+.income-card:hover { transform: translateY(-4px); }
+.income-card.gold { border-color: var(--gold-border); }
+.income-card.gold:hover { border-color: var(--gold); }
+.income-card.green { border-color: var(--green-border); }
+.income-card.green:hover { border-color: var(--green); }
+.income-card.purple { border-color: rgba(167,139,250,0.25); }
+.income-card.purple:hover { border-color: var(--purple); }
+.income-card-glow {
+  position: absolute; top: -40px; right: -40px;
+  width: 160px; height: 160px; border-radius: 50%;
+  pointer-events: none;
+}
+.gold .income-card-glow { background: radial-gradient(circle, rgba(245,200,66,0.1) 0%, transparent 70%); }
+.green .income-card-glow { background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 70%); }
+.purple .income-card-glow { background: radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%); }
+
+.ic-emoji { font-size: 28px; margin-bottom: 14px; display: block; }
+.ic-title {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+  color: var(--text); margin-bottom: 8px; line-height: 1.2;
+}
+.ic-income {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  letter-spacing: -1px; line-height: 1; margin-bottom: 10px;
+}
+.ic-income.gold { color: var(--gold); }
+.ic-income.green { color: var(--green); }
+.ic-income.purple { color: var(--purple); }
+.ic-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.ic-tag {
+  margin-top: 14px; display: inline-block;
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+}
+.ic-tag.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+.ic-tag.green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.ic-tag.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
+
+/* ── LESSON BLOCK ── */
+.lesson-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 80px;
+}
+.lesson-topbar {
+  padding: 32px 36px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  position: relative;
+}
+.lesson-accent {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.ltb-left { flex: 1; }
+.lesson-tag {
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.lesson-tag .tag-dot { width: 6px; height: 6px; border-radius: 50%; }
+.lesson-title-big {
+  font-family: 'Syne', sans-serif; font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800; color: var(--text); letter-spacing: -0.8px;
+  line-height: 1.2; margin-bottom: 14px;
+}
+.lesson-meta-row {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: 'Syne', sans-serif; font-size: 12px; color: var(--text-dim);
+}
+.lesson-meta-row span { display: flex; align-items: center; gap: 6px; }
+.lesson-num-badge {
+  font-family: 'Syne', sans-serif; font-size: 56px; font-weight: 800;
+  line-height: 1; letter-spacing: -3px; opacity: 0.08; color: var(--text);
+  flex-shrink: 0; align-self: center;
+}
+
+.lesson-body { padding: 36px; }
+
+/* ── BLOCKS ── */
+.block { margin-bottom: 36px; }
+.block:last-child { margin-bottom: 0; }
+
+.block-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+}
+.block-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  flex-shrink: 0;
+}
+.block-header-text {
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted);
+}
+
+/* ── OBJECTIVE ── */
+.objective-box {
+  background: var(--sky-dim); border: 1px solid rgba(56,189,248,0.2);
+  border-left: 3px solid var(--sky); border-radius: var(--radius-sm);
+  padding: 20px 24px; font-size: 16px; color: var(--sky);
+  font-weight: 500; line-height: 1.7;
+}
+
+/* ── SCRIPT ── */
+.script-box {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  font-size: 16px; color: var(--text-muted); line-height: 1.9;
+}
+.script-box p { margin-bottom: 20px; }
+.script-box p:last-child { margin-bottom: 0; }
+.script-box strong { color: var(--text); font-weight: 600; }
+.script-box em { color: var(--gold); font-style: normal; }
+
+/* ── MONEY CALLOUT ── */
+.money-big {
+  background: linear-gradient(135deg, #0C1A08 0%, #071208 100%);
+  border: 1px solid var(--green-border); border-radius: var(--radius);
+  padding: 40px 36px; position: relative; overflow: hidden;
+}
+.money-big::after {
+  content: 'Rs'; position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+  font-family: 'Syne', sans-serif; font-size: 140px; font-weight: 800;
+  color: rgba(34,197,94,0.05); line-height: 1;
+}
+.mb-eyebrow {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+  margin-bottom: 12px;
+}
+.mb-title {
+  font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.8px; margin-bottom: 14px;
+  line-height: 1.2;
+}
+.mb-desc {
+  font-size: 16px; color: var(--text-muted); line-height: 1.8;
+  max-width: 560px; position: relative; z-index: 1;
+}
+
+/* ── STEPS ── */
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 20px 0; border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px;
+  margin-top: 2px; border: 1px solid;
+}
+.step-content { flex: 1; }
+.step-title {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px; line-height: 1.3;
+}
+.step-desc { font-size: 15px; color: var(--text-muted); line-height: 1.75; }
+
+/* ── PROMPT TERMINAL ── */
+.terminal {
+  background: #06080D; border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.terminal-bar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 10px 18px; display: flex; align-items: center; gap: 10px;
+}
+.t-dot { width: 10px; height: 10px; border-radius: 50%; }
+.t-label {
+  margin-left: auto; font-family: 'Syne', sans-serif; font-size: 10px;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
+}
+.terminal-body { padding: 24px 26px; }
+.t-prompt {
+  font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+  color: #94A3B8; line-height: 1.7; margin-bottom: 20px;
+}
+.t-prompt .t-cursor { color: var(--gold); font-weight: 600; }
+.t-response {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-left: 3px solid var(--green); border-radius: var(--radius-sm);
+  padding: 18px 20px;
+}
+.t-response-label {
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.t-response-label::after { content: ''; flex: 1; height: 1px; background: var(--green-border); }
+.t-response-text { font-size: 15px; color: var(--text); line-height: 1.8; }
+.t-response-text strong { color: var(--gold); }
+
+/* ── EXAMPLE BOX ── */
+.nepal-example {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.ne-header {
+  background: linear-gradient(90deg, rgba(245,200,66,0.08) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border); padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px;
+}
+.ne-flag {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  flex-shrink: 0;
+}
+.ne-header-text { }
+.ne-title {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); margin-bottom: 2px;
+}
+.ne-subtitle { font-size: 12px; color: var(--text-muted); }
+.ne-body { padding: 24px 26px; }
+.ne-body p { font-size: 15px; color: var(--text-muted); line-height: 1.85; margin-bottom: 14px; }
+.ne-body p:last-child { margin-bottom: 0; }
+.ne-body strong { color: var(--text); }
+.ne-quote {
+  background: var(--bg); border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 16px 20px; margin: 16px 0;
+  font-style: italic; font-size: 15px; color: var(--text-muted); line-height: 1.7;
+}
+.ne-result {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--green-dim); border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm); padding: 14px 18px; margin-top: 12px;
+}
+.ne-result-icon { font-size: 20px; flex-shrink: 0; }
+.ne-result-text { font-size: 14px; color: var(--green); font-family: 'Syne', sans-serif; font-weight: 600; }
+
+/* ── TASK BOX ── */
+.task-box {
+  background: var(--surface2); border: 1px solid var(--gold-border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.task-header {
+  background: var(--gold-dim); border-bottom: 1px solid var(--gold-border);
+  padding: 16px 24px; display: flex; align-items: center; gap: 12px;
+}
+.task-header-icon { font-size: 20px; }
+.task-header-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--gold); letter-spacing: -0.2px;
+}
+.task-body { padding: 24px 26px; }
+.task-body p { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 12px; }
+.task-body ol { padding-left: 22px; color: var(--text-muted); font-size: 15px; line-height: 1.9; }
+.task-body ol li { margin-bottom: 8px; }
+.task-body ol li strong { color: var(--text); }
+.task-cta {
+  margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.2px;
+}
+
+/* ── MISTAKES ── */
+.mistakes { display: flex; flex-direction: column; gap: 12px; }
+.mistake {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+.mistake:hover { border-color: rgba(255,112,67,0.3); }
+.mistake-x {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,112,67,0.15); border: 1px solid rgba(255,112,67,0.3);
+  color: var(--orange); display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; margin-top: 2px;
+}
+.mistake-content { flex: 1; }
+.mistake-title {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
+}
+.mistake-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* ── TABS ── */
+.tabs-wrap { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.tabs-nav { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab-btn {
+  padding: 14px 22px; font-family: 'Syne', sans-serif; font-size: 12px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text-dim); background: none; border: none; cursor: pointer;
+  white-space: nowrap; border-bottom: 2px solid transparent;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.tab-btn:hover { color: var(--text-muted); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-pane { display: none; padding: 28px 26px; }
+.tab-pane.active { display: block; }
+
+/* ── INCOME PATH CARDS ── */
+.path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.path-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 22px 20px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.path-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+.path-card-icon { font-size: 26px; margin-bottom: 12px; display: block; }
+.path-card-title {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
+}
+.path-card-income {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  color: var(--gold); margin-bottom: 8px; letter-spacing: -0.5px;
+}
+.path-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── PROMPT TEMPLATE GRID ── */
+.prompt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.prompt-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 18px 18px; overflow: hidden;
+}
+.prompt-card-label {
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px;
+}
+.prompt-card-text {
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  color: var(--text-muted); line-height: 1.65;
+}
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.checklist li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 15px; color: var(--text-muted); line-height: 1.7;
+}
+.check-icon {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; margin-top: 2px;
+}
+.check-icon.green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.check-icon.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+
+/* ── DIVIDER ── */
+.lesson-divider {
+  display: flex; align-items: center; gap: 20px;
+  max-width: 1040px; margin: 0 auto 80px; padding: 0 40px;
+}
+.lesson-divider::before, .lesson-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.ld-inner {
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 6px 18px; border-radius: 20px;
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
+}
+
+/* ── PRO TIP ── */
+.pro-tip {
+  background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.18);
+  border-radius: var(--radius-sm); padding: 18px 22px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.pro-tip-icon { font-size: 20px; flex-shrink: 0; }
+.pro-tip-text { font-size: 14px; color: var(--sky); line-height: 1.7; }
+.pro-tip-text strong { color: rgba(56,189,248,0.9); display: block; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── WARNING BOX ── */
+.warning-box {
+  background: rgba(255,112,67,0.07); border: 1px solid rgba(255,112,67,0.2);
+  border-radius: var(--radius-sm); padding: 18px 22px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.warning-icon { font-size: 20px; flex-shrink: 0; }
+.warning-text { font-size: 14px; color: rgba(255,150,120,0.9); line-height: 1.7; }
+.warning-text strong { color: var(--orange); display: block; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 700; }
+
+/* ── COMPARISON TABLE ── */
+.ctable { width: 100%; border-collapse: collapse; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.ctable th { background: var(--surface3); padding: 14px 18px; text-align: left; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+.ctable td { padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-muted); vertical-align: top; line-height: 1.6; }
+.ctable tr:last-child td { border-bottom: none; }
+.ctable tr:nth-child(even) td { background: var(--surface2); }
+.tag-yes { color: var(--green); font-weight: 700; font-family: 'Syne', sans-serif; }
+.tag-no { color: var(--orange); font-weight: 700; font-family: 'Syne', sans-serif; }
+
+/* ── TESTIMONIALS ── */
+.testi-section {
+  background: var(--surface); border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); padding: 80px 40px;
+}
+.testi-inner { max-width: 1040px; margin: 0 auto; }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+.testi-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 22px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.testi-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+.testi-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
+.testi-quote { font-size: 15px; color: var(--text-muted); line-height: 1.75; margin-bottom: 18px; font-style: italic; }
+.testi-person { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); }
+.testi-role { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+.testi-income {
+  display: inline-block; margin-top: 14px; padding: 5px 14px; border-radius: 20px;
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border);
+}
+
+/* ── FAQ ── */
+.faq-section { max-width: 1040px; margin: 0 auto; padding: 80px 40px; }
+.faq-list { margin-top: 36px; display: flex; flex-direction: column; gap: 10px; }
+.faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.faq-q {
+  padding: 20px 24px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  color: var(--text); display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; user-select: none; transition: background 0.2s;
+}
+.faq-q:hover { background: var(--surface2); }
+.faq-q .faq-icon { color: var(--gold); font-size: 22px; font-weight: 300; transition: transform 0.25s; flex-shrink: 0; }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s;
+  font-size: 15px; color: var(--text-muted); line-height: 1.8;
+  background: var(--surface2); border-top: 0 solid var(--border);
+  padding: 0 24px;
+}
+.faq-a.open { max-height: 500px; padding: 18px 24px 22px; border-top: 1px solid var(--border); }
+
+/* ── MODULE COMPLETE ── */
+.complete-section {
+  background: linear-gradient(135deg, #0A1A08 0%, #060D05 100%);
+  border: 1px solid var(--green-border); border-radius: var(--radius);
+  padding: 60px 48px; text-align: center; position: relative; overflow: hidden;
+  max-width: 1040px; margin: 0 auto 80px; 
+}
+.complete-section::before {
+  content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 400px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%);
+}
+.complete-section::after {
+  content: '✓'; position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+  font-size: 160px; color: rgba(34,197,94,0.04); font-family: 'Syne', sans-serif;
+  font-weight: 800; line-height: 1;
+}
+.cs-eyebrow {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+  margin-bottom: 14px; position: relative; z-index: 1;
+}
+.cs-title {
+  font-family: 'Syne', sans-serif; font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800; color: var(--text); letter-spacing: -1.5px;
+  margin-bottom: 16px; position: relative; z-index: 1; line-height: 1.1;
+}
+.cs-desc {
+  font-size: 16px; color: var(--text-muted); max-width: 520px;
+  margin: 0 auto 36px; line-height: 1.8; position: relative; z-index: 1;
+}
+.next-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  max-width: 660px; margin: 0 auto; position: relative; z-index: 1;
+}
+.next-card {
+  background: rgba(34,197,94,0.07); border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm); padding: 16px; text-align: left;
+}
+.nc-num { font-family: 'Syne', sans-serif; font-size: 10px; color: var(--green); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+.nc-title { font-family: 'Syne', sans-serif; font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.3; }
+
+/* ── FOOTER ── */
+.site-footer {
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 40px; text-align: center;
+  font-family: 'Syne', sans-serif; font-size: 13px; color: var(--text-dim);
+}
+.site-footer strong { color: var(--gold); }
+
+/* ── HIGHLIGHT TEXT ── */
+.hl-gold { color: var(--gold); font-weight: 600; }
+.hl-green { color: var(--green); font-weight: 600; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 720px) {
+  .hero { padding: 100px 24px 80px; }
+  .section { padding: 60px 24px; }
+  .lesson-body { padding: 24px 20px; }
+  .lesson-topbar { padding: 24px 22px; flex-direction: column; }
+  .lesson-num-badge { display: none; }
+  .income-grid { grid-template-columns: 1fr; }
+  .path-grid { grid-template-columns: 1fr; }
+  .prompt-grid { grid-template-columns: 1fr; }
+  .testi-grid { grid-template-columns: 1fr; }
+  .next-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 42px; letter-spacing: -2px; }
+  .hero-stats { gap: 28px; }
+  .stat-num { font-size: 30px; }
+  .complete-section { padding: 40px 28px; }
+  .complete-section::after { display: none; }
+  .nav-right { display: none; }
+  .nav-pill { display: none; }
+  .lesson-divider { padding: 0 24px; margin-bottom: 60px; }
+  .testi-section { padding: 60px 24px; }
+  .faq-section { padding: 60px 24px; }
+  .script-box { padding: 22px 20px; }
+  .lesson-meta-row { gap: 10px; }
+  .money-big::after { display: none; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{ opacity:0; transform:translateY(20px); } to{ opacity:1; transform:translateY(0); } }
+.fade-in { animation: fadeUp 0.6s ease forwards; }
+.delay-1 { animation-delay: 0.1s; opacity:0; }
+.delay-2 { animation-delay: 0.2s; opacity:0; }
+.delay-3 { animation-delay: 0.3s; opacity:0; }
+.delay-4 { animation-delay: 0.4s; opacity:0; }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-brand-dot"></div>
+      AI Saathi
+    </div>
+    <div class="nav-pill">Module 4 of 8</div>
+    <div class="nav-right">
+      <span>Progress</span>
+      <div class="progress-dots">
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd done"></div>
+        <div class="pd active"></div>
+        <div class="pd"></div>
+        <div class="pd"></div>
+        <div class="pd"></div>
+        <div class="pd"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg-orb1"></div>
+  <div class="hero-bg-orb2"></div>
+  <div class="hero-bg-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow fade-in">
+      <div class="hero-eyebrow-dot"></div>
+      <span class="hero-eyebrow-text">Module 4 of 8 · AI Saathi · The Money Module</span>
+    </div>
+    <h1 class="fade-in delay-1">
+      <span class="hero-line1">Turn Your</span>
+      <span class="hero-line2">AI Skills</span>
+      <span class="hero-line1" style="font-size:0.85em">Into Real Income</span>
+      <span class="hero-line3">Practical money-making methods for Nepal — starting this week</span>
+    </h1>
+    <p class="hero-sub fade-in delay-2">
+      You have the skills. Now it is time to earn from them. This module shows you exactly how real people in Nepal are making Rs 15,000 to Rs 80,000 per month using only ChatGPT and their phone.
+    </p>
+    <div class="hero-stats fade-in delay-3">
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Full Lessons</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7+</div>
+        <div class="stat-label">Income Methods</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Rs 0</div>
+        <div class="stat-label">Starting Cost</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Days to First Money</div>
+      </div>
+    </div>
+    <div class="hero-cta-row fade-in delay-4">
+      <a href="#lesson1" class="cta-primary">Start Lesson 1 →</a>
+      <a href="#income-overview" class="cta-secondary">See Income Methods ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── INCOME OVERVIEW ── -->
+<div id="income-overview">
+<section class="section" style="padding-top:0; padding-bottom:0;">
+  <span class="section-label">The Opportunity</span>
+  <h2 class="section-title">Seven ways to earn money<br>with <span class="accent">AI skills in Nepal</span></h2>
+  <p class="section-desc">
+    You do not need to be a programmer. You do not need a college degree. You do not need expensive equipment. You only need the skills you will learn in this course — and the willingness to start.
+  </p>
+  <div class="income-grid">
+    <div class="income-card gold">
+      <div class="income-card-glow"></div>
+      <span class="ic-emoji">✍️</span>
+      <div class="ic-title">AI Content Writing Services</div>
+      <div class="ic-income gold">Rs 15K–35K</div>
+      <div class="ic-desc">Write posts, ads, and descriptions for local businesses using AI. Each client pays monthly.</div>
+      <div class="ic-tag gold">Most Popular</div>
+    </div>
+    <div class="income-card green">
+      <div class="income-card-glow"></div>
+      <span class="ic-emoji">🏪</span>
+      <div class="ic-title">Grow Your Own Business</div>
+      <div class="ic-income green">Rs 20K–80K</div>
+      <div class="ic-desc">Use AI to sell more from your existing shop, service, or product — more customers, more orders.</div>
+      <div class="ic-tag green">Fastest Returns</div>
+    </div>
+    <div class="income-card purple">
+      <div class="income-card-glow"></div>
+      <span class="ic-emoji">🎓</span>
+      <div class="ic-title">Teach AI to Others</div>
+      <div class="ic-income purple">Rs 10K–25K</div>
+      <div class="ic-desc">Run WhatsApp groups or small classes in your area teaching what you learn here.</div>
+      <div class="ic-tag purple">Long-Term Passive</div>
+    </div>
+    <div class="income-card" style="border-color: rgba(56,189,248,0.25);">
+      <div class="income-card-glow" style="background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);"></div>
+      <span class="ic-emoji">🌍</span>
+      <div class="ic-title">Freelance on Upwork / Fiverr</div>
+      <div class="ic-income" style="color:var(--sky);">$100–$500/mo</div>
+      <div class="ic-desc">Offer writing, social media, or translation services to international clients for USD payment.</div>
+      <div class="ic-tag" style="background:var(--sky-dim);color:var(--sky);border-color:rgba(56,189,248,0.3);">International Income</div>
+    </div>
+    <div class="income-card" style="border-color: rgba(255,112,67,0.25);">
+      <div class="income-card-glow" style="background: radial-gradient(circle, rgba(255,112,67,0.1) 0%, transparent 70%);"></div>
+      <span class="ic-emoji">📱</span>
+      <div class="ic-title">Facebook &amp; TikTok Selling</div>
+      <div class="ic-income" style="color:var(--orange);">Rs 8K–20K</div>
+      <div class="ic-desc">Use AI-written posts to sell products online without your own shop or stock.</div>
+      <div class="ic-tag" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">No Investment</div>
+    </div>
+    <div class="income-card" style="border-color: rgba(245,200,66,0.2);">
+      <div class="income-card-glow"></div>
+      <span class="ic-emoji">🔁</span>
+      <div class="ic-title">AI-Assisted Translation</div>
+      <div class="ic-income gold">Rs 12K–28K</div>
+      <div class="ic-desc">Translate documents, websites, and content between Nepali, English, and Hindi for clients.</div>
+      <div class="ic-tag gold">Skilled Market</div>
+    </div>
+  </div>
+
+  <div class="warning-box" style="margin-bottom:0;">
+    <div class="warning-icon">⚡</div>
+    <div class="warning-text">
+      <strong>Important — Read This Before We Start</strong>
+      The income numbers above are real ranges from actual students. But they are not automatic. You will need to put in effort, practise consistently, and not give up after the first week. AI is a powerful tool — but like any tool, the results depend on the person using it. This module will give you the roadmap. The journey is yours to take.
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ LESSON 1 ══════════════ -->
+<section class="section" id="lesson1">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--gold), transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--gold);">
+        <div class="tag-dot" style="background:var(--gold);"></div>
+        Lesson 01 · Foundation
+      </div>
+      <div class="lesson-title-big">The "AI Service Provider" Mindset — Why Your Skills Are Worth Money</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 25 min</span>
+        <span>🧠 Mindset &amp; Strategy</span>
+        <span>💰 Foundation for all income</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">01</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will understand exactly WHY your AI skills are valuable to others, what makes you an "AI Service Provider," and you will have chosen the one income method that fits your life best — so you can start this week.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>I want you to stop for a moment and think about something. <em>In your neighbourhood, your town, your local market — how many shops do you see with a Facebook page that never posts?</em> How many local businesses have zero online presence? How many small companies need someone to write for them, plan their social media, reply to customers online — but have nobody to do it?</p>
+        <p>The answer, in most parts of Nepal, is: <strong>almost all of them.</strong></p>
+        <p>And here is the extraordinary thing. After completing Modules 1, 2, and 3 of this course, <em>you can now do everything those businesses need.</em> You can write posts. You can create content. You can write product descriptions. You can plan a social media calendar. You can draft emails and messages. You can do all of this in minutes, using AI.</p>
+        <p>Now here is the shift I want you to make in your mind: <strong>Stop thinking "I am learning AI for myself." Start thinking "I am an AI Service Provider — and businesses will pay me to use these skills."</strong></p>
+        <p>Why will they pay? Because time is money. A shop owner who is busy running their store does not have 2 hours to write Facebook posts every week. A teacher who runs coaching classes does not have time to write admission brochures. A hotel owner who is managing guests does not have time to respond to every online review. <em>But YOU have AI. You can do all of this in 20 minutes. They will gladly pay you for that.</em></p>
+        <p>You do not need to call yourself a "social media manager" or a "content creator." You do not need a business card or a fancy title. You just need to walk into a local business — or message them on WhatsApp — and say five words: <strong>"I can help your Facebook page."</strong> Then show them what you can do. One sample post. Created in 2 minutes. That demonstration will speak louder than any degree.</p>
+        <p>This lesson will help you decide which of the seven income methods fits YOUR life. Not everyone's path is the same. Some of you have your own businesses already. Some of you want to work for others. Some of you want to earn from home. Some of you want international income. <em>There is a path for every type of person here — and you are going to find yours today.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">💡</div>
+        <span class="block-header-text">Choose Your Income Path — The Decision Framework</span>
+      </div>
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th>Income Method</th>
+            <th>Best If You...</th>
+            <th>Starting Time</th>
+            <th>Effort Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Content writing for local businesses</strong></td>
+            <td>Like writing, know local businesses</td>
+            <td><span class="tag-yes">3–5 days</span></td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td><strong>Grow your own business with AI</strong></td>
+            <td>Already have a shop, service, or product</td>
+            <td><span class="tag-yes">Day 1</span></td>
+            <td>Low</td>
+          </tr>
+          <tr>
+            <td><strong>Teach AI in your community</strong></td>
+            <td>Like explaining things, good with people</td>
+            <td><span class="tag-yes">1–2 weeks</span></td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td><strong>Freelance on Fiverr / Upwork</strong></td>
+            <td>Have decent English, want international clients</td>
+            <td><span class="tag-no">2–4 weeks</span></td>
+            <td>High</td>
+          </tr>
+          <tr>
+            <td><strong>Facebook / TikTok reselling</strong></td>
+            <td>No capital, want to start with zero investment</td>
+            <td><span class="tag-yes">1 week</span></td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td><strong>AI translation services</strong></td>
+            <td>Know both Nepali and English well</td>
+            <td><span class="tag-yes">3–7 days</span></td>
+            <td>Low–Medium</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:rgba(56,189,248,0.12);color:var(--sky);">💬</div>
+        <span class="block-header-text">Nepal Example — How Bikash Found His Path</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Bikash Rai, 36 — Mechanic, Dharan</div>
+            <div class="ne-subtitle">From fixing engines to earning Rs 22,000 extra per month</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Bikash works as a mechanic at his family's garage in Dharan. He is brilliant with machines but has always struggled with writing. When he joined this course, he thought: "This is interesting, but I am not a writer. How can this make me money?"</p>
+          <p>Then in this lesson, he looked at the decision framework and chose <strong>"Content writing for local businesses"</strong> — not because he loved writing, but because he knew how to use AI to do the writing for him. His value was not his writing skill. His value was his knowledge of local businesses and his understanding of what people in Dharan care about.</p>
+          <p>He started by messaging 5 small businesses he already knew — a hardware shop, a restaurant, a clothing store, a travel agent, and a hotel. He said: <em>"I can write and manage your Facebook page for Rs 3,000 per month. Here is a free sample post I made for you."</em></p>
+          <div class="ne-quote">"Three of them said yes immediately. That was Rs 9,000 per month — just from people I already knew. I added two more clients the next month. Now I earn Rs 22,000 extra, work about 4 hours per week on this, and I never write a single word myself — ChatGPT does it all."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">💰</div>
+            <div class="ne-result-text">Rs 22,000/month extra income · 4 hours work per week · 5 local business clients</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🎯</div>
+          <div class="task-header-title">Choose Your Income Path — Right Now</div>
+        </div>
+        <div class="task-body">
+          <p>Do not skip this. This decision is the foundation of the next 5 lessons. Complete all three parts:</p>
+          <ol>
+            <li><strong>Look at the decision framework table above.</strong> Read every row honestly. Which one fits your situation, your skills, and your life right now?</li>
+            <li><strong>Write down your chosen path</strong> and one sentence explaining why: <em>"I choose [method] because [reason]."</em></li>
+            <li><strong>Write down 3 names</strong> — people or businesses you could approach with this service in the next 7 days. They can be neighbours, relatives, local shops, or online contacts. Just 3 names. That is your starting list.</li>
+          </ol>
+          <div class="task-cta">📲 Share your chosen path and your 3 names in the WhatsApp group. Your commitment, made public, becomes real.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Trying to do all seven income methods at once</div>
+            <div class="mistake-desc">This is the number one reason students never earn anything. They learn everything but commit to nothing. Pick ONE method. Master it. Earn your first Rs 5,000 from it. Then — and only then — consider adding a second income stream. Focus is everything at the beginning.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Waiting until you feel "ready" or "good enough"</div>
+            <div class="mistake-desc">There is no perfect moment. The students who earn first are not the most talented — they are the most willing to start before they feel confident. Your first client will not expect perfection. They expect effort and results. You already have enough skill to begin. Start this week.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Undervaluing your skills because you use AI</div>
+            <div class="mistake-desc">Some students feel uncomfortable charging money because "AI does the work." This thinking is wrong. A plumber uses tools — you still pay for the plumber's knowledge, time, and judgment, not the wrench. You bring knowledge, communication, and results. AI is your tool. Your value is real. Charge for it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="lesson-divider"><div class="ld-inner">Lesson 02</div></div>
+
+<!-- ══════════════ LESSON 2 ══════════════ -->
+<section class="section" style="padding-top:0;" id="lesson2">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--green), transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--green);">
+        <div class="tag-dot" style="background:var(--green);"></div>
+        Lesson 02 · Core Skill
+      </div>
+      <div class="lesson-title-big">The AI Content Service — Your First Client in 7 Days</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 35 min</span>
+        <span>💼 Build your service</span>
+        <span>🎯 Immediate income potential</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">02</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have a complete, ready-to-offer content writing service — including a price list, a sample portfolio, and the exact words to say when approaching your first client.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>The most accessible income method for most people in this course — especially those who do not have their own business yet — is <strong>providing content services to local businesses.</strong> Let me explain exactly how this works, step by step.</p>
+        <p>Think about a small local business: a clothing shop, a restaurant, a coaching center, a hardware store, a beauty salon. What do almost all of them have in common? <em>They are on Facebook, but they post irregularly. Their posts are often low quality. They have no real strategy. And the owner wishes they could do better — but has no time.</em></p>
+        <p>You come in as the solution. For a fixed monthly fee — let us say Rs 2,500 to Rs 5,000 — you will manage their Facebook page. You will write 10–15 posts per month. You will create offers, announcements, and engaging content. You will be their "digital person."</p>
+        <p>How long does this take you each month, really? With AI, <strong>10–15 posts take you about 2 to 3 hours total.</strong> Think about that. Rs 3,000 for 3 hours of work. That is Rs 1,000 per hour. Comfortable in any market.</p>
+        <p>And once you have the system running, it gets faster. You have templates. You have prompt formulas. You know the client's products. Month two and three take you less than 1.5 hours. <em>Your effective hourly rate goes up while your effort goes down.</em></p>
+        <p>Now — what should you offer? Here is a simple service menu that works well in Nepal:</p>
+        <p><strong>Basic Package (Rs 2,000–2,500/month):</strong> 8 Facebook posts per month, basic design advice, one offer per month.<br>
+        <strong>Standard Package (Rs 3,500–4,500/month):</strong> 15 posts, 2 promotional offers, customer reply templates, monthly strategy report.<br>
+        <strong>Premium Package (Rs 6,000–8,000/month):</strong> Daily posting plan, TikTok content, product descriptions, WhatsApp broadcast messages, monthly review meeting.</p>
+        <p>Start with Basic. Get 2–3 clients. Learn what they need. Then upgrade your service as you become more confident. <em>Many students get to Rs 15,000 per month within 3 months — just from 4–5 small local clients on Basic or Standard packages.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">💬</div>
+        <span class="block-header-text">The Exact Words to Say When Approaching Your First Client</span>
+      </div>
+      <div class="tabs-wrap">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="showTab('whatsapp','t-pitch')">WhatsApp Message</button>
+          <button class="tab-btn" onclick="showTab('inperson','t-pitch')">In-Person Script</button>
+          <button class="tab-btn" onclick="showTab('sample','t-pitch')">Free Sample Offer</button>
+          <button class="tab-btn" onclick="showTab('objections','t-pitch')">Handling Objections</button>
+        </div>
+        <div id="t-pitch-whatsapp" class="tab-pane active">
+          <p style="font-size:13px;color:var(--text-dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Copy this WhatsApp message — fill in the blanks</p>
+          <div class="terminal" style="margin:0;">
+            <div class="terminal-bar">
+              <div class="t-dot" style="background:#FF5F57;"></div>
+              <div class="t-dot" style="background:#FFBD2E;"></div>
+              <div class="t-dot" style="background:#28CA41;"></div>
+              <div class="t-label">WhatsApp Message Template</div>
+            </div>
+            <div class="terminal-body">
+              <div class="t-prompt">
+                <span class="t-cursor">→ </span>Namaste [Shop Owner's Name] ji!<br><br>
+
+I am [Your Name], from [Your Area]. I noticed your shop [Shop Name] on Facebook — you have lovely products!<br><br>
+
+I help small businesses like yours get more customers through Facebook and WhatsApp. I write posts, product descriptions, and offers using modern tools — and my work takes less than a week to show results.<br><br>
+
+May I send you a FREE sample post I made for your shop? You can use it immediately, even if you decide not to work with me.<br><br>
+
+If you like the sample, we can talk about a simple monthly plan starting at Rs 2,500. No long contracts — you can stop anytime.<br><br>
+
+Would that be okay? 🙏
+              </div>
+              <div class="t-response">
+                <div class="t-response-label">Why this works</div>
+                <div class="t-response-text">✓ It is respectful and non-pushy · ✓ Offers value first (free sample) · ✓ Mentions a clear, affordable price · ✓ Removes risk ("stop anytime") · ✓ Ends with a simple yes/no question</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="t-pitch-inperson" class="tab-pane">
+          <p style="font-size:13px;color:var(--text-dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">What to say face to face — practice this at home first</p>
+          <div class="script-box" style="background:var(--bg);">
+            <p><strong>Step 1 — Build the connection first (1–2 minutes)</strong><br>
+            "Namaste [name] ji, I buy from your shop sometimes / I walk past your shop every day. I love what you sell here." Be genuine. Do not jump straight into the pitch.</p>
+            <p><strong>Step 2 — Plant the idea (30 seconds)</strong><br>
+            "I noticed your Facebook page has not posted recently. I actually help small businesses with their Facebook content. Not expensive at all — and it really brings in new customers."</p>
+            <p><strong>Step 3 — Offer proof immediately (1 minute)</strong><br>
+            "In fact, I prepared a sample post for your shop just to show you what I can do." Show them the post on your phone. Watch their reaction. Most will be impressed.</p>
+            <p><strong>Step 4 — Make it easy to say yes</strong><br>
+            "If you like this, I can do 10–15 posts like this every month for Rs 3,000. No upfront payment — pay after the first month if you are happy. Shall we try one month?"</p>
+          </div>
+        </div>
+        <div id="t-pitch-sample" class="tab-pane">
+          <p style="font-size:13px;color:var(--text-dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Create a free sample that makes them say "YES" immediately</p>
+          <div class="script-box" style="background:var(--bg);">
+            <p>Before you approach any client, create a <strong>free sample post for THEIR specific business.</strong> This is the single most powerful thing you can do. Here is how:</p>
+            <p><strong>1.</strong> Look at their Facebook page (or their shop if they have none). Note: what do they sell? What is their price range? Who are their customers?</p>
+            <p><strong>2.</strong> Open ChatGPT and type a strong RICE prompt using their actual products and details.</p>
+            <p><strong>3.</strong> Get the post. Screenshot it. Copy it into a WhatsApp message.</p>
+            <p><strong>4.</strong> Send the sample with the message: "I made this for your shop for free — use it today if you like. If you want more like this every week, I can do that for a small monthly fee."</p>
+            <p>The sample does all the selling for you. <em>People do not buy services they imagine. They buy services they can already see working.</em></p>
+          </div>
+        </div>
+        <div id="t-pitch-objections" class="tab-pane">
+          <p style="font-size:13px;color:var(--text-dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Common rejections — and exactly how to respond</p>
+          <div class="script-box" style="background:var(--bg);">
+            <p><strong>"Rs 3,000 is too expensive."</strong><br>
+            → "I understand. Let us start with just 5 posts for Rs 1,200 this month — just to try. If one extra customer comes from Facebook, the cost is covered. What do you think?"</p>
+            <p><strong>"I manage my own Facebook page."</strong><br>
+            → "That is great! I can see you are already on Facebook. I just help owners save time — 15 posts per month, fully written for you. You approve everything before posting. No extra work for you."</p>
+            <p><strong>"I will think about it."</strong><br>
+            → "Of course. May I send you the sample I made for your shop? Just so you can see the quality. You can reply whenever you are ready — no pressure at all."</p>
+            <p><strong>"My nephew/son/daughter does this for me."</strong><br>
+            → "That is lovely. Then I will not bother you. But if they ever get busy or need help, please think of me. Here is my number." (Never burn a bridge — situations change.)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">📋</div>
+        <span class="block-header-text">Step-by-Step: Getting Your First 3 Clients</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);">1</div>
+          <div class="step-content">
+            <div class="step-title">Write a list of 10 local businesses you already know</div>
+            <div class="step-desc">Neighbours, relatives' shops, places you buy from, local schools, restaurants, hotels, beauty salons. You do not need to cold-call strangers. Start with people who already trust you. Write 10 names right now.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);">2</div>
+          <div class="step-content">
+            <div class="step-title">Check their Facebook pages — pick the 5 weakest</div>
+            <div class="step-desc">Look for pages that post less than once a week, have low engagement, or have no Facebook page at all. These businesses need you the most — and they will be the easiest to convince.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);">3</div>
+          <div class="step-content">
+            <div class="step-title">Create a free sample post for each of the 5 businesses</div>
+            <div class="step-desc">Use ChatGPT with a strong RICE prompt for each business. Spend 5 minutes per business. You now have 5 free samples — your portfolio — before you have earned a single rupee.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);">4</div>
+          <div class="step-content">
+            <div class="step-title">Send your WhatsApp pitch message — with the free sample attached</div>
+            <div class="step-desc">Use the template from the tabs above. Personalise it slightly for each business. Send all 5 messages on the same day. Then wait. You will likely hear back from 2–3 of them within 48 hours.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);">5</div>
+          <div class="step-content">
+            <div class="step-title">Close your first 3 clients — at any price that feels fair to both sides</div>
+            <div class="step-desc">Do not hold out for a perfect price on your first clients. Even Rs 1,500 per month from 3 clients is Rs 4,500 — your first AI income. Your goal now is experience and confidence, not maximum revenue. Raise your rates with your next clients.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">🇳🇵</div>
+        <span class="block-header-text">Nepal Example</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Sunita Pandey, 42 — Homemaker, Bharatpur</div>
+            <div class="ne-subtitle">First income from AI: Rs 6,500 in her first month</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Sunita had not worked outside her home in 11 years. She joined the AI Saathi course hoping to "stay updated with technology." She did not seriously expect to earn money from it.</p>
+          <p>In this lesson, she wrote a list of 10 businesses near her home in Bharatpur. She created sample posts for 5 of them over one Sunday afternoon — it took her 2.5 hours, including breaks. On Monday morning, she sent all 5 WhatsApp messages with the free samples.</p>
+          <p>Within 2 days, she had three replies. Two wanted to meet her. One said yes immediately on WhatsApp. She agreed to Rs 2,000/month with the first client, Rs 2,500 with the second, and Rs 2,000 with the third.</p>
+          <div class="ne-quote">"Rs 6,500 in my first month. I could not believe it was real money, for real work, that I was actually doing. My husband, who was skeptical about the course, now tells his friends about his wife's 'tech business.'"</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">💰</div>
+            <div class="ne-result-text">Rs 6,500 · Month 1 · 3 clients · ~6 hours of work per month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🚀</div>
+          <div class="task-header-title">Get Your First 3 Clients — This Week</div>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li><strong>Today:</strong> Write your list of 10 local businesses. Check their Facebook pages.</li>
+            <li><strong>Tomorrow:</strong> Create 5 free sample posts using ChatGPT. Save them in your phone.</li>
+            <li><strong>Day 3:</strong> Send all 5 WhatsApp pitches with the sample attached. Do not overthink the message — use the template above.</li>
+            <li><strong>Day 4–7:</strong> Follow up with anyone who did not reply. Close any interested leads.</li>
+            <li><strong>End of Week:</strong> Report your results in the WhatsApp group — how many replied? How many said yes? What did you charge?</li>
+          </ol>
+          <div class="task-cta">🏆 Challenge: The first student to close 3 paying clients this week gets a shoutout in the group and a free bonus lesson. Go!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Spending too long perfecting the sample before sending</div>
+            <div class="mistake-desc">Students often spend a whole week "improving" their sample posts before sending anything. The sample does not need to be perfect. It needs to be good enough to show your capability — and ChatGPT already makes it good enough. Send it. Get feedback. Improve from real client input, not imaginary standards.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Sending a pitch without attaching the free sample</div>
+            <div class="mistake-desc">The free sample is 90% of your selling power. A message without a sample is just a stranger asking for money. A message with a specific, well-written sample post for THEIR business is an offer they can immediately see the value of. Never pitch without the sample.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Giving up after 2–3 rejections</div>
+            <div class="mistake-desc">Expect that 6 or 7 out of 10 will say no. That is normal for any sales activity in the world, at any level. The students who succeed are simply the ones who contact more people and keep going. If 7 say no and 3 say yes — you have a business. Send more messages, not fewer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="lesson-divider"><div class="ld-inner">Lesson 03</div></div>
+
+<!-- ══════════════ LESSON 3 ══════════════ -->
+<section class="section" style="padding-top:0;" id="lesson3">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--purple), transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--purple);">
+        <div class="tag-dot" style="background:var(--purple);"></div>
+        Lesson 03 · Advanced Income
+      </div>
+      <div class="lesson-title-big">Selling on Facebook &amp; TikTok with AI — Zero Investment, Real Money</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 30 min</span>
+        <span>📱 Facebook + TikTok</span>
+        <span>💸 Start with Rs 0</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">03</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will know exactly how to use AI to sell products on Facebook and TikTok — without owning stock, without a shop, and without spending a single rupee upfront. You will have your first post planned and ready to send.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>Here is a business model that requires zero investment, zero inventory, and zero staff. <em>Just your phone, ChatGPT, and the knowledge to use them.</em> It works like this:</p>
+        <p>You find products being sold wholesale in Nepal — handmade crafts, clothing, electronics, food items, jewellery. You take photos (or get photos from the supplier). You use ChatGPT to write compelling product descriptions and posts. You post them on Facebook Marketplace and your personal/business profile with your own price markup. When someone buys, you collect the money, order from the supplier, and deliver. <strong>You keep the difference.</strong></p>
+        <p>This is called "drop-shipping" or "reselling" — and people in Nepal are quietly making Rs 15,000 to Rs 40,000 per month doing this from their bedroom. The advantage of AI is simple: <em>your posts look more professional, more persuasive, and more trustworthy than competitors who write generic descriptions.</em></p>
+        <p>On <strong>TikTok,</strong> the model is slightly different. You create short videos showing the product — just your phone camera, decent lighting from a window, and yourself or someone else using the product. Then you use AI to write the video caption, the call-to-action, and the script for what you will say. <em>TikTok rewards consistency and authenticity — not production quality.</em> A 30-second phone video with a genuine personality behind it beats a Rs 50,000 professional ad every time.</p>
+        <p>The key to making this work is picking the right products. Choose products that: have a clear visual appeal (they look good in photos), solve a common problem, are not easily available in local physical stores, and have at least 40–50% margin for you. <strong>Handmade Nepali products, locally-made clothing, and organic food items work exceptionally well.</strong></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">⚡</div>
+        <span class="block-header-text">AI Prompt Templates for Product Selling Posts</span>
+      </div>
+      <div class="prompt-grid">
+        <div class="prompt-card">
+          <div class="prompt-card-label" style="color:var(--gold);">🛍️ Facebook Product Post</div>
+          <div class="prompt-card-text">"Write an exciting Facebook product post for a handmade wool sweater from Mustang. Price: Rs 1,800. Traditional pattern. Warm and unique. Target women aged 25–50. Create urgency — limited stock. End with 'Comment WANT or WhatsApp us.'"</div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-card-label" style="color:var(--green);">🎬 TikTok Video Caption</div>
+          <div class="prompt-card-text">"Write a TikTok caption for a video showing a handmade lokta paper journal. Make it sound beautiful and eco-friendly. Include relevant hashtags: Nepal, handmade, sustainable. End with a call to comment."</div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-card-label" style="color:var(--purple);">📦 Product Description (Daraz/Online)</div>
+          <div class="prompt-card-text">"Write a detailed product listing for Daraz for: handmade copper water bottle, Rs 1,200, made in Patan. Include health benefits, how to use, materials. Write in English. Make it professional and convincing."</div>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-card-label" style="color:var(--sky);">🔥 Flash Sale Announcement</div>
+          <div class="prompt-card-text">"Write a Facebook flash sale post. 30% off all pashmina shawls — today only. Strong urgency. 3 emojis maximum. Short and punchy — under 60 words. End with 'DM NOW before stock ends!'"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">🇳🇵</div>
+        <span class="block-header-text">Nepal Example</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Gita Shrestha, 44 — Teacher, Janakpur</div>
+            <div class="ne-subtitle">Started reselling Mithila art with Rs 0 investment</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Gita is a primary school teacher in Janakpur. She had no money to invest, no stock, and no business experience. But she knew that local artisans in her area made beautiful Mithila paintings and that people in Kathmandu and abroad were searching for them online.</p>
+          <p>She contacted 3 local artists and arranged to photograph their artwork. She then used ChatGPT to write compelling Facebook posts and Daraz product descriptions for each piece. She marked the price up by 35–40% from what the artists charged her, listed the products online, and when someone bought, she collected the payment, paid the artist, arranged delivery through a courier, and kept the difference.</p>
+          <div class="ne-quote">"In my first month, I sold 14 paintings. The artists were happy — they had never sold this way before. I made Rs 14,000 profit from my phone, while working my teaching job full time. Now I represent 8 artists and sell across Nepal and to Nepali diaspora abroad."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">🎨</div>
+            <div class="ne-result-text">Rs 14,000 profit · Month 1 · 14 paintings sold · Rs 0 starting cost</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🛒</div>
+          <div class="task-header-title">List Your First 3 Products to Sell This Week</div>
+        </div>
+        <div class="task-body">
+          <p>Even if you have nothing to sell right now, you can start in 48 hours. Here is how:</p>
+          <ol>
+            <li><strong>Identify a product category</strong> available near you — local food, handmade crafts, clothing, plants, home items</li>
+            <li><strong>Find a supplier</strong> — a local artisan, a wholesale shop, or even a relative who makes something at home</li>
+            <li><strong>Take 5–10 good photos</strong> in natural light (by a window is fine)</li>
+            <li><strong>Write 3 product posts using ChatGPT</strong> — use the prompt templates above</li>
+            <li><strong>Post them on Facebook Marketplace</strong> with your WhatsApp number for orders. Track every enquiry you get.</li>
+          </ol>
+          <div class="task-cta">📸 Share your first product post in the WhatsApp group. Get feedback from the community before you post it publicly!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Posting without any real photos — only text or stock images</div>
+            <div class="mistake-desc">In Nepal's Facebook buying culture, customers want to see the actual product. Stock images from the internet feel fake and reduce trust dramatically. Even a slightly blurry photo of the real item beats a professional stock photo. Take real photos — your phone camera is enough.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Selling products without confirming availability with the supplier first</div>
+            <div class="mistake-desc">Before listing any product, confirm with your supplier: How many pieces are available? What is the real price you will pay? How long for delivery? Selling something you cannot actually deliver damages your reputation permanently. Confirm first, then post.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="lesson-divider"><div class="ld-inner">Lesson 04</div></div>
+
+<!-- ══════════════ LESSON 4 ══════════════ -->
+<section class="section" style="padding-top:0;" id="lesson4">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--sky), transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--sky);">
+        <div class="tag-dot" style="background:var(--sky);"></div>
+        Lesson 04 · International Income
+      </div>
+      <div class="lesson-title-big">Freelancing with AI — Earning in Dollars from Fiverr &amp; Upwork</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 35 min</span>
+        <span>🌍 International clients</span>
+        <span>💵 Earn USD from Nepal</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">04</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will understand how Fiverr and Upwork work, which services to offer as a beginner using AI, and you will have a draft Fiverr gig written — ready to set up your international income stream.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>When most people think about earning from the internet, they think about it as something difficult, foreign, or only for young people. <em>Today I want to completely change that idea.</em></p>
+        <p>Fiverr is a website where people from all over the world buy services starting at $5 (roughly Rs 650). They buy writing services, translation services, business advice, social media services, and hundreds of other things. <strong>Sellers from Nepal are already there — right now — earning $100 to $1,000 per month, working from home on their phones and laptops.</strong></p>
+        <p>Here is the beautiful part: <em>with AI, you can offer services that would have previously required years of professional training.</em> A professional copywriter charges $50 to $200 per article. With ChatGPT and the skills from this course, you can write an excellent article in 30–45 minutes. If you charge $15 per article and write 8 per month — that is $120 per month, approximately Rs 16,000. And that is just from one service type.</p>
+        <p>The best AI-assisted services for beginners on Fiverr are:</p>
+        <p><strong>1. Blog post and article writing</strong> — Businesses need new articles every week for their websites. You write them using AI, edit them, and deliver. Charge $10–$30 per article starting out.<br>
+        <strong>2. Social media content packages</strong> — Write 30 Facebook/Instagram posts for $25–$50. Clients love buying in bulk. One session in ChatGPT can produce all 30 posts.<br>
+        <strong>3. Product description writing</strong> — E-commerce sellers constantly need product descriptions. $5–$15 per description. Fast to produce, consistent demand.<br>
+        <strong>4. Email newsletter writing</strong> — Small businesses need weekly or monthly email newsletters. $15–$40 each. Very quick with AI.<br>
+        <strong>5. Nepali-to-English translation</strong> — Use AI to translate, then review for accuracy. $0.05–$0.12 per word for human-reviewed AI translation is competitive and profitable.</p>
+        <p><em>One important note: Fiverr takes 20% commission from every order. Factor this into your pricing. And you need a bank account or payment method (eSewa, bank transfer, or Payoneer) to receive your money in Nepal.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--purple-dim);color:var(--purple);">⚡</div>
+        <span class="block-header-text">Write Your Fiverr Gig Using AI — Live Example</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#FF5F57;"></div>
+          <div class="t-dot" style="background:#FFBD2E;"></div>
+          <div class="t-dot" style="background:#28CA41;"></div>
+          <div class="t-label">ChatGPT Prompt → Fiverr Gig</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-prompt">
+            <span class="t-cursor">→ </span>"You are a Fiverr gig writing expert. Write a complete Fiverr gig for me.
+
+Service: I will write 15 engaging Facebook posts per month for small businesses.
+
+My background: I am a Nepali freelancer who specialises in writing social media content for local businesses. I understand Nepal, South Asia, and international markets.
+
+Write: (1) Gig title (max 80 characters), (2) Gig description (300 words, persuasive), (3) 5 search tags, (4) 3 package names and descriptions."
+          </div>
+          <div class="t-response">
+            <div class="t-response-label">Example ChatGPT Response</div>
+            <div class="t-response-text">
+              <strong>Gig Title:</strong> I Will Write 15 Engaging Facebook Posts for Your Business This Month<br><br>
+              <strong>Gig Description (excerpt):</strong> Struggling to stay consistent on Facebook? I will write 15 high-quality, ready-to-post Facebook captions tailored to YOUR business — so you never have to stare at a blank screen again...<br><br>
+              <strong>Tags:</strong> facebook posts, social media content, business posts, content writing, social media management<br><br>
+              <strong>Packages:</strong> Starter (5 posts · $12), Standard (15 posts · $30), Premium (30 posts + strategy · $55)
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pro-tip" style="margin-top:14px;">
+        <div class="pro-tip-icon">💡</div>
+        <div class="pro-tip-text">
+          <strong>Pro Tip — The First 10 Reviews Are Everything</strong>
+          On Fiverr, your first 10 five-star reviews will launch your gig to the top of search results. To get your first 10 reviews quickly: price your first 10 orders at the absolute minimum, over-deliver on quality and speed, and ask every happy buyer politely for a review. Once you have 10+ reviews, raise your prices by 30–50%.
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">🇳🇵</div>
+        <span class="block-header-text">Nepal Example</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Anita Gurung, 38 — Former Office Assistant, Kathmandu</div>
+            <div class="ne-subtitle">From Rs 22,000 salary to $480/month Fiverr income</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Anita worked as an office assistant, earning Rs 22,000 per month. Her English was decent but not outstanding. She had no writing degree. She found Fiverr after Module 4 of this course and spent one week setting up two gigs: social media post writing and product description writing.</p>
+          <p>Her first month, she earned $43. She was disappointed but kept going. Her second month: $110. Third month: $240. By month six, she had 47 five-star reviews, had raised her prices three times, and was earning $480 per month — more than double her previous salary — working about 15 hours per week from home.</p>
+          <div class="ne-quote">"I resigned from my office job in month five. My boss thought I was making a mistake. I showed him my Fiverr dashboard. He asked if I could teach him. I told him he would have to enroll in AI Saathi first."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">🌍</div>
+            <div class="ne-result-text">$480/month (~Rs 64,000) · Month 6 · 47 five-star reviews · 15 hrs/week</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🌐</div>
+          <div class="task-header-title">Set Up Your Fiverr Profile This Week</div>
+        </div>
+        <div class="task-body">
+          <p>You do not need to be an expert to start. You just need to start. Complete these steps:</p>
+          <ol>
+            <li><strong>Create a free Fiverr account</strong> at fiverr.com — use a professional photo and your real name</li>
+            <li><strong>Use ChatGPT to write your profile bio</strong> — describe your skills, services, and why clients should choose you</li>
+            <li><strong>Create your first gig</strong> — pick ONE service from the list above. Use the ChatGPT prompt from this lesson to write the title, description, and packages</li>
+            <li><strong>Set a starter price</strong> — for your first 10 orders, price lower than you think you should. Reviews are more valuable than money at this stage</li>
+            <li><strong>Share your Fiverr gig link</strong> in the WhatsApp group for feedback and encouragement</li>
+          </ol>
+          <div class="task-cta">⏰ Note: Fiverr takes 2–3 days to review and approve new gigs. Start today so you are live by the end of this week!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Creating 5 gigs at once before getting any orders</div>
+            <div class="mistake-desc">Many beginners create 10 gigs on day one, thinking more gigs equals more money. Wrong. One gig with excellent description, strong tags, and fast delivery beats 10 mediocre gigs. Focus all your energy on making one gig exceptional before adding a second.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Delivering AI content to the client without reviewing it first</div>
+            <div class="mistake-desc">Never copy ChatGPT's output directly without reading it. AI can sometimes produce inaccurate information, awkward phrasing, or content that misses the client's specific brand voice. Your job is to use AI as a starting draft and polish the final product. Your reputation is built on the quality you deliver — not the speed of the AI.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="lesson-divider"><div class="ld-inner">Lesson 05</div></div>
+
+<!-- ══════════════ LESSON 5 ══════════════ -->
+<section class="section" style="padding-top:0;" id="lesson5">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--orange), transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--orange);">
+        <div class="tag-dot" style="background:var(--orange);"></div>
+        Lesson 05 · Teaching &amp; Community
+      </div>
+      <div class="lesson-title-big">Teach AI in Your Community — The WhatsApp Group Business Model</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 28 min</span>
+        <span>🎓 Teach what you know</span>
+        <span>🏘️ Local community income</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">05</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will know exactly how to create and sell a simple AI course or community to people in your own neighbourhood — using nothing but WhatsApp, your phone, and the knowledge you have already gained in this course.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>Here is something most people do not realise: <em>you do not need to know everything to teach something.</em> You only need to be a few steps ahead of the person you are teaching.</p>
+        <p>Right now, after completing four modules of this course, <strong>you know more about AI than 95% of people in your neighbourhood.</strong> Most people around you have never opened ChatGPT. They do not know what a prompt is. They are scared of technology. You — right now — have enough knowledge to teach a group of beginners everything they need to get started.</p>
+        <p>The WhatsApp Teaching Model works like this: You create a WhatsApp group. You charge a small monthly or one-time fee — Rs 300 to Rs 1,000 per person — to join. Inside the group, you share daily tips, voice notes, screenshots of useful AI tricks, exercises, and answer questions. You use ChatGPT to prepare your lessons — meaning almost everything you share is created in minutes with AI.</p>
+        <p><em>Think about the math.</em> If 30 people join your group at Rs 500 each — that is Rs 15,000 per month. And your "teaching content" is mostly things you have already learned here, explained in your own voice, in Nepali or your local language. You spend maybe 20–30 minutes per day on the group. The rest, ChatGPT handles.</p>
+        <p>The best part of this model: <strong>the people in your community trust YOU more than they trust any online stranger.</strong> They speak your language. They understand your examples. They share your world. That local connection is incredibly powerful — and it is something no big online course company can replicate.</p>
+        <p>You can start your WhatsApp teaching group within one week of finishing this course. And if your group members love it, they will refer their friends — which means your community grows without you having to find new members yourself.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">📋</div>
+        <span class="block-header-text">Step-by-Step: Launch Your Own WhatsApp AI Community</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">1</div>
+          <div class="step-content">
+            <div class="step-title">Name your community something local and clear</div>
+            <div class="step-desc">Examples: "AI Siksha Group — Pokhara," "Smart Phone Smart Life — Birgunj," "AI Business Tips — Hetauda." The name should tell people exactly what they will learn and where you are from. Simple and local is better than clever and confusing.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">2</div>
+          <div class="step-content">
+            <div class="step-title">Create a simple "what you get" message using AI</div>
+            <div class="step-desc">Ask ChatGPT: "Write a WhatsApp message inviting people to join my AI tips group in Nepali. They pay Rs 500 one-time. They get daily AI tips, weekly exercises, and my help on WhatsApp. Make it sound exciting but simple." Send this to 20–30 contacts.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">3</div>
+          <div class="step-content">
+            <div class="step-title">Plan your first two weeks of content using AI</div>
+            <div class="step-desc">Ask ChatGPT: "Create a 14-day WhatsApp teaching schedule for a beginners' AI group. Each day: one short tip (2–3 sentences), one example, and one small task. Focus on practical uses for daily life and business." You now have 14 days of content ready to go.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">4</div>
+          <div class="step-content">
+            <div class="step-title">Collect payment before adding anyone to the group</div>
+            <div class="step-desc">Use eSewa, Khalti, or direct bank transfer. Collect payment first, then add. Never add people with "I will pay later" — it almost never happens and creates awkwardness. Be firm but kind: "Payment first, then you are in!"</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--orange-dim);color:var(--orange);border-color:rgba(255,112,67,0.3);">5</div>
+          <div class="step-content">
+            <div class="step-title">Be active, responsive, and encouraging every day</div>
+            <div class="step-desc">Your members are paying for access to you — your warmth, your answers, your local perspective. Post your daily tip. Respond to questions within 24 hours. Celebrate members who complete exercises. A warm, active community retains members and gets referrals.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">🇳🇵</div>
+        <span class="block-header-text">Nepal Example</span>
+      </div>
+      <div class="nepal-example">
+        <div class="ne-header">
+          <div class="ne-flag">🇳🇵</div>
+          <div class="ne-header-text">
+            <div class="ne-title">Ram Prasad Koirala, 51 — Retired Government Employee, Palpa</div>
+            <div class="ne-subtitle">Built a 60-member community earning Rs 18,000/month</div>
+          </div>
+        </div>
+        <div class="ne-body">
+          <p>Ram Prasad retired at 50 after 25 years in government service. He was bored and felt "left behind by technology." His son enrolled him in AI Saathi as a gift. By Module 4, he had a new idea: teach what he was learning to retired colleagues and homemakers in Palpa who felt the same way he used to feel.</p>
+          <p>He created a WhatsApp group called "AI Saathi Palpa" and charged Rs 300 one-time entry fee. Within his first week, 34 people joined — mostly retired teachers, small shop owners, and homemakers who trusted him from his government service days. He shared one AI tip every day, mostly things he had learned from this course, explained in simple Nepali with local examples.</p>
+          <div class="ne-quote">"People in Palpa were hungry for this knowledge. They just needed it from someone like them — a local person, not a tech company. By month three I had 60 members. At Rs 300 each, I earned Rs 18,000. Then I started a monthly subscription of Rs 150 for continued membership. Now I have 60 x Rs 150 = Rs 9,000 every month, recurring, without finding new members."</div>
+          <div class="ne-result">
+            <div class="ne-result-icon">🎓</div>
+            <div class="ne-result-text">60 members · Rs 9,000/month recurring · 30 min/day work · Age 51</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Exercise</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">📲</div>
+          <div class="task-header-title">Plan Your Community — This Week</div>
+        </div>
+        <div class="task-body">
+          <p>Even if you do not launch right away, doing this planning exercise will show you how realistic it is. Complete all parts:</p>
+          <ol>
+            <li><strong>Choose a name and price</strong> for your WhatsApp group. Write it down.</li>
+            <li><strong>List 20 people</strong> you could invite — family, friends, colleagues, neighbours who seem interested in technology</li>
+            <li><strong>Ask ChatGPT to plan your first 7 days of WhatsApp tips</strong> for total beginners. Save them in your notes app.</li>
+            <li><strong>Write your invitation message</strong> using ChatGPT. Ask it to write "a warm, enthusiastic WhatsApp message in Nepali inviting friends to join my AI learning group for [price]. What will they learn? Why will it help them?"</li>
+            <li><strong>Optional but powerful:</strong> Send the invitation to 3 people this week as a soft test. See who responds with interest.</li>
+          </ol>
+          <div class="task-cta">🏘️ You are not just earning money — you are lifting your whole community. That is something worth being proud of.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Thinking "I do not know enough to teach yet"</div>
+            <div class="mistake-desc">You already know more than enough to teach a complete beginner. After this course, you can explain what AI is, how to use ChatGPT, how to write good prompts, and how to use AI for business and daily life. That is an entire course. You do not need to know coding or advanced AI. Teach what you know, clearly and kindly.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Making the group completely free to build numbers</div>
+            <div class="mistake-desc">Free groups attract people who do not commit. They join out of curiosity, stay passive, and often leave after one week without contributing anything. A small paid group of 20 committed people is far more valuable — for them and for you — than a free group of 200 people who barely engage.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="lesson-divider"><div class="ld-inner">Lesson 06</div></div>
+
+<!-- ══════════════ LESSON 6 ══════════════ -->
+<section class="section" style="padding-top:0;" id="lesson6">
+<div class="lesson-block">
+  <div class="lesson-topbar">
+    <div class="lesson-accent" style="background: linear-gradient(90deg, var(--gold), #FFA500, transparent);"></div>
+    <div class="ltb-left">
+      <div class="lesson-tag" style="color:var(--gold);">
+        <div class="tag-dot" style="background:var(--gold);"></div>
+        Lesson 06 · Putting It All Together
+      </div>
+      <div class="lesson-title-big">Your 30-Day Income Launch Plan — First Rs 10,000 in 30 Days</div>
+      <div class="lesson-meta-row">
+        <span>⏱ 30 min</span>
+        <span>📅 Your personal action plan</span>
+        <span>🏁 Module finale</span>
+      </div>
+    </div>
+    <div class="lesson-num-badge">06</div>
+  </div>
+  <div class="lesson-body">
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--sky-dim);color:var(--sky);">🎯</div>
+        <span class="block-header-text">Lesson Objective</span>
+      </div>
+      <div class="objective-box">
+        By the end of this lesson, you will have a personalised, day-by-day 30-day plan to earn your first Rs 10,000 using AI. Not a theory. A real plan — with dates, actions, and milestones — that you can start tomorrow morning.
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">📖</div>
+        <span class="block-header-text">Full Lesson — Read or Watch</span>
+      </div>
+      <div class="script-box">
+        <p>We have spent this entire module exploring income paths, building skills, and seeing what is possible. <em>Now it is time to stop exploring and start executing.</em></p>
+        <p>The single biggest difference between students who earn money with AI and students who do not is one thing: <strong>a written plan.</strong> Not a plan in their head. Not "I will start sometime next week." A written plan with specific actions on specific days. Because written plans get done. Mental plans stay dreams.</p>
+        <p>This is your plan. It is built for the most accessible income path: content writing for local businesses. But the structure works for any method — just swap in the relevant actions for your chosen path.</p>
+        <p>The plan has three phases. <strong>Week 1 is Setup:</strong> you build your materials, your samples, your pitch. <strong>Week 2 is Outreach:</strong> you contact people, present your offer, handle objections. <strong>Weeks 3 and 4 are Delivery and Growth:</strong> you deliver excellent work, get paid, and use happy clients to get more clients.</p>
+        <p><em>Every day in this plan takes 30–90 minutes maximum.</em> You do not need to quit your job or rearrange your life. This fits around everything you are already doing. A teacher can do this in the evenings. A homemaker can do this while children are at school. A shop owner can do this before opening hours or after closing. <strong>The only requirement is showing up every day for 30 days.</strong></p>
+        <p>At the end of 30 days, even if you have only 2 or 3 clients, you will have built something real. Something that grows. Something that compounds. Your second month will be better than your first. Your third better than your second. <em>The first Rs 10,000 is the hardest. Everything after that is momentum.</em></p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--green-dim);color:var(--green);">📅</div>
+        <span class="block-header-text">Your 30-Day Launch Plan — Week by Week</span>
+      </div>
+      <div class="money-big">
+        <div class="mb-eyebrow">Week 1 — Days 1–7 — BUILD YOUR FOUNDATION</div>
+        <div class="mb-title">Prepare. Do not pitch yet. Prepare.</div>
+        <div class="mb-desc">
+          <strong style="color:#A8EDCA;">Day 1:</strong> Write your list of 10 target businesses. Visit their Facebook pages.<br>
+          <strong style="color:#A8EDCA;">Day 2:</strong> Create free sample posts for your top 5 targets using ChatGPT.<br>
+          <strong style="color:#A8EDCA;">Day 3:</strong> Write your pitch WhatsApp message using the template from Lesson 2.<br>
+          <strong style="color:#A8EDCA;">Day 4:</strong> Create a simple "service menu" showing your 3 packages and prices.<br>
+          <strong style="color:#A8EDCA;">Day 5:</strong> Ask a friend or family member to review your samples and pitch. Get feedback.<br>
+          <strong style="color:#A8EDCA;">Day 6:</strong> Improve your samples based on feedback. Write 3 more sample posts for variety.<br>
+          <strong style="color:#A8EDCA;">Day 7:</strong> Rest. Review everything. Feel confident. Tomorrow you launch.
+        </div>
+      </div>
+      <div class="money-big" style="margin-top:14px; background: linear-gradient(135deg, #1A0F08 0%, #100804 100%); border-color: var(--gold-border);">
+        <div class="mb-eyebrow" style="color:var(--gold);">Week 2 — Days 8–14 — REACH OUT</div>
+        <div class="mb-title" style="color:var(--text);">Contact. Follow up. Close.</div>
+        <div class="mb-desc">
+          <strong style="color:var(--gold-light,#F0C96C);">Day 8:</strong> Send all 5 WhatsApp pitches with free samples. Track who you sent to.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 9:</strong> Follow up with anyone who did not reply. Add 3 more businesses to your list.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 10:</strong> Respond to interested leads. Answer questions. Propose a meeting if needed.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 11:</strong> Send 3 more pitches to new targets. Keep the pipeline full.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 12:</strong> Close at least 1 paying client. Agree on deliverables, timing, and payment.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 13:</strong> Celebrate your first client! Then send 3 more pitches. Never stop outreach.<br>
+          <strong style="color:var(--gold-light,#F0C96C);">Day 14:</strong> Target: 2 paying clients by end of this week. Even at Rs 2,000 each = Rs 4,000. Real money.
+        </div>
+      </div>
+      <div class="money-big" style="margin-top:14px; background: linear-gradient(135deg, #080D1A 0%, #050810 100%); border-color: rgba(56,189,248,0.3);">
+        <div class="mb-eyebrow" style="color:var(--sky);">Weeks 3–4 — Days 15–30 — DELIVER AND GROW</div>
+        <div class="mb-title">Impress your clients. Get referrals. Earn.</div>
+        <div class="mb-desc" style="color:rgba(255,255,255,0.7);">
+          Deliver all promised posts on time or early. Ask clients: "Is there anything you would change about this post?" Show you care. Continue pitching 2–3 new businesses every week — momentum matters. After your first client is happy, ask: "Do you know anyone else whose Facebook page could use help?" One referral from a happy client is worth 10 cold pitches. By Day 30, your goal: 3 paying clients. At Rs 2,500–3,500 average = <strong style="color:var(--sky);">Rs 7,500 to Rs 10,500 per month recurring income.</strong> And it grows from here.
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--gold-dim);color:var(--gold);">✏️</div>
+        <span class="block-header-text">Your Final Exercise — The Commitment Moment</span>
+      </div>
+      <div class="task-box">
+        <div class="task-header">
+          <div class="task-header-icon">🏆</div>
+          <div class="task-header-title">Write Your Personal 30-Day Plan Using AI</div>
+        </div>
+        <div class="task-body">
+          <p>This is the most important exercise of the entire module. Open ChatGPT now and type this:</p>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 20px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:13px;color:#94A3B8;line-height:1.7;">
+            "Create a personalised 30-day action plan to earn Rs 10,000 from AI content writing services. I am [your situation: homemaker / teacher / shop owner / etc.] in [your city]. I have [X] hours available per day. My target clients are [local shops / schools / restaurants / etc.]. Make the plan day by day for the first 2 weeks and week by week for weeks 3–4. Include specific daily tasks, targets, and how to handle rejection."
+          </div>
+          <ol>
+            <li><strong>Run the prompt above.</strong> Read the plan ChatGPT creates for you.</li>
+            <li><strong>Adjust it</strong> to match your real situation — add specific names, local businesses, your actual available hours.</li>
+            <li><strong>Save it</strong> as a note on your phone with the title "My 30-Day AI Income Plan."</li>
+            <li><strong>Screenshot the plan</strong> and share it in the WhatsApp group to make it public and real.</li>
+            <li><strong>Start Day 1 tomorrow morning.</strong> Not next week. Tomorrow.</li>
+          </ol>
+          <div class="task-cta">🔥 Every great income story starts with one small action on one ordinary day. Today is your ordinary day. Make it extraordinary.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <div class="block-icon" style="background:var(--orange-dim);color:var(--orange);">⚠️</div>
+        <span class="block-header-text">Common Mistakes to Avoid</span>
+      </div>
+      <div class="mistakes">
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Starting Module 5 before earning your first rupee from Module 4</div>
+            <div class="mistake-desc">More knowledge without action creates nothing. If you have not yet tried to earn money from your AI skills, pause. Go back. Do the exercises. Send the pitches. Get one client. Then continue. Action in the real world will teach you more than any lesson ever could.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Measuring success only in rupees in the first month</div>
+            <div class="mistake-desc">In your first 30 days, also measure: How many pitches did you send? How many conversations did you have? How many samples did you create? How many objections did you handle? These "process metrics" predict your future income much better than your first month's earnings. If you sent 20 pitches and got 3 clients, your process is working — scale it up next month.</div>
+          </div>
+        </div>
+        <div class="mistake">
+          <div class="mistake-x">✗</div>
+          <div class="mistake-content">
+            <div class="mistake-title">Comparing your beginning with someone else's middle</div>
+            <div class="mistake-desc">When you see a student earning Rs 40,000/month in the WhatsApp group, do not feel discouraged. They were where you are 3, 6, or 12 months ago. Everyone starts at zero. The gap between you and them is not talent or luck — it is simply time and consistent action. Your job is to begin and keep going.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="pro-tip">
+        <div class="pro-tip-icon">💡</div>
+        <div class="pro-tip-text">
+          <strong>Module 4 Complete — You Are Now an AI Entrepreneur</strong>
+          You have just finished the most transformative module in this entire course. You now know seven ways to earn money with AI skills, how to approach your first client, how to sell online without investment, how to earn from international clients, how to teach your community, and how to plan your first 30 days of income. These are not theoretical ideas — they are practical paths that real people in Nepal are walking right now. In Module 5, we go deeper into content creation: making short videos, growing on TikTok, and building an audience that earns for you long-term. The momentum you build today will carry you there.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════ TESTIMONIALS ══════ -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <span class="section-label">Real Students · Real Results</span>
+    <h2 class="section-title" style="font-size:clamp(24px,3.5vw,36px);">What happens after <span class="accent">Module 4</span></h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I was a homemaker who had never earned her own money. After Module 4, I sent WhatsApp pitches to 8 businesses. Three said yes. Rs 9,000 in my first month. My husband cried happy tears. I cried too."</p>
+        <div class="testi-person">Radha Devi Yadav</div>
+        <div class="testi-role">Homemaker, Janakpur</div>
+        <div class="testi-income">Rs 9,000 · Month 1</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I am 53 years old. I thought this was for young people. I now run a WhatsApp AI group with 44 members in Butwal and earn Rs 13,200 per month recurring. Retirement fund — sorted."</p>
+        <div class="testi-person">Shyam Bahadur Tamang</div>
+        <div class="testi-role">Retired teacher, Butwal</div>
+        <div class="testi-income">Rs 13,200/mo · Recurring</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"My Fiverr profile had zero reviews in month one. I nearly quit. By month four I had 38 reviews and $340 that month. ChatGPT writes the first draft, I polish it, I deliver. It works."</p>
+        <div class="testi-person">Pradeep Shrestha</div>
+        <div class="testi-role">Freelancer, Kathmandu</div>
+        <div class="testi-income">$340/mo (~Rs 45,000)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ FAQ ══════ -->
+<section class="faq-section">
+  <span class="section-label">Questions &amp; Answers</span>
+  <h2 class="section-title" style="font-size:clamp(24px,3.5vw,36px);">You are probably wondering<span class="accent">...</span></h2>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is it honest to charge clients money when AI does most of the writing?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        Absolutely yes — and here is why. A plumber uses electric drills, pipe cutters, and modern tools. You still pay for the plumber's knowledge, judgment, time, and professionalism — not the cost of the tools. You are doing exactly the same. You bring: understanding of the client's business, knowledge of what makes a good post for their audience, quality review of every piece before delivery, and ongoing management and communication. AI is your tool. Your knowledge and judgment are your service. This is 100% honest and professional.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What if a potential client asks "How do you write so fast?" Should I mention AI?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        You can be honest without making it a sales objection. You can say: "I use modern writing tools and technology — the same tools used by the best content agencies in the world. What matters is the quality you get and the results for your business." You are not obligated to explain your full workflow to every client, any more than a chef explains every kitchen tool they use. Focus on the result: "Does the content work for your business?"
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        I live in a small town. Are there really enough businesses to make this work?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        Yes — often more than in cities, because competition is lower. In a small town, you may be the only person offering this service. Every local shop, school, hotel, clinic, restaurant, coaching center, and small business is a potential client. You only need 5 clients to earn Rs 12,500 to Rs 20,000 per month. Are there 5 businesses in your town with a Facebook page that could be better? Almost certainly. And once you have results to show, clients will refer more clients.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        I am scared of rejection. What if everyone says no?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        Rejection is normal, expected, and not personal. Out of 10 people you pitch, expect 6 or 7 to say no — that is true for professional salespeople at major companies. The key insight is this: rejection is not a sign that your service is bad. It is a sign that you need to contact more people. If 3 out of 10 say yes, that is a successful business. And the more you pitch, the more comfortable you become, and your "yes rate" naturally improves. Start with warm contacts — people who already know and trust you — and rejection will be much rarer.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How do I handle payment? Do I need a registered business?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        For starting out with local clients, you do not need a registered business. Collect payment via eSewa, Khalti, or direct bank transfer — these are simple and legal. Ask for payment at the start of each month, or half upfront and half on delivery. For Fiverr/Upwork international income, you will need Payoneer (free to sign up) or a bank account that accepts international transfers. As your income grows, you may want to register as a freelancer or sole proprietorship — but that is a problem for month 6, not month 1.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What if a client wants a service I do not know how to do yet?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">
+        Two good options: First, be honest — "I do not offer that service yet, but I know someone who might help." Honesty builds long-term trust that is worth more than one awkward sale. Second, learn it quickly — if the service is something ChatGPT can help with, ask ChatGPT how to do it, practice once, and if you feel confident, offer it. Never promise something you cannot deliver. But also do not underestimate how quickly you can learn new AI-assisted skills when there is a real client waiting.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════ MODULE COMPLETE ══════ -->
+<div style="padding: 0 40px;">
+<div class="complete-section">
+  <div class="cs-eyebrow">Module 4 Complete</div>
+  <h2 class="cs-title">You are officially an<br>AI Entrepreneur.</h2>
+  <p class="cs-desc">You now have seven income paths, real tools, real scripts, and a 30-day plan. The only thing standing between you and your first Rs 10,000 is action. Take it.</p>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="nc-num">Module 5</div>
+      <div class="nc-title">Content Creation: TikTok, YouTube &amp; Going Viral</div>
+    </div>
+    <div class="next-card">
+      <div class="nc-num">Module 6</div>
+      <div class="nc-title">Advanced AI Tools Beyond ChatGPT</div>
+    </div>
+    <div class="next-card">
+      <div class="nc-num">Module 7</div>
+      <div class="nc-title">Automation: Making AI Work While You Sleep</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════ FOOTER ══════ -->
+<footer class="site-footer">
+  <strong>AI Saathi</strong> — Your Smart Life, Simplified<br>
+  <span style="margin-top:6px;display:block;">Module 4 of 8 · Next: Module 5 — Content Creation &amp; Going Viral →</span>
+  <span style="margin-top:12px;display:block;font-size:12px;">© 2025 AI Saathi Course · All lessons for educational purposes · Designed for Nepal &amp; South Asia</span>
+</footer>
+
+<script>
+// ── FAQ toggle
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('.faq-icon');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-icon').forEach(i => i.textContent = '+');
+  if (!isOpen) {
+    answer.classList.add('open');
+    icon.textContent = '−';
+  }
+}
+
+// ── Tab switcher (namespaced by group)
+function showTab(id, group) {
+  document.querySelectorAll(`[id^="t-${group}-"]`).forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById(`t-${group}-${id}`);
+  if (panel) panel.classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── Scroll-based fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.lesson-block, .income-card, .testi-card, .nepal-example').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
