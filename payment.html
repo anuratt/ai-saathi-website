@@ -4,184 +4,124 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Saathi — Payment | eSewa & Khalti</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="firebase-config.js"></script>
 <style>
 :root{
-  --saffron:#E8611A;--saffron-deep:#C0470D;--saffron-pale:#FFF3EC;
-  --gold:#F5A623;--gold-pale:#FFFAED;
-  --forest:#1B5E3B;--forest-pale:#EAF5EE;
-  --esewa:#60BB46;--esewa-bg:#F0FAF0;
-  --khalti:#5C2D91;--khalti-bg:#F5F0FB;
-  --ink:#1A1A2E;--ink-mid:#3D3D5C;--muted:#7A7A99;
-  --border:#E8E0D0;--white:#fff;--off:#FDFCF9;
+  --brand:#E8611A;--brand-deep:#C0470D;--brand-pale:#FFF3EC;--brand-glow:rgba(232,97,26,0.3);
+  --gold:#F0A500;--gold-pale:#FFFAED;
+  --forest:#1B5E3B;--forest-pale:#E8F5EE;
+  --esewa:#60BB46;--khalti:#5C2D91;
+  --ink:#0E0D12;--ink-mid:#3D3B50;--muted:#888599;
+  --white:#fff;--pale:#F7F6F2;--border:rgba(0,0,0,0.08);
+  --shadow:0 4px 20px rgba(14,13,18,0.09);--r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Lato',sans-serif;background:var(--off);color:var(--ink);min-height:100vh;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--pale);color:var(--ink-mid);min-height:100vh;}
 
-.nav{
-  background:var(--ink);padding:0 20px;border-bottom:2px solid var(--saffron);
-  position:sticky;top:0;z-index:100;
-}
-.nav-inner{
-  max-width:700px;margin:0 auto;height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.nav-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--gold);}
-.nav-back{color:rgba(255,255,255,0.55);font-size:13px;text-decoration:none;}
+.nav{background:var(--ink);padding:0 16px;border-bottom:2px solid var(--brand);position:sticky;top:0;z-index:100;}
+.nav-inner{max-width:680px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'Fraunces',serif;font-weight:900;font-size:22px;background:linear-gradient(135deg,#FFD166,#F0A500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-back{color:rgba(255,255,255,0.55);font-size:13px;text-decoration:none;font-weight:600;}
 
-.main{max-width:700px;margin:0 auto;padding:28px 16px 60px;}
+.main{max-width:680px;margin:0 auto;padding:24px 14px 60px;}
 
-/* ORDER SUMMARY */
 .order-card{
-  background:linear-gradient(135deg,var(--ink),#0D3526);
-  border-radius:16px;padding:24px;color:white;margin-bottom:24px;
+  background:linear-gradient(135deg,var(--ink) 0%,#0A1F12 100%);
+  border-radius:20px;padding:24px;color:white;margin-bottom:24px;
+  position:relative;overflow:hidden;
 }
-.order-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:8px;}
-.order-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;margin-bottom:16px;}
+.order-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,97,26,0.18),transparent 70%);pointer-events:none;}
+.order-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px;}
+.order-title{font-family:'Fraunces',serif;font-weight:900;font-size:20px;margin-bottom:16px;}
 .order-items{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;}
-.order-item{display:flex;justify-content:space-between;font-size:14px;color:rgba(255,255,255,0.75);}
-.order-total{
-  display:flex;justify-content:space-between;align-items:center;
-  border-top:1px solid rgba(255,255,255,0.15);padding-top:16px;
-}
+.order-item{display:flex;justify-content:space-between;font-size:14px;color:rgba(255,255,255,0.7);}
+.order-total{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.15);padding-top:16px;}
 .order-total-label{font-size:14px;color:rgba(255,255,255,0.7);}
-.order-total-price{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--gold);}
-.order-save{background:rgba(245,166,35,0.15);color:var(--gold);font-size:12px;padding:3px 10px;border-radius:12px;border:1px solid rgba(245,166,35,0.2);}
+.order-total-price{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:#FFD166;}
+.order-save{background:rgba(240,165,0,0.15);color:#FFD166;font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(240,165,0,0.2);display:inline-block;margin-top:4px;}
 
-/* STEPS */
-.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:24px;}
-.step-dot{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;flex-shrink:0;
-}
-.step-dot.active{background:var(--saffron);color:white;}
-.step-dot.done{background:var(--forest);color:white;}
-.step-dot.inactive{background:var(--border);color:var(--muted);}
-.step-line{flex:1;height:2px;background:var(--border);}
-.step-line.done{background:var(--forest);}
+.section-title{font-family:'Fraunces',serif;font-weight:900;font-size:18px;margin-bottom:14px;color:var(--ink);}
 
-/* SECTION TITLE */
-.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px;}
-
-/* PAYMENT METHOD CARDS */
-.method-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
-.method-card{
-  background:white;border:2px solid var(--border);border-radius:14px;
-  padding:18px;cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;gap:14px;
-}
-.method-card:hover{border-color:var(--saffron);}
-.method-card.selected{border-color:var(--saffron);background:var(--saffron-pale);}
-.method-card.esewa-card.selected{border-color:var(--esewa);background:var(--esewa-bg);}
-.method-card.khalti-card.selected{border-color:var(--khalti);background:var(--khalti-bg);}
-.method-logo{
-  width:50px;height:50px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:14px;flex-shrink:0;
-}
-.esewa-logo{background:#60BB46;color:white;}
-.khalti-logo{background:#5C2D91;color:white;}
-.bank-logo{background:#1A6B9A;color:white;font-size:11px;}
-.method-info strong{display:block;font-size:15px;margin-bottom:2px;}
+.method-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.method-card{background:white;border:2px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
+.method-card:hover{border-color:var(--brand);box-shadow:0 4px 20px var(--brand-glow);}
+.method-card.selected{border-color:var(--brand);background:var(--brand-pale);}
+.method-card.selected.esewa-card{border-color:var(--esewa);background:#F0FAF0;}
+.method-card.selected.khalti-card{border-color:var(--khalti);background:#F5F0FB;}
+.method-logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;color:white;}
+.esewa-logo{background:#60BB46;}
+.khalti-logo{background:#5C2D91;}
+.bank-logo{background:#1A6B9A;font-size:11px;}
+.method-info strong{display:block;font-size:15px;margin-bottom:2px;color:var(--ink);}
 .method-info span{font-size:13px;color:var(--muted);}
-.method-radio{margin-left:auto;width:20px;height:20px;flex-shrink:0;}
+.method-check{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.method-card.selected .method-check{background:var(--brand);border-color:var(--brand);color:white;}
+.method-card.selected.esewa-card .method-check{background:var(--esewa);border-color:var(--esewa);}
+.method-card.selected.khalti-card .method-check{background:var(--khalti);border-color:var(--khalti);}
 
-/* PAYMENT INSTRUCTIONS */
-.payment-steps{
-  background:white;border:1.5px solid var(--border);border-radius:14px;
-  padding:20px;margin-bottom:20px;display:none;
-}
+.payment-steps{background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:18px;display:none;box-shadow:var(--shadow);}
 .payment-steps.show{display:block;}
-.ps-title{font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.ps-step{
-  display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;
-}
-.ps-num{
-  width:24px;height:24px;border-radius:50%;background:var(--saffron);color:white;
-  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.ps-num.green{background:var(--forest);}
-.ps-num.purple{background:var(--khalti);}
+.ps-title{font-weight:800;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--ink);}
+.ps-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.ps-num{width:26px;height:26px;border-radius:50%;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;background:var(--brand);}
+.ps-num.green{background:#60BB46;}
+.ps-num.purple{background:#5C2D91;}
+.ps-num.blue{background:#1A6B9A;}
 .ps-text{font-size:14px;line-height:1.5;color:var(--ink-mid);}
 .ps-text strong{color:var(--ink);}
-
-/* PHONE NUMBER HIGHLIGHT */
 .phone-highlight{
-  background:var(--gold-pale);border:1px solid rgba(245,166,35,0.3);
-  border-radius:8px;padding:12px 14px;margin:10px 0;
-  font-family:monospace;font-size:20px;font-weight:700;letter-spacing:2px;
+  background:var(--gold-pale);border:1px solid rgba(240,165,0,0.3);
+  border-radius:8px;padding:12px 16px;margin:10px 0;
+  font-family:monospace;font-size:20px;font-weight:800;letter-spacing:2px;
   text-align:center;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  flex-wrap:wrap;
 }
-.copy-btn{
-  background:var(--saffron);color:white;border:none;
-  font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;
-  cursor:pointer;margin-left:8px;
-}
+.copy-btn{background:var(--brand);color:white;border:none;font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;}
 
-/* UPLOAD SECTION */
-.upload-section{background:white;border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
-.upload-area{
-  border:2px dashed var(--border);border-radius:10px;
-  padding:28px;text-align:center;cursor:pointer;transition:all .2s;
-  background:var(--off);
-}
-.upload-area:hover{border-color:var(--saffron);background:var(--saffron-pale);}
+.qr-block{text-align:center;margin:16px 0;}
+.qr-block span{display:block;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.qr-block img{max-width:200px;border-radius:12px;border:2px solid var(--border);}
+
+.upload-section{background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;display:none;box-shadow:var(--shadow);}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--pale);}
+.upload-area:hover,.upload-area.has-file{border-color:var(--brand);background:var(--brand-pale);}
 .upload-area.has-file{border-color:var(--forest);background:var(--forest-pale);}
 .upload-icon{font-size:36px;margin-bottom:8px;}
 .upload-text{font-size:14px;color:var(--muted);}
-.upload-text strong{display:block;color:var(--ink);margin-bottom:4px;}
-.upload-preview{max-width:100%;border-radius:8px;margin-top:12px;display:none;}
+.upload-text strong{display:block;color:var(--ink);margin-bottom:3px;}
+.upload-preview{max-width:100%;max-height:200px;border-radius:8px;margin-top:12px;display:none;object-fit:contain;}
 #screenshotInput{display:none;}
-
-/* FORM FIELDS */
 .form-group{margin-bottom:14px;}
-label{display:block;font-size:13px;font-weight:700;color:var(--ink-mid);margin-bottom:5px;}
-input,textarea,select{
-  width:100%;padding:12px 13px;border:1.5px solid var(--border);
-  border-radius:9px;font-size:15px;font-family:'Lato',sans-serif;
-  background:white;color:var(--ink);outline:none;transition:border .2s;
-  -webkit-appearance:none;
-}
-input:focus,textarea:focus{border-color:var(--saffron);}
-textarea{resize:vertical;min-height:70px;}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+input{width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;background:white;color:var(--ink);outline:none;transition:border .2s;-webkit-appearance:none;}
+input:focus{border-color:var(--brand);}
 
-/* SUBMIT */
 .btn-submit{
-  width:100%;padding:16px;background:var(--saffron);color:white;
+  width:100%;padding:16px;background:var(--brand);color:white;
   font-size:17px;font-weight:800;border:none;border-radius:10px;
   cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  box-shadow:0 4px 16px var(--brand-glow);
 }
-.btn-submit:hover{background:var(--saffron-deep);}
-.btn-submit:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-submit:hover{background:var(--brand-deep);transform:translateY(-1px);}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* SUCCESS STATE */
-.success-screen{
-  background:white;border:1.5px solid rgba(27,94,59,0.2);border-radius:16px;
-  padding:36px;text-align:center;display:none;
-}
+.guarantee{background:var(--forest-pale);border:1px solid rgba(27,94,59,0.15);border-radius:10px;padding:14px;text-align:center;margin-top:16px;font-size:13px;color:var(--forest);}
+
+.success-screen{background:white;border:1.5px solid rgba(27,94,59,0.2);border-radius:var(--r);padding:36px;text-align:center;display:none;box-shadow:var(--shadow);}
 .success-screen.show{display:block;}
 .success-icon{font-size:64px;margin-bottom:16px;}
-.success-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--forest);margin-bottom:8px;}
+.success-title{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--forest);margin-bottom:8px;}
 .success-sub{font-size:15px;color:var(--ink-mid);margin-bottom:24px;line-height:1.6;}
-.whatsapp-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  background:#25D366;color:white;font-weight:800;font-size:15px;
-  padding:14px 24px;border-radius:10px;text-decoration:none;width:100%;justify-content:center;
-}
-.guarantee{
-  background:var(--forest-pale);border:1px solid rgba(27,94,59,0.15);
-  border-radius:10px;padding:14px;text-align:center;margin-top:16px;
-  font-size:13px;color:var(--forest);
-}
-
-/* MAIN FORM wrapper */
-#mainPayForm{}
+.whatsapp-btn{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;font-weight:800;font-size:15px;padding:14px 24px;border-radius:10px;text-decoration:none;width:100%;justify-content:center;}
+.dash-btn{margin-top:12px;display:inline-flex;align-items:center;justify-content:center;background:var(--brand);color:white;font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;text-decoration:none;width:100%;}
 </style>
 </head>
 <body>
@@ -189,12 +129,11 @@ textarea{resize:vertical;min-height:70px;}
 <nav class="nav">
   <div class="nav-inner">
     <div class="nav-brand">AI Saathi</div>
-    <a href="dashboard.html" class="nav-back">← Back</a>
+    <a href="dashboard.html" class="nav-back">← Dashboard</a>
   </div>
 </nav>
 
 <main class="main">
-
   <!-- ORDER SUMMARY -->
   <div class="order-card">
     <div class="order-label">Your Order</div>
@@ -214,19 +153,8 @@ textarea{resize:vertical;min-height:70px;}
     </div>
   </div>
 
-  <!-- STEP INDICATOR -->
-  <div class="step-indicator">
-    <div class="step-dot done" id="s1">1</div>
-    <div class="step-line done"></div>
-    <div class="step-dot active" id="s2">2</div>
-    <div class="step-line" id="sl2"></div>
-    <div class="step-dot inactive" id="s3">3</div>
-  </div>
-
   <!-- MAIN FORM -->
   <div id="mainPayForm">
-
-    <!-- PAYMENT METHOD SELECTION -->
     <div class="section-title">💳 Payment Method छान्नुहोस्</div>
     <div class="method-grid">
       <div class="method-card esewa-card" onclick="selectMethod('esewa')">
@@ -235,7 +163,7 @@ textarea{resize:vertical;min-height:70px;}
           <strong>eSewa</strong>
           <span>Nepal को सबैभन्दा popular digital wallet</span>
         </div>
-        <input type="radio" name="method" class="method-radio" id="r-esewa">
+        <div class="method-check" id="chk-esewa"></div>
       </div>
       <div class="method-card khalti-card" onclick="selectMethod('khalti')">
         <div class="method-logo khalti-logo">Khalti</div>
@@ -243,7 +171,7 @@ textarea{resize:vertical;min-height:70px;}
           <strong>Khalti</strong>
           <span>Fast र easy digital payment</span>
         </div>
-        <input type="radio" name="method" class="method-radio" id="r-khalti">
+        <div class="method-check" id="chk-khalti"></div>
       </div>
       <div class="method-card bank-card" onclick="selectMethod('bank')">
         <div class="method-logo bank-logo">Bank</div>
@@ -251,11 +179,11 @@ textarea{resize:vertical;min-height:70px;}
           <strong>Bank Transfer</strong>
           <span>Direct bank transfer / Connect IPS</span>
         </div>
-        <input type="radio" name="method" class="method-radio" id="r-bank">
+        <div class="method-check" id="chk-bank"></div>
       </div>
     </div>
 
-    <!-- ESEWA INSTRUCTIONS -->
+    <!-- eSewa Instructions -->
     <div class="payment-steps" id="steps-esewa">
       <div class="ps-title"><span style="color:#60BB46;">●</span> eSewa Payment Steps</div>
       <div class="ps-step">
@@ -266,10 +194,10 @@ textarea{resize:vertical;min-height:70px;}
         <div class="ps-num green">2</div>
         <div class="ps-text">"Send Money" थिच्नुहोस् र यो number मा <strong>रू. ९९९</strong> पठाउनुहोस्:</div>
       </div>
-      <div class="phone-highlight" id="esewaNum">9841189356 <button class="copy-btn" onclick="copyNum('9841189356')">Copy</button></div>
-      <div style="text-align:center; margin: 16px 0;">
-        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
-        <img src="esewa-qr.png" alt="eSewa QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
+      <div class="phone-highlight">9841189356 <button class="copy-btn" onclick="copyNum('9841189356', event)">Copy</button></div>
+      <div class="qr-block">
+        <span>वा QR Code Scan गर्नुहोस्:</span>
+        <img src="esewa-qr.png" alt="eSewa QR Code">
       </div>
       <div class="ps-step">
         <div class="ps-num green">3</div>
@@ -281,7 +209,7 @@ textarea{resize:vertical;min-height:70px;}
       </div>
     </div>
 
-    <!-- KHALTI INSTRUCTIONS -->
+    <!-- Khalti Instructions -->
     <div class="payment-steps" id="steps-khalti">
       <div class="ps-title"><span style="color:#5C2D91;">●</span> Khalti Payment Steps</div>
       <div class="ps-step">
@@ -292,10 +220,10 @@ textarea{resize:vertical;min-height:70px;}
         <div class="ps-num purple">2</div>
         <div class="ps-text">"Send Money" गएर यो number मा <strong>रू. ९९९</strong> पठाउनुहोस्:</div>
       </div>
-      <div class="phone-highlight">9841189356 <button class="copy-btn" onclick="copyNum('9841189356')">Copy</button></div>
-      <div style="text-align:center; margin: 16px 0;">
-        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
-        <img src="khalti-qr.png" alt="Khalti QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
+      <div class="phone-highlight">9841189356 <button class="copy-btn" onclick="copyNum('9841189356', event)">Copy</button></div>
+      <div class="qr-block">
+        <span>वा QR Code Scan गर्नुहोस्:</span>
+        <img src="khalti-qr.png" alt="Khalti QR Code">
       </div>
       <div class="ps-step">
         <div class="ps-num purple">3</div>
@@ -307,29 +235,29 @@ textarea{resize:vertical;min-height:70px;}
       </div>
     </div>
 
-    <!-- BANK INSTRUCTIONS -->
+    <!-- Bank Instructions -->
     <div class="payment-steps" id="steps-bank">
       <div class="ps-title">🏦 Bank Transfer Details</div>
       <div class="ps-step">
-        <div class="ps-num">1</div>
+        <div class="ps-num blue">1</div>
         <div class="ps-text"><strong>Bank:</strong> Prabhu Bank</div>
       </div>
       <div class="ps-step">
-        <div class="ps-num">2</div>
+        <div class="ps-num blue">2</div>
         <div class="ps-text"><strong>Account Name:</strong> [Your Name]<br><strong>Account No:</strong> 9841189356<br><strong>Amount:</strong> रू. ९९९</div>
       </div>
-      <div style="text-align:center; margin: 16px 0;">
-        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
-        <img src="prabhu-bank-qr.png" alt="Prabhu Bank QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
+      <div class="qr-block">
+        <span>वा QR Code Scan गर्नुहोस्:</span>
+        <img src="prabhu-bank-qr.png" alt="Prabhu Bank QR Code">
       </div>
       <div class="ps-step">
-        <div class="ps-num">3</div>
+        <div class="ps-num blue">3</div>
         <div class="ps-text">Transfer गरेपछि receipt screenshot लिनुहोस् र तल submit गर्नुहोस्।</div>
       </div>
     </div>
 
-    <!-- SCREENSHOT UPLOAD FORM -->
-    <div class="upload-section" id="uploadSection" style="display:none;">
+    <!-- Upload Form -->
+    <div class="upload-section" id="uploadSection">
       <div class="section-title" style="font-size:16px;margin-bottom:14px;">📸 Payment Confirm गर्नुहोस्</div>
 
       <div class="form-group">
@@ -339,10 +267,6 @@ textarea{resize:vertical;min-height:70px;}
       <div class="form-group">
         <label>Phone Number (WhatsApp)</label>
         <input type="tel" id="payerPhone" placeholder="98XXXXXXXX" inputmode="tel">
-      </div>
-      <div class="form-group">
-        <label>Email (course access को लागि)</label>
-        <input type="email" id="payerEmail" placeholder="tapai@gmail.com" inputmode="email">
       </div>
 
       <div class="form-group">
@@ -372,8 +296,7 @@ textarea{resize:vertical;min-height:70px;}
         7-day money-back guarantee लागू हुन्छ।
       </div>
     </div>
-
-  </div><!-- /mainPayForm -->
+  </div>
 
   <!-- SUCCESS SCREEN -->
   <div class="success-screen" id="successScreen">
@@ -384,51 +307,42 @@ textarea{resize:vertical;min-height:70px;}
       <strong>२ घण्टाभित्र</strong> तपाईंको course access activate हुन्छ।<br>
       WhatsApp मा notification पाउनुहुन्छ।
     </div>
-    <a href="https://wa.me/9779841189356?text=Payment गरेँ, please activate गरिदिनुस्।" class="whatsapp-btn" target="_blank">
+    <a href="https://wa.me/9779841189356?text=Payment%20गरेँ%2C%20please%20activate%20गरिदिनुस्।" class="whatsapp-btn" target="_blank">
       💬 WhatsApp मा जानकारी दिनुहोस्
     </a>
-    <div style="margin-top:14px;font-size:14px;color:var(--muted);">
-      वा email: <strong>hello@aisaathi.com</strong>
-    </div>
+    <a href="dashboard.html" class="dash-btn" style="margin-top:12px;">← Dashboard मा जानुहोस्</a>
   </div>
-
 </main>
 
 <script>
 let selectedMethod = null;
-let screenshotFile = null;
+let screenshotBase64 = null;
 
 function selectMethod(method){
   selectedMethod = method;
-
-  // Uncheck all
   document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.payment-steps').forEach(s => s.classList.remove('show'));
-  document.querySelectorAll('.method-radio').forEach(r => r.checked = false);
+  ['esewa','khalti','bank'].forEach(m => {
+    document.getElementById('chk-'+m).textContent = '';
+  });
 
-  // Select chosen
-  const card = document.querySelector(`.${method}-card`);
-  if(card){ card.classList.add('selected'); }
-  document.getElementById(`r-${method}`).checked = true;
-
-  // Show instructions
-  const steps = document.getElementById(`steps-${method}`);
-  if(steps) steps.classList.add('show');
-
-  // Show upload form
+  document.querySelector('.'+method+'-card').classList.add('selected');
+  document.getElementById('chk-'+method).textContent = '✓';
+  document.getElementById('steps-'+method).classList.add('show');
   document.getElementById('uploadSection').style.display = 'block';
 
-  // Scroll to instructions
-  steps.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(() => {
+    document.getElementById('steps-'+method).scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
 }
 
 function handleScreenshot(input){
   const file = input.files[0];
   if(!file) return;
-  screenshotFile = file;
 
   const reader = new FileReader();
   reader.onload = (e) => {
+    screenshotBase64 = e.target.result;
     const preview = document.getElementById('uploadPreview');
     preview.src = e.target.result;
     preview.style.display = 'block';
@@ -439,66 +353,73 @@ function handleScreenshot(input){
   reader.readAsDataURL(file);
 }
 
-function copyNum(num){
+function copyNum(num, evt){
+  evt.stopPropagation();
   navigator.clipboard.writeText(num).then(() => {
-    event.target.textContent = '✅ Copied!';
-    setTimeout(() => event.target.textContent = 'Copy', 2000);
-  }).catch(() => alert('Copy: ' + num));
+    evt.target.textContent = '✅ Copied!';
+    setTimeout(() => evt.target.textContent = 'Copy', 2000);
+  }).catch(() => {
+    prompt('Copy this number:', num);
+  });
 }
 
 async function submitPayment(){
-  const name = document.getElementById('payerName').value.trim();
+  const name  = document.getElementById('payerName').value.trim();
   const phone = document.getElementById('payerPhone').value.trim();
-  const email = document.getElementById('payerEmail').value.trim();
 
-  if(!name){ alert('नाम हाल्नुहोस्।'); return; }
+  if(!name)  { alert('नाम हाल्नुहोस्।'); return; }
   if(!phone || phone.length < 10){ alert('Phone number हाल्नुहोस्।'); return; }
-  if(!email || !email.includes('@')){ alert('Email हाल्नुहोस्।'); return; }
-  if(!screenshotFile){ alert('Payment screenshot upload गर्नुहोस्।'); return; }
+  if(!screenshotBase64){ alert('Payment screenshot upload गर्नुहोस्।'); return; }
   if(!selectedMethod){ alert('Payment method छान्नुहोस्।'); return; }
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = 'Submitting...';
+  btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
   try {
-    // ── PRODUCTION: Submit to Firebase ──
-    // 1. Upload screenshot to Firebase Storage
-    const storageRef = firebase.storage().ref(`payments/${Date.now()}_${phone}.jpg`);
-    const snapshot = await storageRef.put(screenshotFile);
-    const screenshotUrl = await snapshot.ref.getDownloadURL();
-    
-    // 2. Create payment request in Firestore
-    const user = window.auth.currentUser;
+    const user  = window.auth.currentUser;
+    const uid   = user ? user.uid : null;
+    const email = user ? user.email : (phone + '@unknown.com');
+
+    // Truncate screenshot to stay under Firestore's 1 MB document limit
+    const maxLen = 700000;
+    const screenshotData = screenshotBase64.length > maxLen
+      ? screenshotBase64.substring(0, maxLen)
+      : screenshotBase64;
+
     await window.db.collection('payment_requests').add({
-      name, phone, email,
-      userId: user ? user.uid : null,
+      name,
+      phone,
+      email,
+      uid,
+      userId: uid,
       method: selectedMethod,
-      screenshotUrl,
-      txnId: document.getElementById('txnId').value || '',
+      screenshotData,
+      txnId: document.getElementById('txnId').value.trim(),
       amount: 999,
       status: 'pending',
       submittedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-  } catch (error) {
-    console.error("Payment submission failed:", error);
-    alert('Oops! Error submitting payment: ' + error.message);
+
+    // Show success
+    document.getElementById('mainPayForm').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('successScreen').scrollIntoView({behavior:'smooth'});
+
+  } catch(e) {
+    console.error(e);
     btn.disabled = false;
-    btn.textContent = '📨 Payment Submit गर्नुहोस्';
-    return;
+    btn.innerHTML = '📨 Payment Submit गर्नुहोस्';
+    alert('Error: ' + e.message + '\n\nPlease contact us on WhatsApp: 9841189356');
   }
-
-  // Update step indicator
-  document.getElementById('s2').className = 'step-dot done';
-  document.getElementById('s2').textContent = '✓';
-  document.getElementById('s3').className = 'step-dot active';
-  document.getElementById('sl2').className = 'step-line done';
-
-  // Show success
-  document.getElementById('mainPayForm').style.display = 'none';
-  document.getElementById('successScreen').classList.add('show');
-  window.scrollTo(0, 0);
 }
+
+// Redirect to login if not authenticated
+window.auth.onAuthStateChanged(user => {
+  if(!user){
+    window.location.href = 'login.html?redirect=payment.html';
+  }
+});
 </script>
 </body>
 </html>
