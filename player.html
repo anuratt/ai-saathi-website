@@ -129,6 +129,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--ink);color:whit
   .ctrl-complete span{display:none;}
 }
 
+
+
 /* TRANSLATE BUTTON */
 .translate-btn{
   position:fixed;bottom:68px;right:14px;z-index:300;
@@ -163,13 +165,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--ink);color:whit
 .translate-option:hover{background:rgba(255,255,255,0.06);}
 .translate-option.active{background:rgba(232,97,26,0.15);color:var(--brand);}
 .translate-option-flag{font-size:20px;}
-.translate-option-name{font-weight:600;}
+.translate-option-name{font-weight:600;color:white;}
 .translate-option-native{font-size:12px;color:rgba(255,255,255,0.4);margin-left:auto;}
 
-/* Hide Google Translate toolbar */
-.goog-te-banner-frame{display:none!important;}
+/* Hide ugly Google Translate bar */
+.goog-te-banner-frame,.skiptranslate{display:none!important;}
 body{top:0!important;}
-.skiptranslate{display:none!important;}
+#goog-gt-tt,#goog-gt-tt *,.goog-te-balloon-frame{display:none!important;}
+
 </style>
 </head>
 <body>
@@ -521,6 +524,122 @@ function setLanguage(langCode, flag, label){
     const translated = 'https://translate.google.com/translate?sl=en&tl=' + langCode + '&u=' + encodeURIComponent(frame.src);
     frame.src = translated;
   }
+}
+</script>
+
+
+<!-- TRANSLATE DROPDOWN -->
+<div class="translate-dropdown" id="translateDropdown">
+  <div class="translate-dropdown-title">भाषा छान्नुहोस्</div>
+  <div class="translate-option active" id="opt-en" onclick="setLang('en','🇺🇸','English')">
+    <span class="translate-option-flag">🇺🇸</span>
+    <span class="translate-option-name">English</span>
+    <span class="translate-option-native">English</span>
+  </div>
+  <div class="translate-option" id="opt-ne" onclick="setLang('ne','🇳🇵','नेपाली')">
+    <span class="translate-option-flag">🇳🇵</span>
+    <span class="translate-option-name">Nepali</span>
+    <span class="translate-option-native">नेपाली</span>
+  </div>
+  <div class="translate-option" id="opt-hi" onclick="setLang('hi','🇮🇳','हिन्दी')">
+    <span class="translate-option-flag">🇮🇳</span>
+    <span class="translate-option-name">Hindi</span>
+    <span class="translate-option-native">हिन्दी</span>
+  </div>
+  <div class="translate-option" id="opt-zh-CN" onclick="setLang('zh-CN','🇨🇳','中文')">
+    <span class="translate-option-flag">🇨🇳</span>
+    <span class="translate-option-name">Chinese</span>
+    <span class="translate-option-native">中文</span>
+  </div>
+  <div class="translate-option" id="opt-ar" onclick="setLang('ar','🇸🇦','العربية')">
+    <span class="translate-option-flag">🇸🇦</span>
+    <span class="translate-option-name">Arabic</span>
+    <span class="translate-option-native">العربية</span>
+  </div>
+</div>
+
+<!-- TRANSLATE BUTTON -->
+<div class="translate-btn" id="translateBtn" onclick="toggleTranslateMenu()">
+  <span class="translate-btn-flag" id="currentFlag">🌐</span>
+  <span class="translate-btn-label" id="currentLang">Translate</span>
+  <span class="translate-btn-arrow" id="translateArrow">▲</span>
+</div>
+
+<!-- Hidden Google Translate widget — translates THIS page's UI -->
+<div id="google_translate_element" style="display:none;"></div>
+<script>
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+
+<script>
+let translateOpen = false;
+let currentLangCode = 'en';
+
+function toggleTranslateMenu(){
+  translateOpen = !translateOpen;
+  document.getElementById('translateDropdown').classList.toggle('show', translateOpen);
+  document.getElementById('translateArrow').textContent = translateOpen ? '▼' : '▲';
+}
+
+document.addEventListener('click', e => {
+  if(!e.target.closest('#translateBtn') && !e.target.closest('#translateDropdown')){
+    translateOpen = false;
+    document.getElementById('translateDropdown').classList.remove('show');
+    document.getElementById('translateArrow').textContent = '▲';
+  }
+});
+
+function setLang(code, flag, label){
+  currentLangCode = code;
+
+  // Update button
+  document.getElementById('currentFlag').textContent = flag;
+  document.getElementById('currentLang').textContent = label;
+  document.querySelectorAll('.translate-option').forEach(o => o.classList.remove('active'));
+  const optEl = document.getElementById('opt-' + code);
+  if(optEl) optEl.classList.add('active');
+
+  // Close menu
+  translateOpen = false;
+  document.getElementById('translateDropdown').classList.remove('show');
+  document.getElementById('translateArrow').textContent = '▲';
+
+  // Apply translation via Google Translate widget cookie approach
+  // This is the reliable method that works on hosted sites
+  if(code === 'en'){
+    // Reset — remove the googtrans cookie and reload
+    document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = 'googtrans=; path=/; domain=' + location.hostname + '; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    location.reload();
+    return;
+  }
+
+  // Set googtrans cookie — Google Translate reads this on page load
+  const cookieVal = '/en/' + code;
+  document.cookie = 'googtrans=' + cookieVal + '; path=/';
+  document.cookie = 'googtrans=' + cookieVal + '; path=/; domain=' + location.hostname;
+
+  // Try to trigger GT widget directly without reload
+  function applyGT(tries){
+    const combo = document.querySelector('.goog-te-combo');
+    if(combo){
+      combo.value = code;
+      combo.dispatchEvent(new Event('change'));
+    } else if(tries > 0){
+      setTimeout(() => applyGT(tries - 1), 400);
+    } else {
+      // Last resort: reload with cookie set (GT will auto-apply)
+      location.reload();
+    }
+  }
+  applyGT(15);
 }
 </script>
 
