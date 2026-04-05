@@ -217,14 +217,14 @@ body{font-family:'Lato',sans-serif;background:var(--ink);color:white;display:fle
 // MODULE REGISTRY
 // ─────────────────────────────────────────────
 const MODULES = [
-  {id:1, title:"AI Saathi: Your Smart Life, Simplified",     short:"Foundations",    file:"AI_Saathi_Module1_Complete.html"},
-  {id:2, title:"The Writing Superpower",                     short:"Writing",        file:"AI_Course_Module2_Nepal.html"},
-  {id:3, title:"ChatGPT for Daily Life & Business",          short:"Daily Life",     file:"AI_Course_Module3_Nepal.html"},
-  {id:4, title:"Making Money with AI",                       short:"Earn Money",     file:"AI_Course_Module4_Nepal.html"},
-  {id:5, title:"AI Images, Video & Voice",                   short:"Creative",       file:"AI_Course_Module5_Nepal.html"},
-  {id:6, title:"Research, Data & Smarter Decisions",         short:"Research",       file:"AI_Course_Module6_Nepal.html"},
-  {id:7, title:"Advanced Prompting & Automation",            short:"Prompting",      file:"AI_Course_Module7_Nepal__1_.html"},
-  {id:8, title:"Your AI Future",                             short:"Future",         file:"AI_Course_Module8_Nepal__1_.html"},
+  {id:1, title:"AI Saathi: Your Smart Life, Simplified",     short:"Foundations",    file:"modules/AI_Saathi_Module1_Complete.html"},
+  {id:2, title:"The Writing Superpower",                     short:"Writing",        file:"modules/AI_Course_Module2_Nepal.html"},
+  {id:3, title:"ChatGPT for Daily Life & Business",          short:"Daily Life",     file:"modules/AI_Course_Module3_Nepal.html"},
+  {id:4, title:"Making Money with AI",                       short:"Earn Money",     file:"modules/AI_Course_Module4_Nepal.html"},
+  {id:5, title:"AI Images, Video & Voice",                   short:"Creative",       file:"modules/AI_Course_Module5_Nepal.html"},
+  {id:6, title:"Research, Data & Smarter Decisions",         short:"Research",       file:"modules/AI_Course_Module6_Nepal.html"},
+  {id:7, title:"Advanced Prompting & Automation",            short:"Prompting",      file:"modules/AI_Course_Module7_Nepal (1).html"},
+  {id:8, title:"Your AI Future",                             short:"Future",         file:"modules/AI_Course_Module8_Nepal (1).html"},
 ];
 
 // ─────────────────────────────────────────────
@@ -256,9 +256,10 @@ window.auth.onAuthStateChanged(async (user) => {
   try {
     const doc = await window.db.collection('users').doc(user.uid).get();
     const data = doc.exists ? doc.data() : {};
-    if(!data.hasPaid){ window.location.href = 'payment.html'; return; }
+    const hasPaid = data.hasPaid === true;
+    
     // Store for UI use
-    localStorage.setItem('ai_saathi_user', JSON.stringify({...data, name: data.name || user.email}));
+    localStorage.setItem('ai_saathi_user', JSON.stringify({...data, name: data.name || user.displayName || user.email.split('@')[0], hasPaid: hasPaid}));
   } catch(e){ console.error(e); }
   initPlayer();
 });

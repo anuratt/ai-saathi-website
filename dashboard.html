@@ -167,14 +167,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--pale);color:var
 </main>
 <script>
 const MODULES=[
-  {id:1,title:"AI Saathi: Your Smart Life, Simplified",sub:"AI foundations — zero to start",emoji:"🤖",file:"AI_Saathi_Module1_Complete.html"},
-  {id:2,title:"The Writing Superpower",sub:"Write anything in minutes",emoji:"✍️",file:"AI_Course_Module2_Nepal.html"},
-  {id:3,title:"ChatGPT for Daily Life & Business",sub:"AI in your everyday work",emoji:"💬",file:"AI_Course_Module3_Nepal.html"},
-  {id:4,title:"Making Money with AI",sub:"रू.१५K–८०K income roadmap",emoji:"💰",file:"AI_Course_Module4_Nepal.html"},
-  {id:5,title:"AI Images, Video & Voice",sub:"Create without a designer",emoji:"🎨",file:"AI_Course_Module5_Nepal.html"},
-  {id:6,title:"Research, Data & Smarter Decisions",sub:"AI as your personal advisor",emoji:"📊",file:"AI_Course_Module6_Nepal.html"},
-  {id:7,title:"Advanced Prompting & Automation",sub:"Level up your AI skills",emoji:"⚡",file:"AI_Course_Module7_Nepal__1_.html"},
-  {id:8,title:"Your AI Future",sub:"Graduate and keep growing",emoji:"🚀",file:"AI_Course_Module8_Nepal__1_.html"},
+  {id:1,title:"AI Saathi: Your Smart Life, Simplified",sub:"AI foundations — zero to start",emoji:"🤖",file:"modules/AI_Saathi_Module1_Complete.html"},
+  {id:2,title:"The Writing Superpower",sub:"Write anything in minutes",emoji:"✍️",file:"modules/AI_Course_Module2_Nepal.html"},
+  {id:3,title:"ChatGPT for Daily Life & Business",sub:"AI in your everyday work",emoji:"💬",file:"modules/AI_Course_Module3_Nepal.html"},
+  {id:4,title:"Making Money with AI",sub:"रू.१५K–८०K income roadmap",emoji:"💰",file:"modules/AI_Course_Module4_Nepal.html"},
+  {id:5,title:"AI Images, Video & Voice",sub:"Create without a designer",emoji:"🎨",file:"modules/AI_Course_Module5_Nepal.html"},
+  {id:6,title:"Research, Data & Smarter Decisions",sub:"AI as your personal advisor",emoji:"📊",file:"modules/AI_Course_Module6_Nepal.html"},
+  {id:7,title:"Advanced Prompting & Automation",sub:"Level up your AI skills",emoji:"⚡",file:"modules/AI_Course_Module7_Nepal (1).html"},
+  {id:8,title:"Your AI Future",sub:"Graduate and keep growing",emoji:"🚀",file:"modules/AI_Course_Module8_Nepal (1).html"},
 ];
 function getState(){try{return JSON.parse(localStorage.getItem('ai_saathi_progress'))||{completed:[],started:[]};}catch(e){return{completed:[],started:[]};}}
 function render(userName, hasPaid){
@@ -241,48 +241,6 @@ window.auth.onAuthStateChanged(async (user)=>{
     render(user.email, false);
   }
 });
-</script>
-</body>
-</html>
-function render(){
-  const user=getUser(),state=getState();
-  const done=state.completed||[],started=state.started||[];
-  const hasPaid=user.hasPaid,pct=Math.round((done.length/8)*100);
-  document.getElementById('navUser').textContent=`नमस्ते, ${user.name} 👋`;
-  document.getElementById('wcName').textContent=`नमस्ते, ${user.name}! 👋`;
-  document.getElementById('wcPct').textContent=pct+'%';
-  document.getElementById('wcPText').textContent=`${done.length} of 8 modules`;
-  document.getElementById('wcDone').textContent=done.length;
-  setTimeout(()=>{document.getElementById('wcBar').style.width=pct+'%';},100);
-  if(!hasPaid) document.getElementById('unlockPrompt').classList.add('show');
-  if(done.length===8){const cb=document.getElementById('certBtn');cb.classList.add('active');cb.href='certificate.html';}
-  let contMod=null;
-  if(hasPaid){
-    contMod=MODULES.find(m=>started.includes(m.id)&&!done.includes(m.id));
-    if(!contMod) contMod=MODULES.find(m=>!done.includes(m.id));
-  }
-  if(contMod){
-    const cta=document.getElementById('continueCta');
-    cta.classList.remove('hidden');
-    cta.href=`player.html?module=${contMod.id}`;
-    document.getElementById('ctaTitle').textContent=`Module ${contMod.id}: ${contMod.title}`;
-  }
-  document.getElementById('sectMeta').textContent=hasPaid?`${done.length}/8 complete`:'🔒 Locked';
-  const list=document.getElementById('moduleList');
-  list.innerHTML='';
-  MODULES.forEach(mod=>{
-    const isDone=done.includes(mod.id),isStarted=started.includes(mod.id);
-    const isLocked=!hasPaid;
-    const isNext=contMod&&contMod.id===mod.id;
-    let cc='module-card',ic='mc-icon',ico=mod.emoji,tag='',bar='',lock='';
-    const href=`player.html?module=${mod.id}`;
-    if(isLocked){cc+=' locked';ic+=' locked-bg';ico='🔒';tag=`<span class="mc-tag tag-locked">🔒 Locked</span>`;lock=`<div class="mc-lock">🔒 <span>Unlock: <a href="payment.html">Buy Course →</a></span></div>`;}
-    else if(isDone){cc+=' completed';ic+=' done-bg';ico='✅';tag=`<span class="mc-tag tag-done">✓ Done</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar done" style="width:100%"></div></div>`;}
-    else if(isStarted){cc+=' in-progress';ic+=' active-bg';tag=`<span class="mc-tag tag-prog">▶ In Progress</span>`;bar=`<div class="mc-bar-wrap"><div class="mc-bar prog" style="width:45%"></div></div>`;}
-    else{ic+=' next-bg';tag=`<span class="mc-tag tag-next">${isNext?'▶ Start':'Not Started'}</span>`;}
-    list.innerHTML+=`<a class="${cc}" href="${isLocked?'#':href}" ${isLocked?'onclick="return false"':''}><div class="mc-inner"><div class="${ic}">${ico}</div><div class="mc-content"><div class="mc-num">Module ${mod.id}</div><div class="mc-title">${mod.title}</div><div class="mc-sub">${mod.sub}</div>${bar}</div><div class="mc-status">${tag}</div></div>${lock}</a>`;
-  });
-}
 </script>
 </body>
 </html>

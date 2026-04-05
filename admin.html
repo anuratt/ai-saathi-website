@@ -303,7 +303,7 @@ function loadData(){
         const data = d.data();
         return {
           id: d.id,
-          uid: data.uid || null,
+          uid: data.uid || data.userId || null,
           name: data.name || '—',
           phone: data.phone || '—',
           email: data.email || '—',
@@ -311,7 +311,7 @@ function loadData(){
           txnId: data.txnId || '',
           date: data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleDateString('ne-NP') : '—',
           status: data.status || 'pending',
-          screenshotData: data.screenshotData || null,
+          screenshotData: data.screenshotData || data.screenshotUrl || null,
         };
       });
       renderAll();

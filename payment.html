@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Saathi — Payment | eSewa & Khalti</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
 <style>
 :root{
   --saffron:#E8611A;--saffron-deep:#C0470D;--saffron-pale:#FFF3EC;
@@ -261,7 +266,11 @@ textarea{resize:vertical;min-height:70px;}
         <div class="ps-num green">2</div>
         <div class="ps-text">"Send Money" थिच्नुहोस् र यो number मा <strong>रू. ९९९</strong> पठाउनुहोस्:</div>
       </div>
-      <div class="phone-highlight" id="esewaNum">98XXXXXXXX <button class="copy-btn" onclick="copyNum('98XXXXXXXX')">Copy</button></div>
+      <div class="phone-highlight" id="esewaNum">9841189356 <button class="copy-btn" onclick="copyNum('9841189356')">Copy</button></div>
+      <div style="text-align:center; margin: 16px 0;">
+        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
+        <img src="esewa-qr.png" alt="eSewa QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
+      </div>
       <div class="ps-step">
         <div class="ps-num green">3</div>
         <div class="ps-text">Remarks मा <strong>"AI Saathi Course"</strong> लेख्नुहोस्।</div>
@@ -283,7 +292,11 @@ textarea{resize:vertical;min-height:70px;}
         <div class="ps-num purple">2</div>
         <div class="ps-text">"Send Money" गएर यो number मा <strong>रू. ९९९</strong> पठाउनुहोस्:</div>
       </div>
-      <div class="phone-highlight">98XXXXXXXX <button class="copy-btn" onclick="copyNum('98XXXXXXXX')">Copy</button></div>
+      <div class="phone-highlight">9841189356 <button class="copy-btn" onclick="copyNum('9841189356')">Copy</button></div>
+      <div style="text-align:center; margin: 16px 0;">
+        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
+        <img src="khalti-qr.png" alt="Khalti QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
+      </div>
       <div class="ps-step">
         <div class="ps-num purple">3</div>
         <div class="ps-text">Note मा <strong>"AI Saathi"</strong> लेख्नुहोस् र transaction complete गर्नुहोस्।</div>
@@ -299,11 +312,15 @@ textarea{resize:vertical;min-height:70px;}
       <div class="ps-title">🏦 Bank Transfer Details</div>
       <div class="ps-step">
         <div class="ps-num">1</div>
-        <div class="ps-text"><strong>Bank:</strong> Nepal Investment Mega Bank (वा तपाईंको बैंकको नाम)</div>
+        <div class="ps-text"><strong>Bank:</strong> Prabhu Bank</div>
       </div>
       <div class="ps-step">
         <div class="ps-num">2</div>
-        <div class="ps-text"><strong>Account Name:</strong> [Your Name]<br><strong>Account No:</strong> XXXX-XXXX-XXXX<br><strong>Amount:</strong> रू. ९९९</div>
+        <div class="ps-text"><strong>Account Name:</strong> [Your Name]<br><strong>Account No:</strong> 9841189356<br><strong>Amount:</strong> रू. ९९९</div>
+      </div>
+      <div style="text-align:center; margin: 16px 0;">
+        <span style="display:block; font-size:12px; color:var(--muted); margin-bottom:8px;">वा QR Code Scan गर्नुहोस्:</span>
+        <img src="prabhu-bank-qr.png" alt="Prabhu Bank QR Code" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">
       </div>
       <div class="ps-step">
         <div class="ps-num">3</div>
@@ -367,7 +384,7 @@ textarea{resize:vertical;min-height:70px;}
       <strong>२ घण्टाभित्र</strong> तपाईंको course access activate हुन्छ।<br>
       WhatsApp मा notification पाउनुहुन्छ।
     </div>
-    <a href="https://wa.me/977XXXXXXXXXX?text=Payment गरेँ, please activate गरिदिनुस्।" class="whatsapp-btn" target="_blank">
+    <a href="https://wa.me/9779841189356?text=Payment गरेँ, please activate गरिदिनुस्।" class="whatsapp-btn" target="_blank">
       💬 WhatsApp मा जानकारी दिनुहोस्
     </a>
     <div style="margin-top:14px;font-size:14px;color:var(--muted);">
@@ -444,27 +461,32 @@ async function submitPayment(){
   btn.disabled = true;
   btn.textContent = 'Submitting...';
 
-  // ── PRODUCTION: Submit to Firebase ──
-  // 1. Upload screenshot to Firebase Storage
-  // const storageRef = firebase.storage().ref(`payments/${Date.now()}_${phone}.jpg`);
-  // const snapshot = await storageRef.put(screenshotFile);
-  // const screenshotUrl = await snapshot.ref.getDownloadURL();
-  //
-  // 2. Create payment request in Firestore
-  // await firebase.firestore().collection('payment_requests').add({
-  //   name, phone, email,
-  //   method: selectedMethod,
-  //   screenshotUrl,
-  //   txnId: document.getElementById('txnId').value,
-  //   amount: 999,
-  //   status: 'pending',
-  //   submittedAt: firebase.firestore.FieldValue.serverTimestamp()
-  // });
-  //
-  // 3. Optional: Send WhatsApp notification to admin (via Twilio or manual)
-
-  // ── DEMO: Simulate submission ──
-  await new Promise(r => setTimeout(r, 1500));
+  try {
+    // ── PRODUCTION: Submit to Firebase ──
+    // 1. Upload screenshot to Firebase Storage
+    const storageRef = firebase.storage().ref(`payments/${Date.now()}_${phone}.jpg`);
+    const snapshot = await storageRef.put(screenshotFile);
+    const screenshotUrl = await snapshot.ref.getDownloadURL();
+    
+    // 2. Create payment request in Firestore
+    const user = window.auth.currentUser;
+    await window.db.collection('payment_requests').add({
+      name, phone, email,
+      userId: user ? user.uid : null,
+      method: selectedMethod,
+      screenshotUrl,
+      txnId: document.getElementById('txnId').value || '',
+      amount: 999,
+      status: 'pending',
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Payment submission failed:", error);
+    alert('Oops! Error submitting payment: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = '📨 Payment Submit गर्नुहोस्';
+    return;
+  }
 
   // Update step indicator
   document.getElementById('s2').className = 'step-dot done';
